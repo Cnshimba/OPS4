@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 11 Quiz: System Design and Networking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_11_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 11 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of System Design and Networking</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What does the acronym RAS stand for in the context of HPC System Administration?",
+                        "options": [
+                                    "Random Access Storage",
+                                    "Reliability, Availability, Serviceability",
+                                    "Remote Administration System",
+                                    "Rapid Application Scaling"
+                        ],
+                        "correct": 1,
+                        "explanation": "RAS (Reliability, Availability, Serviceability) represents the primary goals of maintaining an enterprise or HPC system."
+            },
+            {
+                        "question": "According to the Utilization Law (U = \u03bb/\u03bc), what happens to queue wait times as cluster utilization (U) approaches 100%?",
+                        "options": [
+                                    "Wait times become zero.",
+                                    "Wait times grow exponentially.",
+                                    "Wait times remain constant.",
+                                    "Wait times decrease."
+                        ],
+                        "correct": 1,
+                        "explanation": "In queueing theory, as a system reaches 100% saturation (U=1), the length of the queue and the wait time grow towards infinity."
+            },
+            {
+                        "question": "What is a primary difference between Legacy monitoring (e.g., Nagios) and Modern monitoring (e.g., Prometheus)?",
+                        "options": [
+                                    "Legacy focuses on 'How is it running?', Modern focuses on 'Is it up?'",
+                                    "Legacy monitoring focuses on binary states (Up/Down), while modern monitoring uses Time-Series databases to track metric changes over time.",
+                                    "Legacy monitoring uses graphics, Modern uses only text.",
+                                    "There is no difference."
+                        ],
+                        "correct": 1,
+                        "explanation": "Prometheus shifts the focus to metrics over time rather than simple ping checks, allowing for trend analysis."
+            },
+            {
+                        "question": "Prometheus utilizes a 'Pull' architecture. What does this mean?",
+                        "options": [
+                                    "Nodes forcefully push their data to the server.",
+                                    "The server wakes up at specific intervals and requests (scrapes) data from the nodes.",
+                                    "The server pulls cables to restart nodes.",
+                                    "Data is pulled directly from the internet."
+                        ],
+                        "correct": 1,
+                        "explanation": "In a Pull model, the central server initiates the HTTP request to scrape the metrics from the node exporters."
+            },
+            {
+                        "question": "What is the role of an 'Exporter' in the Prometheus ecosystem?",
+                        "options": [
+                                    "It exports data to a CSV file.",
+                                    "It is a lightweight binary running on a node that collects local metrics and exposes them on a web endpoint for the server to scrape.",
+                                    "It deletes old data to save disk space.",
+                                    "It alerts users via email."
+                        ],
+                        "correct": 1,
+                        "explanation": "Exporters (like node_exporter) translate local system states into the Prometheus metric format and host them via HTTP."
+            },
+            {
+                        "question": "What does TSDB stand for?",
+                        "options": [
+                                    "Time-Series Database",
+                                    "Terminal System Data Bus",
+                                    "Total Storage Data Block",
+                                    "Technical System Debugging Binary"
+                        ],
+                        "correct": 0,
+                        "explanation": "A Time-Series Database is optimized for handling data indexed by time, tracking how values change over seconds, minutes, or days."
+            },
+            {
+                        "question": "Which tool is commonly paired with Prometheus to act as a 'Single Pane of Glass' for visualization?",
+                        "options": [
+                                    "Warewulf",
+                                    "Slurm",
+                                    "Grafana",
+                                    "BeeGFS"
+                        ],
+                        "correct": 2,
+                        "explanation": "Grafana connects to Prometheus and turns raw time-series data into actionable dashboards with graphs, gauges, and heatmaps."
+            },
+            {
+                        "question": "What is the primary benefit of using a Heatmap visualization in an HPC cluster?",
+                        "options": [
+                                    "To show the exact temperature of the CPU in Celsius.",
+                                    "To instantly reveal outliers and distributions across hundreds of nodes (e.g., finding one node acting differently than the rest).",
+                                    "To print data to paper.",
+                                    "To replace the terminal interface."
+                        ],
+                        "correct": 1,
+                        "explanation": "Heatmaps excel at displaying the distribution of a metric across a massive number of targets, making outliers visually obvious."
+            },
+            {
+                        "question": "What is PromQL?",
+                        "options": [
+                                    "Prometheus Queueing Logic",
+                                    "A SQL database for Prometheus.",
+                                    "Prometheus Query Language, used to query multi-dimensional time series data.",
+                                    "A programming language for writing CFD applications."
+                        ],
+                        "correct": 2,
+                        "explanation": "PromQL allows administrators to filter, aggregate, and perform math (like calculating rates) on the metrics stored in Prometheus."
+            },
+            {
+                        "question": "In PromQL, why is the 'irate()' or 'rate()' function used on counters?",
+                        "options": [
+                                    "To reset the counter to zero.",
+                                    "Because counters only go up (like an odometer), you use rate() to calculate the speed or rate of increase per second.",
+                                    "To delete the metric.",
+                                    "To generate a random number."
+                        ],
+                        "correct": 1,
+                        "explanation": "A counter tells you total bytes transferred since boot. Applying rate() tells you the current bandwidth in bytes per second."
+            },
+            {
+                        "question": "What is the role of the Prometheus Alertmanager?",
+                        "options": [
+                                    "It generates graphs.",
+                                    "It restarts crashed nodes automatically.",
+                                    "It receives alert signals from Prometheus, groups them, and routes them to receivers like Slack, Email, or PagerDuty.",
+                                    "It prevents users from logging in."
+                        ],
+                        "correct": 2,
+                        "explanation": "Alertmanager handles the silencing, grouping, and routing of alerts so administrators don't suffer from alert fatigue."
+            },
+            {
+                        "question": "In a Prometheus alert rule, what does the 'for: 5m' clause do?",
+                        "options": [
+                                    "It waits 5 months before alerting.",
+                                    "It ensures the condition (e.g., high load) remains true for 5 consecutive minutes before firing the alert, preventing false positives from temporary spikes.",
+                                    "It shuts the node down for 5 minutes.",
+                                    "It sends the alert 5 times."
+                        ],
+                        "correct": 1,
+                        "explanation": "The 'for' duration is critical to avoid spamming alerts for transient issues."
+            },
+            {
+                        "question": "What is IPMI (Intelligent Platform Management Interface)?",
+                        "options": [
+                                    "A protocol for sending emails.",
+                                    "A standard interface allowing administrators to manage and monitor hardware (like fans, voltage, power states) directly via a BMC, even if the OS is crashed or powered off.",
+                                    "A file system for storing user data.",
+                                    "A scheduling algorithm."
+                        ],
+                        "correct": 1,
+                        "explanation": "IPMI operates Out-Of-Band via the Baseboard Management Controller (BMC), providing physical hardware control independent of the host OS."
+            },
+            {
+                        "question": "Why is a Push architecture considered risky for monitoring a massive HPC cluster?",
+                        "options": [
+                                    "Because data gets encrypted.",
+                                    "Because if 1000 nodes push their data to the server at the exact same millisecond, they can inadvertently DDoS and crash the monitoring server.",
+                                    "Because it uses too much electricity.",
+                                    "Because Push architecture is illegal."
+                        ],
+                        "correct": 1,
+                        "explanation": "Pull architecture allows the server to dictate the pace of data ingestion, preventing overload."
+            },
+            {
+                        "question": "If you observe that cluster disk I/O spikes every time the CPU usage drops significantly, what pattern have you recognized?",
+                        "options": [
+                                    "A network failure.",
+                                    "A likely I/O bottleneck, where the CPU is sitting idle (I/O Wait) waiting for the storage system to respond.",
+                                    "A perfectly optimized application.",
+                                    "An IPMI alert."
+                        ],
+                        "correct": 1,
+                        "explanation": "Correlating metrics allows you to diagnose bottlenecks. If CPU drops when disk usage spikes, the CPUs are starved for data."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

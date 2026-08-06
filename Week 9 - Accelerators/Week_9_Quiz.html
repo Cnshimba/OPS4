@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 9 Quiz: System Design and Networking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_9_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 9 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of System Design and Networking</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What is the fundamental architectural difference between a CPU and a GPU?",
+                        "options": [
+                                    "CPUs are designed for high throughput; GPUs are designed for low latency.",
+                                    "CPUs optimize for low-latency sequential execution using complex logic; GPUs optimize for massive throughput using thousands of simple cores.",
+                                    "CPUs use memory; GPUs do not.",
+                                    "There is no difference; they are interchangeable."
+                        ],
+                        "correct": 1,
+                        "explanation": "CPUs use a few large, complex cores with deep caches to execute single threads very fast. GPUs use thousands of tiny cores to execute thousands of threads simultaneously."
+            },
+            {
+                        "question": "What does CUDA stand for, and what is it?",
+                        "options": [
+                                    "Compute Unified Device Architecture; NVIDIA's parallel computing platform and programming model.",
+                                    "Central Unit for Data Analysis; a new type of processor.",
+                                    "Computer Understanding of Deep Algorithms; an AI software.",
+                                    "C++ Universal Data Array; a data structure."
+                        ],
+                        "correct": 0,
+                        "explanation": "CUDA is the proprietary software layer and API created by NVIDIA that allows developers to write C/C++ code that executes directly on NVIDIA GPUs."
+            },
+            {
+                        "question": "In NVIDIA architecture, what is an SM (Streaming Multiprocessor)?",
+                        "options": [
+                                    "A video streaming card.",
+                                    "The core building block of a GPU, containing a group of CUDA cores, shared memory, and schedulers.",
+                                    "The main CPU of the host machine.",
+                                    "A network interface."
+                        ],
+                        "correct": 1,
+                        "explanation": "A GPU is made up of multiple SMs. Each SM operates somewhat independently, scheduling and executing blocks of threads on its own set of internal cores."
+            },
+            {
+                        "question": "What is a 'Warp' in CUDA terminology?",
+                        "options": [
+                                    "A bug that crashes the GPU.",
+                                    "A group of 32 threads that are executed simultaneously in lockstep on an SM.",
+                                    "A memory leak.",
+                                    "A physical cable connecting two GPUs."
+                        ],
+                        "correct": 1,
+                        "explanation": "NVIDIA GPUs group threads into Warps of 32. All 32 threads in a warp must execute the exact same instruction at the same time (SIMT architecture)."
+            },
+            {
+                        "question": "What happens if threads within the same Warp take different paths in an `if-else` statement (Warp Divergence)?",
+                        "options": [
+                                    "The GPU crashes.",
+                                    "The SM must execute each branch sequentially, disabling the threads not on the current branch, which severely degrades performance.",
+                                    "The GPU automatically spawns a new SM.",
+                                    "Nothing, it runs at full speed."
+                        ],
+                        "correct": 1,
+                        "explanation": "Because a Warp shares a single instruction fetch unit, divergent branches force the hardware to serialize the execution of the `if` and the `else`, halving performance."
+            },
+            {
+                        "question": "What is the difference between 'Host' and 'Device' in GPU programming?",
+                        "options": [
+                                    "Host is the network; Device is the hard drive.",
+                                    "Host is the user; Device is the software.",
+                                    "Host refers to the CPU and its memory; Device refers to the GPU and its memory.",
+                                    "Host is the GPU; Device is the CPU."
+                        ],
+                        "correct": 2,
+                        "explanation": "In heterogeneous computing, the Host (CPU) orchestrates the program and offloads heavy parallel tasks to the Device (GPU)."
+            },
+            {
+                        "question": "What is typically the most significant bottleneck in GPU-accelerated applications?",
+                        "options": [
+                                    "The clock speed of the GPU.",
+                                    "Transferring data back and forth between the Host memory and Device memory over the PCIe bus.",
+                                    "The size of the L1 cache.",
+                                    "The speed of the monitor."
+                        ],
+                        "correct": 1,
+                        "explanation": "The PCIe bus is vastly slower than the GPU's internal memory bandwidth. If an application constantly copies data to/from the GPU, it will lose all performance gains."
+            },
+            {
+                        "question": "What is 'Shared Memory' on a GPU?",
+                        "options": [
+                                    "Memory shared with other users on the internet.",
+                                    "A very fast, user-managed scratchpad memory located on the SM, shared among all threads in a Block.",
+                                    "The main VRAM of the GPU.",
+                                    "Memory shared over the PCIe bus."
+                        ],
+                        "correct": 1,
+                        "explanation": "Shared memory is an explicit, on-chip cache. Threads in a block can use it to cooperate and share data locally at speeds much faster than reaching out to global VRAM."
+            },
+            {
+                        "question": "In CUDA, what is a 'Thread Block'?",
+                        "options": [
+                                    "A firewall rule.",
+                                    "A logical grouping of threads that execute together on the same SM and can synchronize and share memory.",
+                                    "A physical chunk of silicon.",
+                                    "A section of the hard drive."
+                        ],
+                        "correct": 1,
+                        "explanation": "When you launch a GPU kernel, you organize millions of threads into Blocks. The GPU hardware schedules each entire Block onto a single SM."
+            },
+            {
+                        "question": "What is OpenACC?",
+                        "options": [
+                                    "An open-source GPU manufacturer.",
+                                    "A directive-based programming model (like OpenMP) that allows developers to add pragmas to C/Fortran code to automatically offload loops to the GPU.",
+                                    "A database management system.",
+                                    "A Linux kernel module."
+                        ],
+                        "correct": 1,
+                        "explanation": "OpenACC (and OpenMP offloading) provides a higher-level, easier alternative to writing raw CUDA code, letting the compiler handle the complex GPU memory management and threading."
+            },
+            {
+                        "question": "What does SIMT stand for?",
+                        "options": [
+                                    "Single Instruction, Multiple Threads",
+                                    "System Integrated Memory Transfer",
+                                    "Synchronous Iteration, Multiple Tasks",
+                                    "Shared Internet Multi-Tenancy"
+                        ],
+                        "correct": 0,
+                        "explanation": "SIMT (Single Instruction, Multiple Threads) is NVIDIA's term for their architecture, where a single instruction is broadcast to multiple threads (a Warp) executing on different data."
+            },
+            {
+                        "question": "What is 'Occupancy' in GPU profiling?",
+                        "options": [
+                                    "The physical space the GPU takes in the rack.",
+                                    "The ratio of active warps on an SM to the maximum possible number of active warps.",
+                                    "The percentage of hard drive used.",
+                                    "The number of users logged in."
+                        ],
+                        "correct": 1,
+                        "explanation": "High occupancy means the SM has plenty of warps to switch between when one warp stalls (e.g., waiting for memory), allowing the GPU to hide latency effectively."
+            },
+            {
+                        "question": "What is the advantage of CUDA 'Unified Memory'?",
+                        "options": [
+                                    "It makes the GPU run faster.",
+                                    "It creates a single virtual memory space accessible by both the CPU and GPU, automatically migrating data pages on demand without explicit copy commands.",
+                                    "It combines the RAM of multiple compute nodes.",
+                                    "It prevents race conditions."
+                        ],
+                        "correct": 1,
+                        "explanation": "Unified Memory simplifies programming by eliminating the need to write complex `cudaMemcpy` commands; the driver moves data across the PCIe bus behind the scenes."
+            },
+            {
+                        "question": "What is NVLink?",
+                        "options": [
+                                    "A website for downloading drivers.",
+                                    "A proprietary high-speed interconnect developed by NVIDIA that allows GPUs to communicate directly with each other much faster than PCIe.",
+                                    "A type of fiber optic cable.",
+                                    "A programming language."
+                        ],
+                        "correct": 1,
+                        "explanation": "NVLink provides massive bandwidth (hundreds of GB/s) directly between multiple GPUs within a node, bypassing the CPU and PCIe bottleneck for multi-GPU training."
+            },
+            {
+                        "question": "What are Tensor Cores?",
+                        "options": [
+                                    "Cores that stretch the silicon.",
+                                    "Specialized execution units on modern GPUs specifically designed to dramatically accelerate mixed-precision matrix multiply-accumulate operations used in Deep Learning.",
+                                    "The main power supply of the GPU.",
+                                    "Software libraries for text analysis."
+                        ],
+                        "correct": 1,
+                        "explanation": "Unlike standard CUDA cores that do generalized math, Tensor Cores perform large matrix operations (like 4x4 matrix multiplication) in a single clock cycle, fueling the AI boom."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

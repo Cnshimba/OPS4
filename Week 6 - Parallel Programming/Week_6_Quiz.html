@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 6 Quiz: Parallel Programming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_6_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 6 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of Parallel Programming</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "Which programming model relies on explicit message passing between distributed memory nodes?",
+                        "options": [
+                                    "OpenMP",
+                                    "CUDA",
+                                    "MPI",
+                                    "Pthreads"
+                        ],
+                        "correct": 2,
+                        "explanation": "MPI (Message Passing Interface) is the standard for distributed memory systems, requiring explicit send and receive commands to move data between nodes."
+            },
+            {
+                        "question": "What does a 'Reduction' operation do in parallel programming?",
+                        "options": [
+                                    "It reduces the number of threads to save power.",
+                                    "It combines partial results from multiple processes into a single global result (e.g., sum, max).",
+                                    "It compresses the data before sending it over the network.",
+                                    "It reduces the precision of floating-point numbers to speed up calculation."
+                        ],
+                        "correct": 1,
+                        "explanation": "A reduction takes an array of elements (distributed across processes) and combines them into a single value using a specific operation, like MPI_Reduce or OpenMP's reduction clause."
+            },
+            {
+                        "question": "What is the main difference between OpenMP and MPI?",
+                        "options": [
+                                    "OpenMP is for distributed memory (across nodes), MPI is for shared memory (single node).",
+                                    "OpenMP is for shared memory (single node), MPI is for distributed memory (across nodes).",
+                                    "OpenMP is written in Python, MPI is written in C.",
+                                    "OpenMP only works on GPUs."
+                        ],
+                        "correct": 1,
+                        "explanation": "OpenMP uses threads within a single shared-memory node, while MPI uses independent processes that communicate over a network across distributed nodes."
+            },
+            {
+                        "question": "What does `MPI_Bcast` do?",
+                        "options": [
+                                    "Sends a message to a single specific node.",
+                                    "Broadcasts a message from one 'root' process to all other processes in the communicator.",
+                                    "Calculates the sum of arrays across all nodes.",
+                                    "Closes the MPI environment."
+                        ],
+                        "correct": 1,
+                        "explanation": "MPI_Bcast takes data from a root rank and efficiently copies it to all other ranks."
+            },
+            {
+                        "question": "What is a 'Race Condition' in shared memory programming?",
+                        "options": [
+                                    "Two programs trying to finish first.",
+                                    "A bug where the output depends on the unpredictable timing of threads accessing shared variables simultaneously without synchronization.",
+                                    "The process of accelerating network traffic.",
+                                    "A compiler optimization."
+                        ],
+                        "correct": 1,
+                        "explanation": "Race conditions occur when multiple threads read and write to the same memory location concurrently, leading to corrupted or unpredictable results."
+            },
+            {
+                        "question": "What does `#pragma omp parallel for` do in C/C++?",
+                        "options": [
+                                    "It runs the loop on a GPU.",
+                                    "It tells the compiler to automatically divide the iterations of the following loop among a team of threads.",
+                                    "It prevents the loop from running.",
+                                    "It sends the loop over the network using MPI."
+                        ],
+                        "correct": 1,
+                        "explanation": "This OpenMP directive is the easiest way to parallelize a standard loop in shared memory, handling thread creation, work distribution, and joining automatically."
+            },
+            {
+                        "question": "What is the difference between a blocking (`MPI_Send`) and non-blocking (`MPI_Isend`) call?",
+                        "options": [
+                                    "Blocking stops the whole cluster; non-blocking stops one node.",
+                                    "Blocking waits until the data is safely copied out of the send buffer; non-blocking returns immediately, allowing computation to overlap with communication.",
+                                    "Blocking is for integers; non-blocking is for floats.",
+                                    "Blocking requires a password."
+                        ],
+                        "correct": 1,
+                        "explanation": "Non-blocking communication allows a program to initiate a data transfer and immediately continue crunching numbers, hiding network latency."
+            },
+            {
+                        "question": "What does `MPI_Scatter` do?",
+                        "options": [
+                                    "It randomizes the data array.",
+                                    "It takes a large array on the root node and slices it into equal chunks, sending one chunk to each process.",
+                                    "It gathers data from all nodes into a single array.",
+                                    "It deletes data to free up memory."
+                        ],
+                        "correct": 1,
+                        "explanation": "Scatter is a collective operation used for data distribution, dealing out pieces of a master array to worker nodes."
+            },
+            {
+                        "question": "What does `MPI_Gather` do?",
+                        "options": [
+                                    "It collects smaller arrays from all processes and concatenates them into a single large array on the root process.",
+                                    "It scatters data to all nodes.",
+                                    "It downloads data from the internet.",
+                                    "It collects log files."
+                        ],
+                        "correct": 0,
+                        "explanation": "Gather is the inverse of Scatter. It brings distributed results back together onto a single node for final processing or output."
+            },
+            {
+                        "question": "In MPI terminology, what is a 'Communicator' (e.g., `MPI_COMM_WORLD`)?",
+                        "options": [
+                                    "The network cable.",
+                                    "A group of processes that are allowed to communicate with each other.",
+                                    "The router.",
+                                    "A specialized hardware component."
+                        ],
+                        "correct": 1,
+                        "explanation": "A communicator defines the context and the group of processes. MPI_COMM_WORLD includes all processes launched by the job."
+            },
+            {
+                        "question": "What do `MPI_Comm_rank` and `MPI_Comm_size` represent?",
+                        "options": [
+                                    "Rank is the network speed; Size is the memory size.",
+                                    "Rank is the unique ID (0 to N-1) of a process; Size is the total number of processes in the communicator.",
+                                    "Rank is the CPU model; Size is the hard drive capacity.",
+                                    "Rank is the priority; Size is the file size."
+                        ],
+                        "correct": 1,
+                        "explanation": "Rank identifies 'who am I', and Size identifies 'how many of us are there'. These are fundamental to determining how work is divided."
+            },
+            {
+                        "question": "What is 'Deadlock' in message passing?",
+                        "options": [
+                                    "When the server loses power.",
+                                    "A situation where two or more processes are stuck forever, each waiting for a message from the other that will never arrive.",
+                                    "When the hard drive is full.",
+                                    "A security lock on a file."
+                        ],
+                        "correct": 1,
+                        "explanation": "Deadlock is a critical parallel programming bug caused by mismatched sends and receives, bringing the execution to a permanent halt."
+            },
+            {
+                        "question": "Why use highly optimized numerical libraries like Intel MKL or BLAS instead of writing your own loops?",
+                        "options": [
+                                    "They are easier to read.",
+                                    "Hand-written loops rarely utilize processor features like vector instructions and cache hierarchies effectively, whereas libraries approach peak hardware performance.",
+                                    "They use less memory.",
+                                    "They don't require a compiler."
+                        ],
+                        "correct": 1,
+                        "explanation": "Vendors spend years optimizing libraries (like BLAS for matrix math) at the assembly level to exploit specific cache sizes and SIMD registers."
+            },
+            {
+                        "question": "What is the FFTW library used for?",
+                        "options": [
+                                    "Fast File Transfer over Wide-area networks.",
+                                    "Computing discrete Fast Fourier Transforms efficiently.",
+                                    "Formatting text output.",
+                                    "Finding files on the filesystem."
+                        ],
+                        "correct": 1,
+                        "explanation": "FFTW (Fastest Fourier Transform in the West) is the gold standard C subroutine library for computing the discrete Fourier transform (DFT)."
+            },
+            {
+                        "question": "What is a 'Barrier' in parallel programming?",
+                        "options": [
+                                    "A firewall protecting the cluster.",
+                                    "A synchronization point where all threads/processes must stop and wait until everyone has reached the barrier before anyone can proceed.",
+                                    "A physical wall between server racks.",
+                                    "A limit on memory usage."
+                        ],
+                        "correct": 1,
+                        "explanation": "Barriers ensure that a specific phase of computation is completely finished by all workers before moving to the next phase."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

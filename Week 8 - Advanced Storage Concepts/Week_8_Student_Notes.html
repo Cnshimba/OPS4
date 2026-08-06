@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 8: Advanced Storage Concepts - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_8_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 8</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Advanced Storage Concepts</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+
+<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br /><strong>Module</strong>: EIOSY4A<br /><strong>Topic</strong>: Advanced HPC Storage Concepts<br /><strong>Reading Time</strong>: ~15 Minutes</p></div></div>
+<hr />
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
+1. <strong>Critique</strong> the applications of Block, File, and Object storage paradigms within HPC environments.<br />
+2. <strong>Evaluate</strong> the multi-tiered HPC storage hierarchy, from NVMe burst buffers to deep archive.<br />
+3. <strong>Configure</strong> NFS exports and analyze its scalability limitations in massively parallel systems.<br />
+4. <strong>Analyze</strong> the architectures of BeeGFS and Lustre, focusing on striping mechanics and metadata separation.<br />
+5. <strong>Select and execute</strong> appropriate benchmarking tools (IOR vs mdtest) to evaluate throughput and IOPS.</p></div></div>
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />Welcome to Week 8! We now shift from compute-centric to data-centric thinking. This week you discover that a supercomputer is only as fast as its slowest component - and that component is often the storage system.<br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
+<hr />
+<h2>Overview</h2>
+<p>In the previous weeks, we focused on Computing (Processing). However, a supercomputer that cannot save its data is useless. This week marks the beginning of Part 3: <strong>Storage</strong>. We will explore the fundamental types of storage, the HPC storage hierarchy, and implement the <strong>Network File System (NFS)</strong> to share data across our cluster. We will then advance to <strong>Parallel File Systems (PFS)</strong>, which solve the scalability limits of NFS, and look at how to <strong>benchmark</strong> these systems using industry-standard tools.</p>
+<hr />
+<h2>1. Storage Taxonomy</h2>
+<p>Not all storage is created equal. We classify storage based on how the data is addressed and accessed.</p>
+<h3>1.1 The Three Types of Storage</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: left;"><strong>Block Storage</strong> (SAN)</th>
+<th style="text-align: left;"><strong>File Storage</strong> (NAS)</th>
+<th style="text-align: left;"><strong>Object Storage</strong> (S3)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Access Method</strong></td>
+<td style="text-align: left;">Protocols like iSCSI, Fibre Channel.</td>
+<td style="text-align: left;">Protocols like NFS, SMB/CIFS.</td>
+<td style="text-align: left;">HTTP REST API (GET, PUT).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Data Structure</strong></td>
+<td style="text-align: left;">Raw sectors and blocks on a disk.</td>
+<td style="text-align: left;">Hierarchical Files and Folders.</td>
+<td style="text-align: left;">Flat address space; ID + Metadata.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Performance</strong></td>
+<td style="text-align: left;">Highest ease; Lowest latency.</td>
+<td style="text-align: left;">Moderate; Overhead of file locking.</td>
+<td style="text-align: left;">High throughput; High latency.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Typical Use</strong></td>
+<td style="text-align: left;">Boot drives, Databases (Oracle/SQL).</td>
+<td style="text-align: left;">User Home Directories, Code repos.</td>
+<td style="text-align: left;">Massive Archival, Web content.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>HPC Context</strong></td>
+<td style="text-align: left;">The physical hard drives in the nodes.</td>
+<td style="text-align: left;">The Shared <code>/home</code> directory.</td>
+<td style="text-align: left;">Long-term scientific results archive.</td>
+</tr>
+</tbody>
+</table>
+<p>In this course, we primarily deal with <strong>Block Storage</strong> (the local disk where the OS lives) and <strong>File Storage</strong> (the shared space where users work).</p>
+<h3>1.2 Direct vs. Network Attached</h3>
+<p><strong>Direct Attached Storage (DAS)</strong> refers to storage devices that are physically connected directly to the compute node's motherboard, typically via SATA, SAS, or NVMe interfaces. Because the data path is short and dedicated, DAS offers the lowest latency and highest throughput for that specific machine. However, its major limitation in an HPC context is that it creates "islands of data"—content stored on one node's DAS is invisible to other nodes, creating a barrier to distributed collaboration.</p>
+<p><strong>Network Attached Storage (NAS)</strong>, on the other hand, decouples the storage from the compute nodes, placing it on a dedicated server that shares files over the network (usually via Ethernet). This allows every node in the cluster to access the exact same dataset simultaneously. While this introduces network latency and potential congestion, the ability to have a unified, consistent view of data across the entire cluster makes NAS essential for shared home directories and collaborative workflows.</p>
+<hr />
+<h2>2. The HPC Storage Hierarchy</h2>
+<p>Analogous to the CPU Memory Hierarchy (spanning from nanosecond-speed Registers to slower DRAM), storage infrastructure is organized into a steep pyramid defined by the trade-off between speed and capacity. Data flows through these layers, moving from massive, slow archives to smaller, high-speed buffers closer to the processor. Understanding this hierarchy is critical for designing workflows that mitigate I/O latency.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tier</th>
+<th style="text-align: left;">Technology</th>
+<th style="text-align: left;">Speed</th>
+<th style="text-align: left;">Capacity</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1. Burst Buffer</strong></td>
+<td style="text-align: left;">NVMe / SSD</td>
+<td style="text-align: left;">&gt; 100 GB/s</td>
+<td style="text-align: left;">Small (TB)</td>
+<td style="text-align: left;">Absorption of checkpoints during simulation.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2. Fast Scratch</strong></td>
+<td style="text-align: left;">Parallel FS (BeeGFS/Lustre)</td>
+<td style="text-align: left;">10-50 GB/s</td>
+<td style="text-align: left;">Medium (PB)</td>
+<td style="text-align: left;">Active simulation data (Hot data).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3. Home Area</strong></td>
+<td style="text-align: left;">NFS / NAS</td>
+<td style="text-align: left;">&lt; 1 GB/s</td>
+<td style="text-align: left;">Medium (TB)</td>
+<td style="text-align: left;">Source code, scripts, binaries (Warm data).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>4. Archive</strong></td>
+<td style="text-align: left;">Tape / Object Store</td>
+<td style="text-align: left;">Slow</td>
+<td style="text-align: left;">Infinite (EB)</td>
+<td style="text-align: left;">Long-term retention (Cold data).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical Rule</strong>: Never run high-performance I/O jobs in the <strong>Home Area</strong> (NFS). It will crash the head node. Using NFS for <code>/home</code> is convenient for editing scripts, but actual computation should happen in <strong>Scratch</strong>.</p>
+<hr />
+<h2>3. The Network File System (NFS)</h2>
+<p>The <strong>Network File System (NFS)</strong> serves as the de facto standard for distributed file sharing across Unix and Linux environments. Originally developed by Sun Microsystems in 1984, it allows client systems to access files over a network as if they were locally attached storage. Despite its age, its simplicity and ubiquity make it the default choice for sharing home directories and configuration files in almost every supercomputing cluster.</p>
+<h3>3.1 Architecture</h3>
+<p>NFS operates on a strict <strong>Client-Server</strong> architecture.</p>
+<ul>
+<li><strong>NFS Server</strong>: This is the host machine that physically owns the storage media. It typically runs the user-space <code>nfsd</code> daemon, which listens for incoming requests and "exports" specific local directories to the network, making them available for remote access.</li>
+<li><strong>NFS Client</strong>: These are the compute nodes or workstations that need access to the data. They "mount" the remote exported directory into their local file system hierarchy. To the user and the operating system, the files appear as if they were local, but all I/O operations are actually forwarded over the network using <strong>Remote Procedure Calls (RPC)</strong>.</li>
+</ul>
+<h3>3.2 Exports</h3>
+<p>The NFS server manages client authorization and directory visibility through the <code>/etc/exports</code> configuration file. This file acts as an access control list (ACL), defining which directories are shared, which IP addresses or subnets can access them, and what specific read/write privileges are granted to each client.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>rw</code></td>
+<td style="text-align: left;"><strong>Read/Write</strong>: Clients can modify files.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sync</code></td>
+<td style="text-align: left;"><strong>Synchronous</strong>: Server confirms write to disk before replying (Safer, Slower).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>no_root_squash</code></td>
+<td style="text-align: left;"><strong>Trust Root</strong>: Allows the client <code>root</code> user to act as <code>root</code> on the server (Dangerous in enterprise, useful in clusters).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example Config</strong>:</p>
+<pre><code class="language-bash">/home  10.0.0.0/24(rw,sync,no_root_squash)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Configures an NFS export allowing the entire `10.0.0.0/24` subnet read-write access without root squashing, which is typical for HPC shared home directories.</p>
+<h3>3.3 The Locking Problem (POSIX)</h3>
+<p>NFS is <strong>POSIX compliant</strong>, meaning it strictly enforces file consistency. If User A writes to a file, User B must see that change <em>immediately</em>.</p>
+<ul>
+    <li>On a single laptop, this is easy.</li>
+    <li>On 1,000 nodes, ensuring User B (on Node 500) sees the write from User A (on Node 1) instantly requires expensive network locking traffic.</li>
+</ul>
+<p>This is why <strong>NFS does not scale</strong>. As you add more clients, the overhead of maintaining this "State" locks creates a bottleneck at the single server. This limitation drives the need for Parallel File Systems.</p>
+<hr />
+<h2>4. Parallel File Systems (BeeGFS)</h2>
+<p>To overcome the scalability limitations of NFS, High Performance Computing applies the same principle used in distributed computing: <strong>Parallelism</strong>. Just as MPI splits a computational problem across multiple CPU cores, a <strong>Parallel File System</strong> splits a single large file across multiple storage servers (a technique called <em>striping</em>). This allows the cluster to aggregate the bandwidth of thousands of disks simultaneously, eliminating the single-server bottleneck.</p>
+<h3>4.1 The I/O Bottleneck</h3>
+<p>Imagine a cluster with 100 Compute Nodes. If we use NFS, all 100 nodes try to read from the single Master Server at the same time.</p>
+<p>To analyze this bottleneck, we use <strong>Little's Law</strong>, which relates the number of I/O requests ($L$) to the arrival rate ($\lambda$) and the wait time ($W$):</p>
+<p>$$ L = \lambda \times W $$</p>
+<p>In a saturated NFS system, as the number of requests ($L$) increases, the wait time ($W$) grows exponentially because the arrival rate ($\lambda$) is limited by the server's single network interface. Parallel File Systems solve this by distributing the load.</p>
+<p>The total <strong>Parallel Throughput ($T_{total}$)</strong> of a striped file system is the sum of the individual throughputs of the storage targets ($T_i$), adjusted by an efficiency factor ($\eta$):</p>
+<p>$$ T_{total} = \eta \sum_{i=1}^{n} T_i $$</p>
+<p>By increasing $n$ (the number of storage servers), we can theoretically achieve linear scaling of I/O performance.</p>
+
+<h3>4.2 Striping</h3>
+<p>Striping is the core concept of high-performance I/O. Instead of writing a 10GB file to a single hard drive, the file is broken into small "Chunks" (e.g., 512KB each). These chunks are distributed across multiple storage servers in a round-robin fashion.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concept</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Chunking</strong></td>
+<td style="text-align: left;">Splitting a file into pieces.</td>
+<td style="text-align: left;">Allows distribution.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Striping</strong></td>
+<td style="text-align: left;">Spreading chunks across $N$ servers.</td>
+<td style="text-align: left;">Aggregate Bandwidth = $N \times$ Single Server Speed.</td>
+</tr>
+</tbody>
+</table>
+<h3>4.3 Separation of Metadata and Data</h3>
+<p>A defining characteristic of Parallel File Systems is the architectural decoupling of <strong>Metadata</strong> from <strong>Data</strong>. In a traditional filesystem, these sit together; in BeeGFS and Lustre, they are physically separated.</p>
+<ul>
+<li><strong>Metadata</strong>: This is "data about data"—filenames, directory structures, access permissions, and file location maps. Metadata operations typically involve small, random I/O patterns dependent on high IOPS (Input/Output Operations Per Second).</li>
+<li><strong>Object Storage</strong>: This is the actual file content, broken down into chunks. These operations involve large, sequential I/O patterns dependent on high Bandwidth (Throughput).</li>
+</ul>
+<p>By physically separating these two distinct workloads onto different servers, the system can scale them independently—adding more metadata servers to handle billions of files, or more storage servers to handle petabytes of data.</p>
+<h3>4.4 BeeGFS Architecture</h3>
+<p>BeeGFS is designed for performance and flexibility, consisting of four independent services that work together to create a unified namespace. This modular design allows for "Ad-hoc" file systems, where the storage service runs on the same nodes as the compute jobs to maximize locality.</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="BeeGFS Architecture Interactions" src="../images/beegfs_architecture.png" />
+<em>Figure 2: BeeGFS Architecture Interactions.</em></p>
+<h4>4.4.1 Management Service (<code>beegfs-mgmtd</code>)</h4>
+<p>The <strong>Management Service</strong> acts as the central "brain" and registry for the entire cluster. Its primary role is to maintain a live list of all active nodes and their current status, ensuring the cluster's topology is known. When a client mounts the file system, it first contacts the Management Service to discover the location of the metadata and storage servers. Due to its critical but lightweight role, it typically runs on the Master Node.</p>
+<h4>4.4.2 Metadata Service (<code>beegfs-meta</code>)</h4>
+<p>The <strong>Metadata Service (MDS)</strong> is responsible for managing the logical directory tree, including file names, hierarchy, and permissions (ownership, timestamps). When a user runs a command like <code>ls -l</code>, they are communicating directly with the MDS. The MDS informs the client exactly <em>where</em> the data chunks for a requested file are stored across the various Storage Targets. A key feature of BeeGFS is its ability to scale vertically by adding multiple Metadata Servers to handle billions of files, a capability known as <strong>Distributed Metadata</strong>. These services usually run on dedicated high-performance servers or coexist on the Master Node.</p>
+<h4>4.4.3 Storage Service (<code>beegfs-storage</code>)</h4>
+<p>The <strong>Storage Service</strong> is the "heavy lifter" of the file system, managing the physical hard drives (typically formatted with XFS or ext4) and storing the raw data chunks. When a large file is written, the client splits it into fixed-size chunks (e.g., 512KB) and sends them to different Storage Servers (OSS) in parallel to maximize throughput. These physical storage directories are referred to as <strong>Storage Targets</strong>. In a converged infrastructure, these services may run directly on the Compute Nodes, though they often reside on dedicated storage hardware.</p>
+<h4>4.4.4 Client Service (<code>beegfs-client</code>)</h4>
+<p>The <strong>Client Service</strong> is a kernel module installed on every compute node that requires access to the file system. It mounts the BeeGFS file system (e.g., at <code>/mnt/beegfs</code>) and presents it to the operating system as a standard local directory. Behind the scenes, it handles the complex networking logic required to communicate with the Management, Metadata, and Storage services transparently, allowing users to interact with petabytes of remote data as if it were on their local disk.</p>
+<p><strong>Comparison</strong>:</p>
+<ul>
+    <li><strong>NFS</strong>: Single Server, Limited Scalability, Good for <code>/home</code>.</li>
+    <li><strong>BeeGFS</strong>: Distributed Servers, Linear Scalability, Good for <code>/scratch</code>.</li>
+</ul>
+<hr />
+<h2>5. Lustre File System</h2>
+<p>While BeeGFS is excellent for its ease of use and performance, <strong>Lustre</strong> is the most widely used open-source parallel file system in the Top500 supercomputers. It is a kernel-native filesystem known for extreme scalability, managing Exabytes of data.</p>
+<h3>5.1 Architecture Components</h3>
+<p>Lustre uses very specific terminology consistent with early PFS designs:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Term</th>
+<th style="text-align: left;">Daemon</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>MGS</strong></td>
+<td style="text-align: left;">Management Server</td>
+<td style="text-align: left;"><code>mgds</code></td>
+<td style="text-align: left;">configuration registry (similar to BeeGFS Management).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MDS</strong></td>
+<td style="text-align: left;">Metadata Server</td>
+<td style="text-align: left;"><code>mds</code></td>
+<td style="text-align: left;">Compute node that manages file names and permissions.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MDT</strong></td>
+<td style="text-align: left;">Metadata Target</td>
+<td style="text-align: left;">(disk)</td>
+<td style="text-align: left;">The physical block device where metadata is stored.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OSS</strong></td>
+<td style="text-align: left;">Object Storage Server</td>
+<td style="text-align: left;"><code>oss</code></td>
+<td style="text-align: left;">Compute node that manages file contents.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OST</strong></td>
+<td style="text-align: left;">Object Storage Target</td>
+<td style="text-align: left;">(disk)</td>
+<td style="text-align: left;">The physical block device where file chunks/stripes are stored.</td>
+</tr>
+</tbody>
+</table>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Lustre Architecture" src="../images/lustre_architecture.png" />
+<em>Figure 3: Lustre Architecture. Clients interact with the MDS for permissions/layout, then directly with OSS for data.</em></p>
+<h3>5.2 Lustre vs. BeeGFS</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">BeeGFS</th>
+<th style="text-align: left;">Lustre</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Ease of Use</strong></td>
+<td style="text-align: left;">High (Install via apt/dnf, simple config).</td>
+<td style="text-align: left;">Low (Often requires patched Kernel, complex config).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Scalability</strong></td>
+<td style="text-align: left;">Excellent (Linear).</td>
+<td style="text-align: left;">Extreme (Powers the world's largest systems).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Metadata</strong></td>
+<td style="text-align: left;">Distributed Metadata (Multiple metadata servers).</td>
+<td style="text-align: left;">Traditionally Single MDS (Dual MDS is newer feature).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Client</strong></td>
+<td style="text-align: left;">Kernel Module.</td>
+<td style="text-align: left;">Kernel Module.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Target Audience</strong></td>
+<td style="text-align: left;">Universities, Small-to-Medium HPC for flexibility.</td>
+<td style="text-align: left;">National Labs, Massive Government Clusters for raw scale.</td>
+</tr>
+</tbody>
+</table>
+<h3>5.3 Stripping Implementation</h3>
+<p>In Lustre, you can set striping on a per-file or per-directory basis using <code>lfs setstripe</code>.</p>
+<ul>
+    <li><code>lfs setstripe -c 4 -S 1M /mnt/lustre/bigfile</code></li>
+    <li><strong>-c 4</strong>: Stripe Count (Use 4 OSTs).</li>
+    <li><strong>-S 1M</strong>: Stripe Size (1MB chunks).</li>
+</ul>
+<hr />
+<h2>6. Benchmarking &amp; Optimization</h2>
+<p>How do we <em>know</em> our storage is fast? We use industry-standard benchmarks like <strong>IOR</strong> and <strong>mdtest</strong> to measure the two critical dimensions of storage performance: <strong>Throughput</strong> and <strong>IOPS</strong>.</p>
+<h3>6.1 Throughput vs. IOPS</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Critical For...</th>
+<th style="text-align: left;">Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Throughput</strong></td>
+<td style="text-align: left;">The volume of data moved per second.</td>
+<td style="text-align: left;">Large datasets, Checkpoints, Video.</td>
+<td style="text-align: left;">GB/s or MB/s</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IOPS</strong></td>
+<td style="text-align: left;">Input/Output Operations Per Second.</td>
+<td style="text-align: left;">Compiling code, Machine Learning (many small images).</td>
+<td style="text-align: left;">Ops/s</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 IOR (Interleaved or Random)</h3>
+<p><strong>IOR</strong> is the standard benchmark for measuring <strong>Throughput</strong>. It coordinates $N$ MPI processes to write to a single shared file (N-to-1) or many unique files (N-to-N).</p>
+<ul>
+    <li><strong>N-to-1 (Single Shared File)</strong>: Hardest test (locking contention).</li>
+    <li><strong>N-to-N (File Per Process)</strong>: Scales better, but creates metadata clutter.</li>
+</ul>
+<h3>6.3 mdtest (Metadata Benchmark)</h3>
+<p><strong>mdtest</strong> measures <strong>IOPS</strong> (Metadata performance). It performs a cycle of:</p>
+<ol>
+    <li><strong>Create</strong>: <code>touch file_001</code> ... <code>touch file_1000</code></li>
+    <li><strong>Stat</strong>: <code>ls -l</code> (Reading attributes)</li>
+    <li><strong>Remove</strong>: <code>rm file_001</code> ... <code>rm file_1000</code></li>
+</ol>
+<p>If your Metadata Server (MDS) is slow, the cluster will feel sluggish even if throughput is high.</p>
+<h3>6.4 Burst Buffers</h3>
+<p>As the gap between Compute Speed and Disk Speed widens, we use <strong>Burst Buffers</strong>—a layer of high-speed NVMe/SSD physically close to the Compute Nodes.</p>
+<ul>
+    <li><strong>Absorption</strong>: Absorb massive checkpoint data instantly.</li>
+    <li><strong>Efficiency</strong>: Protect mechanical drives from random I/O.</li>
+</ul>
+<hr />
+<h2>7. Summary and Next Steps</h2>
+<p>This week, we moved from the <em>compute-centric</em> view of HPC to the <em>data-centric</em> view. You now understand that a supercomputer is only as fast as its slowest component, which is often the file system. We explored the hierarchy from local <strong>Block Storage</strong> to shared <strong>NFS</strong>, and finally to high-performance <strong>Parallel File Systems</strong> like <strong>BeeGFS</strong> and <strong>Lustre</strong> that strip data across thousands of drives using metadata separation. We also learned how to prove performance using <strong>IOR</strong> and <strong>mdtest</strong>.</p>
+<h3>Preparing for Week 9</h3>
+<p>Next week, we return to hardware, but this time looking at <strong>Accelerators</strong>. We will leave the general-purpose CPU behind and explore specialized hardware designed to crunch numbers faster than any processor. We will:</p>
+<ul>
+    <li>Understand <strong>Heterogeneous Computing</strong> (CPU + GPU).</li>
+    <li>Explore the architecture of a <strong>GPGPU</strong> (SIMT, Warps, Cores).</li>
+    <li>Learn why GPUs are the engine behind the modern AI revolution.</li>
+</ul>
+<p><strong>Checklist:</strong></p>
+<ul>
+    <li>Can you explain why <strong>NFS</strong> fails to scale beyond a few dozen nodes (Locking)?</li>
+    <li>Do you understand the difference between a <strong>Metadata Server</strong> (MGS/MDS) and an <strong>Object Storage Server</strong> (OSS)?</li>
+    <li>If you wanted to test the maximum write speed of your cluster, would you use <code>dd</code>, <code>IOR</code>, or <code>mdtest</code>?</li>
+    <li>Why is a <strong>Burst Buffer</strong> necessary in the era of Exascale computing?</li>
+</ul>
+<h3>Resources</h3>
+<ul>
+<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann. Chapter 18.</li>
+<li><a href="https://nfs.sourceforge.net/nfs-howto/">NFS HowTo</a></li>
+<li><a href="https://doc.beegfs.io/">BeeGFS Documentation</a></li>
+<li><a href="https://wiki.lustre.org/">Lustre Wiki</a></li>
+<li><a href="../HPC%20books/LustreArchitecture-v4.pdf">Lustre Architecture Reference (PDF)</a></li>
+<li><a href="https://io500.org">IO500 List</a></li>
+</ul>
+
+        
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_8_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%207%20-%20Parallel%20Algorithms/Week_7_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 7</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%209%20-%20Accelerators/Week_9_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 9</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

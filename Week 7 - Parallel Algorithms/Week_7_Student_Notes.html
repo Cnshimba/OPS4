@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 7: Parallel Algorithms - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_7_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 7</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Parallel Algorithms</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+
+<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br /><strong>Module</strong>: EIOSY4A<br /><strong>Topic</strong>: Parallel Algorithm Design Patterns<br /><strong>Reading Time</strong>: ~18 Minutes</p></div></div>
+<hr />
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
+1. <strong>Analyze</strong> parallel algorithms based on Work, Span, and Cost Optimality metrics.<br />
+2. <strong>Design</strong> parallel solutions by applying rigorous Domain and Functional Decomposition strategies.<br />
+3. <strong>Evaluate</strong> the suitability of Fork-Join, Divide-and-Conquer, and Manager-Worker patterns for various workloads.<br />
+4. <strong>Optimize</strong> communication overhead by applying the surface-to-volume ratio principle.<br />
+5. <strong>Trace and critique</strong> the execution flows of advanced algorithms (Halo Exchange, Cannon's Algorithm, BFS).</p></div></div>
+
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />Welcome to Week 7! This week, we transition from the tools of parallelism (MPI, OpenMP) to the strategy of parallel algorithm design. You will learn the standard parallel motifs that underpin all major scientific computing applications.<br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
+<hr />
+<h2>Overview</h2>
+<p>This week, we transition from the <em>tools</em> of parallelism (MPI, OpenMP) to the <em>strategy</em> of parallel algorithm design. Implementing efficient parallel logic requires a fundamental shift in problem-solving approaches. We will explore standard parallel design patterns, often called "motifs," analyzing their communication behaviors, scalability characteristics, and best-use cases.</p>
+<p>This content strictly follows <strong>Sterling Chapter 9 (Parallel Algorithms)</strong>.</p>
+<hr />
+<h2>7.1 Introduction</h2>
+<p>Parallel algorithms differ fundamentally from sequential ones. In a sequential world, optimization focuses primarily on minimizing the operation count, often denoted as $O(N)$. However, in a parallel computing environment, the primary goal is optimizing execution time, which is a complex function of computation, communication overhead, and synchronization delays. A highly efficient sequential algorithm might parallelize poorly if it requires excessive data movement.</p>
+<p>Designing a robust parallel algorithm involves navigating several critical trade-offs. First, one must consider granularity, deciding between coarse-grained parallelism, which involves a few large tasks, and fine-grained parallelism, which utilizes many small tasks. Second, locality is paramount; algorithms should maximize local cache usage and minimize the frequency of remote data retrieval to reduce latency. Finally, load balancing ensures that all processors contribute equally to the workload, preventing scenarios where some processors idle while others arguably struggle to finish, which ultimately dictates the total runtime.</p>
+<h3>7.1.1 Complexity Analysis (Big O)</h3>
+<p>In sequential computer science, we use Big O notation to describe how the execution time grows with input size $N$ (e.g., $O(N)$, $O(N \log N)$). In parallel computing, strictly analyzing $N$ is insufficient because we have a second variable: $P$ (the number of processors). We typically analyze parallel algorithms using the <strong>Work-Span Model</strong>:</p>
+<ul>
+<li><strong>Work ($T_1$)</strong>: The total time taken to execute the algorithm on a single processor. This corresponds to the sequential complexity.</li>
+<li><strong>Span ($T_\infty$)</strong>: The time taken to execute the algorithm on an <em>infinite</em> number of ideal processors. This represents the longest path of dependencies in the program's Directed Acyclic Graph (DAG), or the "Critical Path."</li>
+<li><strong>Cost ($C_p$)</strong>: The total CPU-hours consumed, calculated as $P \times T_p$. A parallel algorithm is <strong>Cost Optimal</strong> if its cost is proportional to the sequential Work ($T_1$).</li>
+</ul>
+<p>We also evaluate <strong>Scalability</strong>:</p>
+<ul>
+    <li><strong>Strong Scaling</strong>: How the execution time $T_p$ decreases as we increase $P$ for a <em>fixed</em> problem size $N$. (Subject to Amdahl's Law).</li>
+    <li><strong>Weak Scaling</strong>: How the execution time $T_p$ behaves as we increase both $P$ and $N$ proportionally. (Subject to Gustafson's Law).</li>
+</ul>
+
+<p>In addition to algorithmic complexity, we must account for <strong>Communication Complexity</strong>. For example, the time complexity of MPI collective operations on a cluster with $P$ processors is typically logarithmic:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Collective Operation</th>
+<th style="text-align: left;">Complexity (Ideal)</th>
+<th style="text-align: left;">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Broadcast / Reduce</strong></td>
+<td style="text-align: left;">$O(\log P)$</td>
+<td style="text-align: left;">Data is distributed/collected via a binary tree.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>All-to-All</strong></td>
+<td style="text-align: left;">$O(P)$</td>
+<td style="text-align: left;">Every processor sends unique data to every other processor.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Barrier</strong></td>
+<td style="text-align: left;">$O(\log P)$</td>
+<td style="text-align: left;">Synchronization propagates through the tree hierarchy.</td>
+</tr>
+</tbody>
+</table>
+<p>Understanding these costs explains why MPI collective functions are almost always superior to manual loops ($O(P)$) written by the user.</p>
+
+<p>With a theoretical understanding of parallel cost and scalability, we must next determine the practical strategy for dividing our problem across these processors.</p>
+<hr />
+<h2>7.2 Domain Decomposition</h2>
+<p>Before selecting a specific algorithm, we must decide how to map the problem onto the available hardware. The most common strategy in scientific computing is <strong>Data Decomposition</strong> (also known as Domain Decomposition), where we split the data rather than the code.</p>
+<h3>7.2.1 Data vs. Functional Decomposition</h3>
+<h4>Functional Decomposition</h4>
+<p>In this approach, different processors execute completely different functions (tasks).</p>
+<p><strong>C Example (MPI)</strong></p>
+<pre><code class="language-c">if (rank == 0) {
+    calculate_discriminant(a, b, c);
+} else if (rank == 1) {
+    calculate_denominator(a);
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The program behavior diverges entirely based on Rank. Rank 0 does math task A, while Rank 1 does math task B. This is hard to scale to 1000 cores because we likely do not have 1000 unique functions to assign.</p>
+<h4>Data Decomposition</h4>
+<p>In this approach, we split the memory (domain). All processors execute the <em>same</em> function, but on different indices of the data array.</p>
+<p><strong>C Example (MPI)</strong></p>
+<pre><code class="language-c">// Array size N=1000, 4 Processors.
+// Each processor acts on a chunk of 250 items.
+int chunk_size = 1000 / 4;
+int start_index = rank * chunk_size;
+int end_index = start_index + chunk_size;
+
+for (int i = start_index; i &lt; end_index; i++) {
+    process_weather_data(grid[i]);
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Every processor runs <code>process_weather_data</code>. However, Rank 0 processes indices 0-249, while Rank 1 processes 250-499. This scales easily; if we get more processors, we can simply reduce the <code>chunk_size</code> or increase the total problem size $N$.</p>
+<h3>7.2.2 1D vs. 2D Decomposition</h3>
+<p>Consider a large 2D matrix of size $N \times N$ distributed across $P$ processors. How we slice this matrix impacts performance significantly.</p>
+<ul>
+<li><strong>1D (Slab/Strip) Decomposition</strong>: We assign $N/P$ rows (or columns) to each processor. This is simple to implement but inefficient for communication. A processor touches the full width of the domain, meaning its "boundary" is long ($N$).</li>
+<li><strong>2D (Block) Decomposition</strong>: We divide the processors into a logical grid ($\sqrt{P} \times \sqrt{P}$) and assign a sub-square block of size $(N/\sqrt{P}) \times (N/\sqrt{P})$ to each.</li>
+</ul>
+<h3>7.2.3 Surface-to-Volume Ratio</h3>
+<p>The efficiency of a parallel algorithm is governed by the <strong>Surface-to-Volume Ratio</strong>.</p>
+<ul>
+    <li><strong>Volume</strong>: Represents <strong>Computation</strong> (the work done on the data inside the block). This is "Good" work.</li>
+    <li><strong>Surface Area</strong>: Represents <strong>Communication</strong> (the data on the edges that must be sent to neighbors). This is "Overhead."</li>
+</ul>
+<p>We want to maximize the Volume (Compute) while minimizing the Surface (Communicate). A square (2D decomposition) has a smaller perimeter-to-area ratio than a long thin rectangle (1D decomposition). Therefore, <strong>2D Decomposition generally scales better</strong> than 1D decomposition for large processor counts.</p>
+<p>Once the domain is decomposed, we need a control structure to manage execution. We will now explore a spectrum of standard "Parallel Motifs" used to solve these problems. We begin with simple shared-memory loops (<strong>Fork-Join</strong>), progress to recursive hierarchies (<strong>Divide and Conquer</strong>), and explore dynamic load balancing (<strong>Manager-Worker</strong>). Finally, we will examine domain-specific patterns for huge datasets, including independent tasks (<strong>Embarrassingly Parallel</strong>), nearest-neighbor physics (<strong>Halo Exchange</strong>), dense linear algebra (<strong>Cannon's Algorithm</strong>), and irregular graph traversals (<strong>BFS</strong>).</p>
+<hr />
+<h2>7.3 Fork-Join</h2>
+<p>The Fork-Join model stands as one of the oldest and simplest parallel patterns, serving as the foundational model for shared-memory environments like OpenMP. It effectively captures the concept of dynamic parallelism where the flow of execution branches and merges based on the program's needs, as illustrated in <strong>Figure 7.1</strong>.</p>
+<h3>Logic Flow</h3>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Fork-Join Diagram" src="../images/fork_join_diagram.png" />
+<strong>Figure 7.1</strong>: <em>The Fork-Join pattern showing the master thread branching into worker threads and re-synchronizing at the barrier.</em></p>
+<p>The mechanism operates through a predictable cycle. A master thread executes code sequentially until it encounters a designated parallel region. At this point, it "forks," splitting into multiple worker threads that execute their assigned tasks independently and in parallel. Once the workers complete their tasks, they enter a "join" phase, which acts as a synchronization barrier. The master thread waits until all workers have finished before resuming sequential execution. This model is particularly effective for loop parallelism, where iterations are independent and can be safely distributed among threads.</p>
+<h3>C Implementation (OpenMP)</h3>
+<pre><code class="language-c">#include &lt;omp.h&gt;
+#include &lt;stdio.h&gt;
+
+void parallel_work() {
+    int data[1000];
+
+    // Fork: Create threads to handle loop iterations
+    #pragma omp parallel for
+    for (int i = 0; i &lt; 1000; i++) {
+        data[i] = i * i; // Distinct, independent work
+        // No explicit Join needed; #pragma omp for implies a barrier
+    }
+    // Join: Master thread resumes here
+    printf(&quot;All work completed.\n&quot;);
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The <code>#pragma omp parallel for</code> directive instructs the compiler to generate a fork-join pattern. The 1000 loop iterations are automatically divided among the available threads. The "Join" is implicit; the code will not proceed past the closing brace <code>}</code> of the for-loop until every thread has finished its chunk of work, ensuring <code>printf</code> runs only after all data is computed.</p>
+<h3>Python Implementation (multiprocessing)</h3>
+<pre><code class="language-python">from multiprocessing import Pool
+
+def square(x):
+    return x * x
+
+if __name__ == '__main__':
+    data = list(range(1000))
+
+    # Fork: Create a pool of worker processes
+    with Pool(processes=4) as pool:
+        # Execute map in parallel
+        result = pool.map(square, data)
+
+    # Join: Pool closes and waits here automatically
+    print(&quot;All work completed.&quot;)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python's <code>multiprocessing.Pool</code> mimics the behavior of OpenMP. <code>Pool(processes=4)</code> creates 4 independent worker processes (the fork). The <code>pool.map</code> function distributes the <code>data</code> list across these workers, each applying the <code>square</code> function to its assigned items. The <code>with</code> block acts as the join/barrier; the program waits there until all workers finish and return their results.</p>
+<p>While Fork-Join is excellent for flat loops, some problems are inherently hierarchical. For these, we turn to recursive patterns.</p>
+<hr />
+<h2>7.4 Divide and Conquer</h2>
+<p>Divide and Conquer is a powerful recursive strategy ideally suited for problems that can be decomposed into smaller, self-similar sub-problems. It maps naturally to parallel execution, allowing for massive concurrency as the problem depth increases, as shown in <strong>Figure 7.2</strong>.</p>
+<h3>Recursive Decomposition</h3>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Divide and Conquer Tree" src="../images/divide_conquer_tree.png" />
+<strong>Figure 7.2</strong>: <em>Recursive decomposition of a problem into smaller sub-tasks, forming a task tree.</em></p>
+<p>The algorithm proceeds in three distinct phases. First, the problem is divided or partitioned into two or more smaller sub-problems. Next, these sub-problems are "conquered." If a sub-problem is small enough to be considered a base case, it is solved directly; otherwise, the algorithm recurses, further splitting the problem. Finally, the results of the sub-problems are merged to reconstruct the final solution. In a parallel implementation, this creates a dynamic tree of tasks. The initial process spawns child tasks for the sub-problems, which in turn spawn grandchildren, rapidly expanding the available parallelism.</p>
+<h3>C Implementation (OpenMP Tasks)</h3>
+<pre><code class="language-c">// Parallel Mergesort Concept
+void mergesort(int *arr, int size) {
+    if (size &lt; 100) {
+        serial_sort(arr, size); // Base Case
+        return;
+    }
+
+    int mid = size / 2;
+
+    // Spawn task for left half
+    #pragma omp task
+    mergesort(arr, mid); 
+
+    // Spawn task for right half
+    #pragma omp task
+    mergesort(arr + mid, size - mid);
+
+    // Wait for children to return (Join)
+    #pragma omp taskwait
+
+    // Merge results
+    merge(arr, mid, size);
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The <code>#pragma omp task</code> directive tells the OpenMP runtime to create a new task unit for the recursive call, which may be executed by any available thread. Crucially, <code>#pragma omp taskwait</code> creates a synchronization point, ensuring exactly this level of recursion waits for its two children (Left and Right) to finish before proceeding to the <code>merge</code> step.</p>
+<h3>Python Implementation (concurrent.futures)</h3>
+<pre><code class="language-python">from concurrent.futures import ThreadPoolExecutor
+
+def parallel_mergesort(arr, executor):
+    if len(arr) &lt; 100:
+        return sorted(arr) # Base case
+
+    mid = len(arr) // 2
+
+    # Spawn tasks
+    future_left = executor.submit(parallel_mergesort, arr[:mid], executor)
+    future_right = executor.submit(parallel_mergesort, arr[mid:], executor)
+
+    # Wait for completion (Join)
+    left = future_left.result()
+    right = future_right.result()
+
+    return merge(left, right)
+
+# Usage
+with ThreadPoolExecutor() as executor:
+    result = parallel_mergesort(data, executor)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> We use <code>ThreadPoolExecutor</code> to handle the dynamic task spawning. <code>executor.submit</code> is non-blocking; it immediately returns a <code>future</code> object representing the pending result. Calling <code>.result()</code> on that future blocks the current thread until the computation is done (effectively the <code>taskwait</code>). This recursively creates a tree of futures.</p>
+<p>Recursive patterns assume we know the structure of the sub-problems. However, when task sizes are unpredictable or highly variable, we need a more dynamic approach to assigning work.</p>
+<hr />
+<h2>7.5 Manager-Worker (Task Farm)</h2>
+<p>The Manager-Worker pattern, often referred to as a Task Farm, is a dynamic load-balancing strategy widely used for workloads where task durations are unpredictable. It effectively decouples the generation of work from its execution, as depicted in <strong>Figure 7.3</strong>.</p>
+<h3>Logic Flow</h3>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Manager-Worker Diagram" src="../images/manager_worker_diagram.png" />
+<strong>Figure 7.3</strong>: <em>The Manager-Worker pattern showing the central Manager distributing tasks to Workers and collecting results.</em></p>
+<p>The structure consists of a single Manager (typically Rank 0) and multiple Workers (Ranks 1 to P). The Manager maintains a central pool of work and is responsible solely for logistics. Workers request a task, process it, return the result, and request another. This architecture provides excellent automatic load balancing because faster workers naturally consume more tasks.</p>
+<h3>C Implementation (MPI)</h3>
+<pre><code class="language-c">if (rank == 0) {
+    // MANAGER
+    int tasks_done = 0;
+    while (tasks_done &lt; TOTAL_TASKS) {
+        MPI_Recv(&amp;request_msg, 1, MPI_INT, MPI_ANY_SOURCE, TAG_REQ, ...);
+        int worker_rank = request_msg_source; // Pseudo-code
+
+        MPI_Send(&amp;task_data[tasks_done], ..., worker_rank, TAG_TASK, ...);
+        tasks_done++;
+    }
+    // Send stop signals to all
+} else {
+    // WORKER
+    while (true) {
+        MPI_Send(&amp;my_rank, 1, MPI_INT, 0, TAG_REQ, ...); // Ask Manager
+        MPI_Recv(&amp;task, ..., 0, MPI_ANY_TAG, ...);
+
+        if (task.tag == TAG_STOP) break;
+
+        process(task);
+    }
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The Manager (Rank 0) sits in a loop listening for <em>any</em> worker (<code>MPI_ANY_SOURCE</code>) to ask for work. Upon receiving a request, it sends the next available task to that specific worker. The Workers sit in an infinite loop: they explicitly ask for work, wait for the response, perform the work, and then loop back to ask again. The protocol handles load balancing automatically, as faster workers cycle through the loop more times.</p>
+<h3>Python Implementation (mpi4py)</h3>
+<pre><code class="language-python">from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+
+if rank == 0:
+    # MANAGER
+    tasks = [10, 20, 30, 40, 50]
+    next_task_idx = 0
+    closed_workers = 0
+
+    while closed_workers &lt; (comm.size - 1):
+        # Wait for any worker to request
+        data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        source = status.Get_source()
+        tag = status.Get_tag()
+
+        if tag == TAG_REQUEST:
+            if next_task_idx &lt; len(tasks):
+                comm.send(tasks[next_task_idx], dest=source, tag=TAG_TASK)
+                next_task_idx += 1
+            else:
+                comm.send(None, dest=source, tag=TAG_STOP)
+                closed_workers += 1
+
+else:
+    # WORKER
+    while True:
+        comm.send(None, dest=0, tag=TAG_REQUEST)
+        task = comm.recv(source=0, tag=MPI.ANY_TAG)
+
+        if task is None: break # Stop signal
+
+        # Do work
+        print(f&quot;Worker {rank} processing {task}&quot;)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> <code>mpi4py</code> simplifies the types but the logic is identical. The <code>Manager</code> runs a state machine. It uses <code>status.Get_tag()</code> to differentiate between a generic request and other messages. The <code>Worker</code> simply sends a blank message ("None") as a signal to request work. When the tasks run out, the Manager sends <code>None</code> back as a poison pill (Stop Signal) to break the worker's loop.</p>
+<p>Manager-Worker handles dependencies and irregularity well, but the ideal case for parallelism is when there are absolutely no dependencies at all.</p>
+<hr />
+<h2>7.6 Embarrassingly Parallel</h2>
+<p>The term "Embarrassingly Parallel" refers to the ideal scenario where a problem decomposes into sub-tasks that are completely independent of one another.</p>
+<h3>C Implementation</h3>
+<pre><code class="language-c">// Monte Carlo: Estimate Pi
+int count = 0;
+#pragma omp parallel for reduction(+:count)
+for (int i=0; i&lt;N; i++) {
+    double x = random_double();
+    double y = random_double();
+    if (x*x + y*y &lt;= 1.0) count++;
+}
+double pi = 4.0 * count / N;
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> This loop has zero dependencies between iterations. The <code>reduction(+:count)</code> is the only synchronization mechanism necessary; it ensures that the private <code>count</code> variables from each thread are safely summed into the global <code>count</code> at the very end.</p>
+<h3>Python Implementation (mpi4py)</h3>
+<pre><code class="language-python">from mpi4py import MPI
+import random
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+
+# Local computation (independent)
+local_count = 0
+N_local = 1000
+for _ in range(N_local):
+    x, y = random.random(), random.random()
+    if x*x + y*y &lt;= 1.0:
+        local_count += 1
+
+# Reduction at the end
+total_count = comm.reduce(local_count, op=MPI.SUM, root=0)
+
+if rank == 0:
+    print(f&quot;Pi estimate: {4.0 * total_count / (N_local * comm.size)}&quot;)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Each MPI rank runs its own simulation loop purely in local memory, requiring zero communication during the "heavy lifting." Communication happens only once at the very end: <code>comm.reduce</code> aggregates the <code>local_count</code> from all processors into <code>total_count</code> on the root, which then performs the final division.</p>
+<p>Unfortunately, most scientific problems are not embarrassingly parallel. Usually, "neighbors" need to talk to each other, leading us to neighbor-based patterns.</p>
+<hr />
+<h2>7.7 Halo Exchange</h2>
+<p>Halo Exchange is the dominant communication pattern for Structured Grid problems (CFD, Heat Transfer).</p>
+<h3>7.7.1 The Advection Equation</h3>
+<p>In grid-based physics, the state of point $(i,j)$ often depends on a "stencil" of neighbors. As shown in <strong>Figure 7.4</strong>, this requires trading "Ghost Cells" with neighbors.</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Halo Exchange Diagram" src="../images/halo_exchange_diagram.png" />
+<strong>Figure 7.4</strong>: <em>Halo Exchange illustrating the concept of Ghost Cells (Halos) used to synchronize boundary data between adjacent processors.</em></p>
+<h3>C Implementation (MPI Halo Swap)</h3>
+<pre><code class="language-c">// Send Right Edge, Receive into Left Halo
+MPI_Isend(&amp;grid[idx_right], 1, col_type, right_neighbor, TAG, comm, &amp;req[0]);
+MPI_Irecv(&amp;grid[idx_left_halo], 1, col_type, left_neighbor, TAG, comm, &amp;req[1]);
+
+// Compute Interior (while data is flying)
+update_interior(grid);
+
+// Wait for Halos
+MPI_Waitall(2, req, statuses);
+
+// Update Boundary using fresh Halo data
+update_boundary(grid);
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> We use <code>MPI_Isend</code> (Immediate Send) and <code>MPI_Irecv</code> to initiate the boundary swap in the background. While the network hardware handles the sort of "Left/Right" data movement, the CPU executes <code>update_interior()</code>, which only touches central data safe from race conditions. Finally, <code>MPI_Waitall</code> ensures the transfer is complete before we process the boundaries, effectively hiding communication cost.</p>
+<h3>Python Implementation (mpi4py with NumPy)</h3>
+<pre><code class="language-python">from mpi4py import MPI
+import numpy as np
+
+comm = MPI.COMM_WORLD
+# Create arrays
+local_grid = np.zeros((10, 10)) # 10x10 Local Block
+left_halo = np.empty(10)
+right_halo = np.empty(10)
+
+# Prepare non-blocking requests
+# Send my column 0 to left, Receive from right into right_halo
+req1 = comm.Isend(local_grid[:, 0], dest=left_neighbor)
+req2 = comm.Irecv(right_halo, source=right_neighbor)
+
+# Overlap: Compute on interior 8x8
+compute_interior(local_grid)
+
+# Wait
+MPI.Request.Waitall([req1, req2])
+
+# Now use right_halo to update right boundary
+update_boundary(local_grid, right_halo)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> <code>mpi4py</code> works efficiently with NumPy buffers. <code>comm.Isend(local_grid[:, 0], ...)</code> sends a slice (the first column) directly. <code>comm.Irecv</code> targets the pre-allocated <code>right_halo</code> buffer. Just like in C, the script proceeds to <code>compute_interior</code> immediately, maximizing parallelism between the CPU and the Interconnect.</p>
+<h3>7.7.2 Sparse Matrix Vector Multiplication (SpMV)</h3>
+<p>Many physical systems are best represented as Sparse Matrices, which contain mostly zeros. The operation of multiplying such a matrix by a vector ($y = A \cdot x$) presents unique challenges compared to structured grids. Because the non-zero elements can be anywhere, the "neighbors" of a process are not fixed. A row stored on Process 0 might require a vector element stored on Process 5, 12, and 99.</p>
+<h3>C Implementation Logic (CSR Format)</h3>
+<pre><code class="language-c">// Compressed Sparse Row (CSR) multiplication
+for (int i = 0; i &lt; num_local_rows; i++) {
+    double sum = 0.0;
+    // Iterate over non-zeros in this row
+    for (int j = row_ptr[i]; j &lt; row_ptr[i+1]; j++) {
+        int col = col_indices[j];
+        // If 'col' is local, access directly. 
+        // If 'col' is remote, we must have pre-fetched it into a buffer!
+        sum += values[j] * vector_x[col];
+    }
+    vector_y[i] = sum;
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> In the CSR format, we iterate cleanly over only the non-zero elements. The critical parallel difficulty is <code>vector_x[col]</code>. If <code>col</code> refers to an index not stored on this processor, the code will crash. Therefore, SpMV algorithms are preceded by a communication phase where processors exchange the indices they <em>need</em> and <em>have</em>, creating a "Communication Plan" to pre-fetch all necessary remote elements of <code>x</code> before the loop runs.</p>
+<h3>Python Implementation (scipy.sparse)</h3>
+<pre><code class="language-python">from scipy.sparse import csr_matrix
+import numpy as np
+
+# A_local is a scipy CSR matrix
+# x_local is the local segment of the vector
+# x_remote is the buffer of elements received from other procs
+
+def spmv_kernel(A_local, x_local, x_remote):
+    # Combine local and remote parts of x
+    x_combined = np.concatenate((x_local, x_remote))
+
+    # Perform multiplication (Scipy is highly optimized)
+    y_local = A_local.dot(x_combined)
+    return y_local
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> In Python, we leverage <code>scipy.sparse</code> for the heavy lifting. The <code>dot</code> product is extremely fast. The complexity lies in constructing <code>x_combined</code>. We typically reorder the matrix columns so that local columns come first (matching <code>x_local</code>) and remote columns come after, allowing us to simply concatenate the receive buffer <code>x_remote</code> to the end of our local vector to make the math valid.</p>
+<p>Halo exchange works well for sparse local connections, but Dense Linear Algebra involves global dependencies where every element interacts with every other element.</p>
+<hr />
+<h2>7.8 Cannon’s Algorithm</h2>
+<p>Cannon’s Algorithm is a memory-efficient strategy for Dense Matrix Multiplication ($C = A \cdot B$) on a 2D Processor Grid ($\sqrt{P} \times \sqrt{P}$). It replaces expensive broadcasts with a systematic shift-and-compute cycle, as visualized in <strong>Figure 7.5</strong>.</p>
+<h3>Visual Logic</h3>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Cannon's Algorithm Diagram" src="../images/cannons_algorithm_diagram.png" />
+<strong>Figure 7.5</strong>: <em>Cannon's Algorithm showing the initial skewing and subsequent shifting of A and B blocks.</em></p>
+<h3>C Implementation</h3>
+<pre><code class="language-c">for (int step = 0; step &lt; sqrt_p; step++) {
+    // 1. Local Compute
+    MatrixMultiplyAdd(C_local, A_local, B_local);
+
+    // 2. Shift A Left (Circular)
+    MPI_Sendrecv_replace(A_local, n_local*n_local, MPI_DOUBLE, 
+                         left_proc, TAG, right_proc, TAG, comm, &amp;status);
+
+    // 3. Shift B Up (Circular)
+    MPI_Sendrecv_replace(B_local, n_local*n_local, MPI_DOUBLE, 
+                         up_proc, TAG, down_proc, TAG, comm, &amp;status);
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The core of Cannon's algorithm is the shift loop. <code>MPI_Sendrecv_replace</code> is a powerful collective that sends <code>A_local</code> to the left neighbor while simultaneously overwriting <code>A_local</code> with the incoming data from the right neighbor. This allows the matrix blocks to "rotate" through the grid step-by-step without requiring extra temporary buffers.</p>
+<h3>Python Implementation (mpi4py)</h3>
+<pre><code class="language-python"># Assuming A_local and B_local are NumPy arrays
+for step in range(sqrt_p):
+    # 1. Local Compute: C += A * B
+    C_local += np.dot(A_local, B_local)
+
+    # 2. Shift A Left: Send to 'left', Recv from 'right'
+    comm.Sendrecv_replace(A_local, dest=left_proc, source=right_proc)
+
+    # 3. Shift B Up: Send to 'up', Recv from 'down'
+    comm.Sendrecv_replace(B_local, dest=up_proc, source=down_proc)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The Python implementation maps 1:1 with C. <code>comm.Sendrecv_replace</code> performs the shift-and-overwrite operation on the NumPy arrays in-place. Because the buffers are managed by NumPy, the operation is highly efficient and avoids Python object serialization overhead.</p>
+<p>Cannon's Algorithm relies on regular, predictable data movement. However, many modern problems involve irregular structures like social networks, where connections are random.</p>
+<hr />
+<h2>7.9 Task Dataflow: Breadth First Search (BFS)</h2>
+<p>Graph Traversal (BFS) explores a graph level-by-level using a <strong>Frontier</strong> set. Unlike structured grids, the communication pattern here is highly irregular. <strong>Figure 7.6</strong> illustrates how the frontier expands outward in parallel.</p>
+<h3>Logic Flow</h3>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="BFS Frontier Diagram" src="../images/bfs_frontier_diagram.png" />
+<strong>Figure 7.6</strong>: <em>Parallel BFS expansion showing the concept of the current frontier, visited nodes, and the unvisited search space.</em></p>
+<h3>C Implementation Logic</h3>
+<pre><code class="language-c">// Level-Synchronized BFS
+while (frontier_size &gt; 0) {
+    // 1. Visit all nodes in current local frontier
+    for (int i=0; i&lt;frontier_size; i++) {
+        int node = frontier[i];
+        for (int j=0; j&lt;num_neighbors(node); j++) {
+            int neighbor = get_neighbor(node, j);
+            int owner = partition(neighbor);
+            add_to_send_buffer(owner, neighbor);
+        }
+    }
+
+    // 2. All-to-All Exchange of &quot;Next Frontier&quot; candidates
+    MPI_Alltoallv(send_buffers, ..., recv_buffers, ...);
+
+    // 3. Process received nodes: if not visited, add to new frontier
+    update_visited_and_frontier(recv_buffers);
+}
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The algorithm proceeds in simultaneous "Waves". In each wave, every processor takes its current set of active nodes (the Frontier) and looks up their neighbors. If a neighbor lives on another processor, we simply queue it up in a buffer. <code>MPI_Alltoallv</code> is then used to blast these buffers to their respective owners. Finally, the owners check: "Have I seen this node before?" If no, it is added to the <em>next</em> Frontier.</p>
+<h3>Python Implementation (Logic)</h3>
+<pre><code class="language-python"># frontier is a set of nodes
+while len(frontier) &gt; 0:
+    send_buffers = defaultdict(list)
+
+    # 1. Local Expansion
+    for node in frontier:
+        for neighbor in graph[node]:
+            owner = get_owner(neighbor)
+            send_buffers[owner].append(neighbor)
+
+    # 2. Exchange
+    # mpi4py allows Alltoall logic with simple lists
+    recv_buffers = comm.alltoall(send_buffers.values())
+
+    # 3. Update (Merge received nodes)
+    frontier.clear()
+    for potential_node in recv_buffers:
+         if potential_node not in visited:
+             visited.add(potential_node)
+             frontier.add(potential_node)
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python's <code>set</code> and <code>dict</code> make the logic cleaner. We group neighbors by their owner rank. <code>comm.alltoall</code> sends these lists to the correct destinations. The main loop then processes the incoming lists, checking a global <code>visited</code> set to prevent cycles and redundant work, effectively building the frontier for the next <code>while</code> iteration.</p>
+<hr />
+<h2>7.10 Summary and Next Steps</h2>
+<p>This week, we shifted focus from the <em>mechanics</em> of parallel programming (syntax) to the <em>architecture</em> of parallel problem solving (strategy). You now understand that a "correct" parallel program is not just one that produces the right answer, but one that balances <strong>Computation (Volume)</strong> against <strong>Communication (Surface)</strong>. We explored the fundamental motifs—from the simplicity of <strong>Fork-Join</strong> to the structured complexity of <strong>Halo Exchange</strong> and the irregularity of <strong>BFS</strong>—providing you with a toolkit of patterns to tackle diverse scientific challenges.</p>
+<h3>Preparing for Week 8</h3>
+<p>Next week, we leave the CPU behind and focus on the data lifecycle. We will explore <strong>HPC Storage Technologies</strong>, moving from local disks to network-attached hierarchies. We will:</p>
+<ul>
+    <li>Differentiate between <strong>Block</strong>, <strong>File</strong>, and <strong>Object</strong> storage architectures.</li>
+    <li>Deploy <strong>NFS</strong> (Network File System) to share <code>/home</code> directories across our cluster.</li>
+    <li>Understand why standard NAS solutions become the bottleneck in High-Performance Computing.</li>
+</ul>
+<p><strong>Checklist:</strong></p>
+<ul>
+    <li>Can you explain why <strong>2D Decomposition</strong> is generally superior to 1D Decomposition for large systems?</li>
+    <li>Do you understand the difference between <strong>Data Decomposition</strong> (splitting the grid) and <strong>Functional Decomposition</strong> (splitting the tasks)?</li>
+    <li>Can you sketch the communication pattern for a <strong>Halo Exchange</strong> involving Ghost Cells?</li>
+    <li>Why does <strong>Cannon's Algorithm</strong> shift memory instead of broadcasting it?</li>
+</ul>
+<h3>Resources</h3>
+<ul>
+<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann. Chapter 9.</li>
+</ul>
+
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_7_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%206%20-%20Parallel%20Programming/Week_6_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 6</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%208%20-%20Advanced%20Storage%20Concepts/Week_8_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 8</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

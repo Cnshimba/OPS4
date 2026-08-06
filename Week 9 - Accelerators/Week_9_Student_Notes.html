@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 9: Accelerators - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_9_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 9</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Accelerators</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+
+<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br /><strong>Module</strong>: EIOSY4A<br /><strong>Topic</strong>: GPU Accelerators and Heterogeneous Computing<br /><strong>Reading Time</strong>: ~15 Minutes</p></div></div>
+<hr />
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
+1. <strong>Evaluate</strong> Heterogeneous Computing models and justify the use of GPUs for massively parallel workloads.<br />
+2. <strong>Analyze</strong> deep GPU architectural features including Streaming Multiprocessors, the SIMT model, and warp scheduling.<br />
+3. <strong>Design</strong> parallel kernels using the CUDA programming model, mapping threads, blocks, and grids.<br />
+4. <strong>Critique</strong> the specific HPC use cases for FPGAs and specialized ASICs versus general-purpose GPUs.<br />
+5. <strong>Analyze</strong> the PCIe data transfer bottleneck and formulate strategies to minimize host-to-device latency.</p></div></div>
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />Welcome to Week 9! We leave the CPU behind and explore the hardware that powers the modern AI and simulation revolution. GPUs are not just for gaming - they are the dominant force in the Top500 list and in AI research.<br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
+<hr />
+<h2>Overview</h2>
+<p>For decades, Moore's Law drove performance improvements in CPUs. However, as we hit physical limits (power wall, heat), simply boosting clock speeds became impossible. This led to the era of <strong>Heterogeneous Computing</strong>: using specialized hardware alongside the CPU to accelerate specific tasks. In this chapter (referencing Sterling Chapter 15), we explore <strong>Accelerators</strong>—specifically GPUs—which power the majority of the world's top supercomputers today.</p>
+<p>This content strictly follows <strong>Sterling Chapters 15 (Architecture) and 16 (Programming)</strong>.</p>
+<hr />
+<h2>9.1 Taxonomy of Accelerators</h2>
+<h3>9.1.1 What is an Accelerator?</h3>
+<p>An <strong>Accelerator</strong> is a specialized hardware component designed to offload specific, compute-intensive tasks from the general-purpose main CPU (often called the <strong>Host</strong>). While a CPU is a "Jack of all trades"—optimized for running operating systems, handling interrupts, and executing complex serial logic—it is not efficient at processing massive blocks of data in parallel. </p>
+<p>Accelerators (the <strong>Device</strong>) differ by dedicating nearly all their transistors to arithmetic processing units (ALUs) rather than cache or control logic. By offloading parallel-heavy workloads (like matrix multiplication or physics simulations) to the accelerator, the system achieves significantly higher throughput and energy efficiency than using the CPU alone. This model of pairing a CPU with an Accelerator is known as <strong>Heterogeneous Computing</strong>.</p>
+<h3>9.1.2 Types of Accelerators</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Flexibility</th>
+<th style="text-align: left;">Efficiency</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>GPU</strong></td>
+<td style="text-align: left;">Graphics Processing Unit</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">High (for parallel tasks)</td>
+<td style="text-align: left;">NVIDIA H100, AMD MI300</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>FPGA</strong></td>
+<td style="text-align: left;">Field-Programmable Gate Array</td>
+<td style="text-align: left;">Medium (Reconfigurable)</td>
+<td style="text-align: left;">Very High</td>
+<td style="text-align: left;">Intel Stratix, Xilinx Alveo</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ASIC</strong></td>
+<td style="text-align: left;">Application-Specific Integrated Circuit</td>
+<td style="text-align: left;">Low (Fixed hardware)</td>
+<td style="text-align: left;">Maximum</td>
+<td style="text-align: left;">Google TPU, Bitcoin Miners</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Manycore</strong></td>
+<td style="text-align: left;">Many Integrated Core</td>
+<td style="text-align: left;">High (Like a CPU)</td>
+<td style="text-align: left;">Moderate</td>
+<td style="text-align: left;">Intel Xeon Phi (Legacy)</td>
+</tr>
+</tbody>
+</table>
+<p>In HPC, <strong>GPUs</strong> are the dominant accelerator because they offer a sweet spot of programmability and massive raw performance.</p>
+<hr />
+<h2>9.2 GPGPU Architecture</h2>
+<p>Originally designed for rendering video games (pixels), GPUs turned out to be excellent for matrix math, which is the foundation of scientific simulation (and AI). This usage is called <strong>GPGPU</strong> (General-Purpose computing on Graphics Processing Units).</p>
+<h3>9.2.1 CPU vs. GPU Design Philosophy</h3>
+<p>The design philosophy of a <strong>CPU</strong> is <strong>Latency Oriented</strong>. A CPU is architected to finish a single task (thread) as quickly as possible. To achieve this, it dedicates the vast majority of its silicon to massive caches (L1/L2/L3) and complex control logic (branch prediction, out-of-order execution). This makes it ideal for operating systems, serial logic, and tasks with complex decision trees.</p>
+<p>In contrast, a <strong>GPU</strong> is <strong>Throughput Oriented</strong>. It is designed to maximize the total volume of work done by executing thousands of threads simultaneously, even if individual thread speed is slow. It sacrifices deep caches and branch prediction in favor of packing thousands of tiny arithmetic cores onto the die, making it perfect for massive data parallelism where the same operation is performed on millions of pixels or floating-point numbers.</p>
+<h3>9.2.2 Key Components</h3>
+<p>The computational engine of a GPU is the <strong>Streaming Multiprocessor (SM)</strong>, which functions roughly like a CPU core but with a crucial difference: each SM contains hundreds of simpler "CUDA Cores" (ALUs). These cores are fed by <strong>High Bandwidth Memory (HBM)</strong>, a specialized stacked memory technology (e.g., HBM3) located directly on the GPU application substrate. HBM provides immense data throughput (3+ TB/s) compared to standard system RAM (100 GB/s), preventing the massive array of cores from starving for data.</p>
+<p>To manage this parallelism, GPUs use an execution model called <strong>SIMT (Single Instruction, Multiple Thread)</strong>. Instead of decoding an instruction for every thread, the GPU issues a single instruction (e.g., "Add Value A + Value B") to a group of 32 threads known as a <strong>Warp</strong>. All threads in the warp execute this same instruction simultaneously but on different data points, amortizing the cost of instruction decoding.</p>
+
+<h3>9.2.3 Performance Metrics</h3>
+<p>To evaluate if a GPU is being used efficiently, we track two primary mathematical metrics:</p>
+<ul>
+    <li><strong>Arithmetic Intensity ($I$)</strong>: The ratio of floating-point operations ($FLOPs$) to bytes of data moved from memory ($Bytes$):
+        <p>$$ I = \frac{FLOPs}{Bytes} $$</p>
+        <p>If $I$ is low, the GPU is waiting for data (Memory-Bound). If $I$ is high, the GPU is busy calculating (Compute-Bound).</p>
+    </li>
+    <li><strong>Occupancy ($\Omega$)</strong>: The ratio of active warps to the maximum possible warps on a Streaming Multiprocessor:
+        <p>$$ \Omega = \frac{\text{Active Warps}}{\text{Maximum Warps}} $$</p>
+        <p>Higher occupancy allows the GPU to "hide" memory latency by switching to another warp while one is waiting for data.</p>
+    </li>
+</ul>
+
+<hr />
+<h2>9.3 Programming Accelerators</h2>
+<p>Standard sequential C/C++ code cannot execute directly on a GPU. Instead, the application must be architected to explicitly distinguish between the <strong>Host</strong> (CPU) control logic and the <strong>Device</strong> (GPU) computational kernels.</p>
+<h3>9.3.1 Coding Models</h3>
+<p><strong>CUDA (Compute Unified Device Architecture)</strong> is the most widely used proprietary model, developed by NVIDIA. It is the distinct gold standard for HPC and AI, allowing developers to write C++ with extensions that grant granular low-level control over memory handling and thread management.</p>
+<p>For open solutions, <strong>OpenCL</strong> (and the newer <strong>HIP</strong> by AMD) offers a vendor-neutral standard. Tools like HIPIFY can even translate CUDA source code into portable HIP code, allowing deployment on non-NVIDIA hardware.</p>
+<p>Finally, for ease of use, directive-based models like <strong>OpenACC</strong> and <strong>OpenMP Offloading</strong> allow developers to simply annotate existing C/C++ loops with <code>#pragma</code> directives. The compiler then handles the complex data movement and kernel generation automatically, though this convenience sometimes comes at the cost of peak performance compared to hand-tuned CUDA.</p>
+<h3>9.3.2 The Host-Device Workflow</h3>
+<p>The standard workflow involves the <strong>Host</strong> (CPU) managing the data and the <strong>Device</strong> (GPU) crunching the numbers.</p>
+<p><strong>C++ Example (CUDA Pseudo-code)</strong></p>
+<pre><code class="language-cpp">// 1. Allocate Memory on GPU (VRAM)
+cudaMalloc(&amp;d_A, size);
+
+// 2. Transfer Data (Host RAM -&gt; GPU VRAM)
+cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
+
+// 3. Launch Kernel (Compute)
+// &lt;&lt;&lt;Grid, Block&gt;&gt;&gt; syntax launches thousands of threads
+matrixMultiply&lt;&lt;&lt;numBlocks, threadsPerBlock&gt;&gt;&gt;(d_A, d_B, d_C);
+
+// 4. Retrieve Results (GPU VRAM -&gt; Host RAM)
+cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
+</code></pre>
+<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The CPU acts as a traffic controller. It moves data across the PCIe bus (Section A &amp; D) and triggers the massive parallel work (Section C). Note that "Compute" is fast, but "Transfer" is slow (limited by PCIe bandwidth).</p>
+<h3>9.3.3 CUDA Thread Hierarchy</h3>
+<p>Valid GPU kernels must map to the hardware's hierarchy. To achieve this, CUDA divides the work into a three-level structure: <strong>Grids</strong>, <strong>Blocks</strong>, and <strong>Threads</strong>.</p>
+<p>The <strong>Grid</strong> represents the entire problem space (e.g., all 4000x4000 pixels in an image). This Grid is divided into smaller chunks called <strong>Blocks</strong>. A Block is a logical group of threads that run on a single Streaming Multiprocessor (SM). Finally, each <strong>Thread</strong> is the smallest unit of execution, processing a single data point. The programmer must define <code>dim3 blocks</code> and <code>dim3 threads</code> to map their problem size to this grid, ensuring that every data element is covered by exactly one thread.</p>
+<h3>9.3.4 Memory Hierarchy</h3>
+<p>High-performance GPU programming requires manual management of the memory hierarchy. Unlike a CPU which manages cache automatically, a GPU programmer usually manages it explicitly to achieve peak performance.</p>
+<p><strong>Global Memory</strong> is the largest memory space (the 16GB-80GB of VRAM) accessible by all threads, but it has high latency and is relatively slow. In contrast, <strong>Shared Memory</strong> is a tiny, incredibly fast slice of memory located on the SM itself, shared only by threads within the same Block. A common optimization pattern is for threads to cooperatively load a chunk of data from Global Memory into Shared Memory, perform heavy calculations on the fast Shared Memory, and then write the final result back to Global.</p>
+<hr />
+<h2>9.4 Modern Trends</h2>
+<h3>9.4.1 AI and Tensor Cores</h3>
+<p>Modern GPUs include specialized headers called <strong>Tensor Cores</strong>. These are hardwired ASICs inside the GPU designed to do just one thing: Matrix Multiplication ($A \times B + C$) for 4x4 or 16x16 matrices. This is the math behind Deep Learning, making GPUs the engine of the AI revolution.</p>
+<h3>9.4.2 Multi-GPU Interconnects</h3>
+<p>The traditional PCIe bus is often a bottleneck for multi-GPU training. To overcome this, NVIDIA introduced <strong>NVLink</strong>, a high-speed direct interconnect that allows GPUs to communicate with each other at blazing speeds without burdening the CPU or traversing the system bus. For massive clusters, <strong>NVSwitch</strong> extends this concept, connecting dozens or hundreds of GPUs into a single unified high-bandwidth fabric, effectively treating them as one giant accelerator.</p>
+<hr />
+<h2>5. Summary and Next Steps</h2>
+<p>This week, we explored the world of <strong>Accelerators</strong>, specialized hardware designed to bypass the physical limitations of modern CPUs. We learned that while CPUs are latency-optimized for complex logic, GPUs are throughput-optimized for massive parallelism. By understanding the <strong>Host-Device</strong> model, the <strong>SIMT</strong> execution pattern, and the importance of <strong>High Bandwidth Memory (HBM)</strong>, you are now equipped to navigate the heterogeneous architecture of modern Exascale systems.</p>
+<h3>Preparing for Week 11</h3>
+<p>Next week (skipping the deprecated Week 10), we will bring everything together in <strong>Real World Applications</strong>. We will look at the actual scientific codes—from Weather Forecasting to Genomics—that run on the clusters we have designed, provisioned, and programmed. We will:</p>
+<ul>
+    <li>Examine case studies like <strong>WRF</strong> (Weather) and <strong>GROMACS</strong> (Molecular Dynamics).</li>
+    <li>Understand the <strong>Exascale Challenges</strong> of power and concurrency.</li>
+    <li>Begin planning your <strong>Capstone Project</strong>.</li>
+</ul>
+<p><strong>Checklist:</strong></p>
+<ul>
+    <li>Why is a GPU characterized as "Throughput Oriented" while a CPU is "Latency Oriented"?</li>
+    <li>What is a <strong>Warp</strong> in CUDA terminology, and what happens if threads in a warp diverge?</li>
+    <li>Why is <strong>PCIe</strong> often the bottleneck in accelerator performance, and how does <strong>NVLink</strong> solve this?</li>
+    <li>Can you explain the difference between an <strong>FPGA</strong> (Reconfigurable) and an <strong>ASIC</strong> (Fixed)?</li>
+</ul>
+<h3>Resources</h3>
+<ul>
+<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann. Chapter 15.</li>
+<li><a href="https://docs.nvidia.com/cuda/">NVIDIA CUDA Programming Guide</a></li>
+</ul>
+
+        
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_9_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%208%20-%20Advanced%20Storage%20Concepts/Week_8_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 8</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%2010%20-%20HPC%20Applications/Week_10_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 10</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

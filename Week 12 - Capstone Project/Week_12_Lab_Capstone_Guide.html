@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 12: Capstone Project - Lab Guide - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_12_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 12</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Week 12: Capstone Project - Lab Guide</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<p><strong>Objective</strong>: Verify the complete functionality of your Cluster.
+<strong>Goal</strong>: Pass the "Final Acceptance Test".</p>
+<hr />
+<hr />
+<h2>1. Infrastructure Verification</h2>
+<p>Ensure that your Proxmox cluster is fully operational. Log into your Master Node (<code>hpc-master</code>) via SSH to begin your work.</p>
+<ul>
+<li>[ ] <strong>Nodes Alive</strong>: <code>hpc-master</code>, <code>compute-01</code>, and <code>compute-02</code> are powered on in Proxmox.</li>
+<li>[ ] <strong>Network</strong>: Master can ping the compute nodes over the isolated network:
+    <code>bash
+    ping -c 1 10.0.0.101  # compute-01
+    ping -c 1 10.0.0.102  # compute-02</code></li>
+<li>[ ] <strong>DNS</strong>: Configure <code>/etc/hosts</code> on the Master so you can use names (<code>compute-01</code>, <code>compute-02</code>).</li>
+<li>[ ] <strong>OpenHPC</strong>: Verify repositories are enabled on the master:
+    <code>bash
+    dnf repolist | grep OpenHPC</code></li>
+</ul>
+<hr />
+<hr />
+<h2>2. Warewulf Verification (Provisioning)</h2>
+<p>Demonstrate that your cluster is aware of its nodes.</p>
+<ul>
+    <li>[ ] <strong>Command</strong>:</li>
+</ul>
+<p>    <code>bash
+    sudo wwctl node list</code></p>
+<ul>
+    <li>[ ] <strong>Requirement</strong>: All nodes must show status <code>READY</code>/<code>SEEN</code>.</li>
+</ul>
+<hr />
+<h2>3. Monitoring Verification (Grafana)</h2>
+<p>To keep the setup light, we will run the monitoring stack in <strong>Containers</strong> using Podman.</p>
+<h3>3.1 Deploy Prometheus Container</h3>
+<ul>
+<li>[ ] <strong>Create Config</strong>:
+    ```bash
+    cat &lt;<EOF > prometheus.yml
+    global:
+      scrape_interval: 15s
+    scrape_configs:<ul>
+<li>job_name: 'cluster'
+    static_configs:<ul>
+<li>targets: ['10.0.0.101:9100', '10.0.0.102:9100']
+EOF
+```</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>[ ] <strong>Run Container</strong>:
+    <code>bash
+    podman run -d --name prometheus \
+      -p 9090:9090 \
+      -v ./prometheus.yml:/etc/prometheus/prometheus.yml \
+      prom/prometheus</code></li>
+</ul>
+<h3>3.2 Deploy Grafana Container</h3>
+<ul>
+<li>[ ] <strong>Run Container</strong>:
+    <code>bash
+    podman run -d --name grafana -p 3000:3000 grafana/grafana</code></li>
+</ul>
+<h3>3.3 Verification</h3>
+<ul>
+<li>[ ] <strong>Action</strong>: Open <code>http://10.0.0.1:3000</code> (Grafana) in your browser.</li>
+<li>[ ] <strong>Requirement</strong>: Add Prometheus (<code>http://10.0.0.1:9090</code>) as a Data Source and verify connection.</li>
+</ul>
+<hr />
+<h2>4. Storage Checklist (Data)</h2>
+<ul>
+<li>[ ] <strong>Home (NFS)</strong>:<ul>
+<li>Create <code>~/test_nfs</code> on Master.</li>
+<li>Verify it appears on <code>compute-01</code> and <code>compute-02</code> immediately.</li>
+<li><em>Note: For this Capstone, we rely entirely on NFS shared home directories.</em></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2>5. The Parallel Programming Challenge</h2>
+<p>Instead of running pre-built software, you must demonstrate your ability to write and run parallel code. You will implement <strong>Parallel Matrix Multiplication</strong> using MPI.</p>
+<h3>5.1 The Code (<code>matrix_mult.py</code>)</h3>
+<p>Create this Python script in your home directory (which is shared via NFS).</p>
+<ul>
+<li>[ ] <strong>Create Script</strong>:
+    <code>bash
+    nano matrix_mult.py</code></li>
+<li>
+<p>[ ] <strong>Paste Content</strong>:
+    ```python
+    from mpi4py import MPI
+    import numpy as np
+    import time</p>
+<p>comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()</p>
+<p>N = 1000  # Matrix Size (1000x1000)</p>
+<p>if rank == 0:
+    print(f"Master: Initializing matrices size {N}x{N}...")
+    A = np.random.rand(N, N)
+    B = np.random.rand(N, N)
+    start_time = time.time()
+else:
+    A = None
+    B = None</p>
+<h1>Broadcast B to everyone (Not memory efficient, but simple)</h1>
+<p>B = comm.bcast(B, root=0)</p>
+<h1>Scatter A (Distribute rows)</h1>
+<h1>Each process gets N/size rows</h1>
+<p>local_rows = N // size
+local_A = np.zeros((local_rows, N))
+comm.Scatter(A, local_A, root=0)</p>
+<h1>Compute Local Sub-Matrix</h1>
+<p>if rank == 0:
+    print(f"Computing on {size} processors...")</p>
+<p>local_C = np.dot(local_A, B)</p>
+<h1>Gather results back to Master</h1>
+<p>if rank == 0:
+    C = np.zeros((N, N))
+else:
+    C = None</p>
+<p>comm.Gather(local_C, C, root=0)</p>
+<p>if rank == 0:
+    end_time = time.time()
+    print(f"Done! Execution Time: {end_time - start_time:.4f} seconds.")
+    # Optional: Verify with serial calculation for small N
+```</p>
+</li>
+</ul>
+<h3>5.2 The Job Script (<code>submit_matrix.sh</code>)</h3>
+<p>You must use the Scheduler to run this.</p>
+<ul>
+<li>[ ] <strong>Create Script</strong>:
+    <code>bash
+    nano submit_matrix.sh</code></li>
+<li>
+<p>[ ] <strong>Paste Content</strong>:
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=MATRIX_MULT
+    #SBATCH --nodes=2
+    #SBATCH --ntasks=2           # 1 Task per Node
+    #SBATCH --partition=debug
+    #SBATCH --output=matrix_%j.log
+    #SBATCH --chdir=/home/openeuler    # Ensure we run in the shared home</p>
+<p>echo "Running on: $SLURM_JOB_NODELIST"</p>
+<h1>Load Modules (Ensure your environment has mpi4py)</h1>
+<h1>If using system python:</h1>
+<h1>dnf install python3-mpi4py mpich -y (inside image)</h1>
+<p>module load mpi</p>
+<p>mpirun -np 2 python3 matrix_mult.py
+```</p>
+</li>
+</ul>
+<h3>5.3 Submit and Verify</h3>
+<ul>
+<li>[ ] <strong>Submit</strong>:
+    <code>bash
+    sbatch submit_matrix.sh</code></li>
+<li>[ ] <strong>Check Output</strong>:
+    <code>bash
+    cat matrix_*.log</code>
+    <em>Did it print the Execution Time?</em></li>
+</ul>
+<hr />
+<h2>6. Submission</h2>
+<p>Prepare a presentation or report containing screenshots of:</p>
+<ol>
+    <li><strong>Warewulf</strong>: Output of <code>wwctl node list</code>.</li>
+    <li><strong>Monitoring</strong>: Your Grafana Dashboard active.</li>
+    <li><strong>Result</strong>: The log file from your Matrix Multiplication job showing success.</li>
+</ol>
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+</div>
+
+</body>
+</html>

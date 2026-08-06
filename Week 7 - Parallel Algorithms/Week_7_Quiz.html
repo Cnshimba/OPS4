@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 7 Quiz: Parallel Algorithms</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_7_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 7 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of Parallel Algorithms</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What is the main advantage of 2D (Block) Decomposition over 1D (Slab) Decomposition in large parallel problems?",
+                        "options": [
+                                    "It requires less memory per node.",
+                                    "It minimizes the Surface-to-Volume ratio, thereby reducing communication overhead.",
+                                    "It is easier to implement using 1D arrays.",
+                                    "It eliminates the need for synchronization barriers."
+                        ],
+                        "correct": 1,
+                        "explanation": "2D decomposition generally scales better because a block has a smaller perimeter-to-area (surface-to-volume) ratio, minimizing the amount of boundary data that must be communicated between processors."
+            },
+            {
+                        "question": "Which parallel motif is characterized by a central node dynamically distributing tasks to a pool of available nodes?",
+                        "options": [
+                                    "Fork-Join",
+                                    "Halo Exchange",
+                                    "Manager-Worker (Task Farm)",
+                                    "Divide and Conquer"
+                        ],
+                        "correct": 2,
+                        "explanation": "In the Manager-Worker pattern, a single Manager maintains a pool of work and distributes tasks to Workers, providing excellent dynamic load balancing."
+            },
+            {
+                        "question": "In structured grid problems like CFD, what is the purpose of a 'Halo Exchange'?",
+                        "options": [
+                                    "To offload computations to a GPU accelerator.",
+                                    "To exchange boundary ghost cells with neighboring processors before the next compute step.",
+                                    "To dynamically balance the load among unevenly matched workers.",
+                                    "To divide a large matrix into smaller sub-matrices."
+                        ],
+                        "correct": 1,
+                        "explanation": "Halo Exchange is used to synchronize boundary data (halos or ghost cells) between adjacent processors in grid-based simulations so they can compute their local updates."
+            },
+            {
+                        "question": "What does the 'Surface-to-Volume Ratio' represent in parallel algorithm design?",
+                        "options": [
+                                    "The physical size of the CPU.",
+                                    "The ratio of Communication (surface) to Computation (volume).",
+                                    "The ratio of RAM to Hard Drive space.",
+                                    "The ratio of network cables to server racks."
+                        ],
+                        "correct": 1,
+                        "explanation": "Volume represents the useful computation done inside a data block, while Surface represents the overhead of communicating the boundaries. We want to maximize volume and minimize surface."
+            },
+            {
+                        "question": "What is Cannon's Algorithm used for?",
+                        "options": [
+                                    "Sorting lists.",
+                                    "Memory-efficient dense matrix multiplication on a 2D processor grid.",
+                                    "Solving differential equations.",
+                                    "Routing network packets."
+                        ],
+                        "correct": 1,
+                        "explanation": "Cannon's algorithm avoids broadcasting large matrices by using a structured shift-and-multiply data flow across a grid of processors."
+            },
+            {
+                        "question": "How does the 'Divide and Conquer' parallel pattern work?",
+                        "options": [
+                                    "It fires the manager.",
+                                    "It recursively breaks a large problem into smaller sub-problems, solves them in parallel, and merges the results.",
+                                    "It separates data from instructions.",
+                                    "It puts half the CPUs to sleep to save power."
+                        ],
+                        "correct": 1,
+                        "explanation": "Divide and conquer creates a dynamic tree of tasks, naturally exposing massive parallelism as the problem is recursively bisected."
+            },
+            {
+                        "question": "What is the 'Fork-Join' pattern?",
+                        "options": [
+                                    "A method for eating pasta.",
+                                    "A model where a main thread executes sequentially, spawns multiple worker threads for a parallel region, and then waits for them to finish.",
+                                    "A way to combine two clusters.",
+                                    "A network routing protocol."
+                        ],
+                        "correct": 1,
+                        "explanation": "Fork-Join is the foundational pattern of OpenMP. The main thread forks to parallelize a loop or task, and joins at a barrier when the work is done."
+            },
+            {
+                        "question": "What does it mean if a problem is 'Embarrassingly Parallel'?",
+                        "options": [
+                                    "The code is poorly written.",
+                                    "The tasks are completely independent of each other and require zero communication to execute.",
+                                    "The algorithm is too complex to understand.",
+                                    "It requires a supercomputer to run."
+                        ],
+                        "correct": 1,
+                        "explanation": "Embarrassingly parallel workloads (like Monte Carlo simulations or ray tracing) scale perfectly because workers never have to talk to each other."
+            },
+            {
+                        "question": "What is 'Load Balancing'?",
+                        "options": [
+                                    "Ensuring physical servers weigh the same.",
+                                    "Distributing work evenly across all processors so that no processor is sitting idle waiting for others to finish.",
+                                    "Balancing network traffic across two cables.",
+                                    "Distributing RAM evenly."
+                        ],
+                        "correct": 1,
+                        "explanation": "Poor load balancing leads to idleness. The execution time of a parallel program is dictated by the slowest (most heavily loaded) processor."
+            },
+            {
+                        "question": "In Parallel Breadth-First Search (BFS), what is the 'Frontier'?",
+                        "options": [
+                                    "The final result.",
+                                    "The set of currently active nodes that are exploring their unvisited neighbors in parallel.",
+                                    "The boundary of the cluster.",
+                                    "The root node."
+                        ],
+                        "correct": 1,
+                        "explanation": "Graph algorithms often proceed level-by-level. The frontier represents the active boundary of the search, expanding iteratively."
+            },
+            {
+                        "question": "What is 'Granularity' in parallel computing?",
+                        "options": [
+                                    "The size of the hard drive platters.",
+                                    "The ratio of computation to communication; i.e., how much work a task does before needing to communicate.",
+                                    "The resolution of the monitor.",
+                                    "The speed of the CPU clock."
+                        ],
+                        "correct": 1,
+                        "explanation": "Fine-grained parallelism involves frequent communication of small data amounts, while coarse-grained parallelism involves infrequent communication of large chunks."
+            },
+            {
+                        "question": "Why might fine-grained parallelism perform poorly on a cluster?",
+                        "options": [
+                                    "It uses too much RAM.",
+                                    "The latency overhead of sending frequent, tiny messages over the network dominates the execution time.",
+                                    "The CPUs get too hot.",
+                                    "It requires specialized GPUs."
+                        ],
+                        "correct": 1,
+                        "explanation": "Network latency is high compared to CPU speed. If tasks are too fine-grained, the CPUs spend more time waiting for the network than actually computing."
+            },
+            {
+                        "question": "What are 'Ghost Cells' (or Halos)?",
+                        "options": [
+                                    "Deleted files.",
+                                    "Extra memory allocated around a local grid block to hold copies of neighboring processors' boundary data.",
+                                    "Hidden processes running in the background.",
+                                    "Corrupted memory segments."
+                        ],
+                        "correct": 1,
+                        "explanation": "Ghost cells allow a processor to compute a stencil operation (which requires neighbor data) locally without communicating for every single calculation."
+            },
+            {
+                        "question": "What is a 'Superlinear Speedup'?",
+                        "options": [
+                                    "When an application crashes really fast.",
+                                    "When a program runs more than N times faster on N processors, often due to the problem now fitting entirely into the combined L1/L2 caches.",
+                                    "A marketing term for fast CPUs.",
+                                    "When the network exceeds the speed of light."
+                        ],
+                        "correct": 1,
+                        "explanation": "While rare, superlinear speedup occurs when dividing the problem shrinks the local data size so much that it fits entirely in ultra-fast CPU cache, bypassing RAM access penalties."
+            },
+            {
+                        "question": "What is the difference between Data Parallelism and Task Parallelism?",
+                        "options": [
+                                    "Data parallelism is for hard drives, task parallelism is for CPUs.",
+                                    "Data parallelism executes the same operation on different pieces of data; Task parallelism executes different operations concurrently.",
+                                    "They are the same thing.",
+                                    "Task parallelism is only used in Python."
+                        ],
+                        "correct": 1,
+                        "explanation": "Applying a filter to every pixel in an image is Data Parallel. Having one thread read a file, another compress data, and a third write to disk is Task Parallel."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 8 Quiz: System Design and Networking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_8_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 8 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of System Design and Networking</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "According to Amdahl's Law applied to I/O, if an application spends 10% of its execution time performing sequential I/O (f_io = 0.1), what is the maximum theoretical speedup as the number of processors approaches infinity?",
+                        "options": [
+                                    "100x",
+                                    "10x",
+                                    "Infinity",
+                                    "1x"
+                        ],
+                        "correct": 1,
+                        "explanation": "S_max = 1 / f_io. Therefore, 1 / 0.10 = 10x maximum speedup, demonstrating the severe impact of the 'I/O Wall'."
+            },
+            {
+                        "question": "According to Little's Law (L = \u03bb \u00d7 W) applied to storage queues, what happens to the I/O wait time (W) as the arrival rate (\u03bb) approaches the service rate (\u03bc)?",
+                        "options": [
+                                    "Wait time approaches zero.",
+                                    "Wait time remains constant.",
+                                    "Wait time grows exponentially towards infinity.",
+                                    "The storage server crashes."
+                        ],
+                        "correct": 2,
+                        "explanation": "As utilization (\u03c1 = \u03bb/\u03bc) approaches 1 (100%), standard queuing theory dictates that wait time grows exponentially, necessitating Scale-Out architectures."
+            },
+            {
+                        "question": "What is the primary function of a Distributed Lock Manager (DLM) in a POSIX-compliant Parallel File System?",
+                        "options": [
+                                    "To encrypt data on disk.",
+                                    "To enforce strict cache coherency and arbitrate exclusive write access across thousands of distributed nodes.",
+                                    "To schedule CPU jobs.",
+                                    "To compress large datasets."
+                        ],
+                        "correct": 1,
+                        "explanation": "The DLM ensures POSIX consistency by revoking and granting locks to ensure no two nodes overwrite the same file block simultaneously."
+            },
+            {
+                        "question": "Why does strict POSIX compliance often cause catastrophic bottlenecks in N-to-1 write patterns (many processes writing to a single file)?",
+                        "options": [
+                                    "POSIX does not allow large files.",
+                                    "The metadata server becomes paralyzed by 'lock contention', spending more time revoking and granting DLM locks than actual data transfer occurs.",
+                                    "POSIX is written in Python.",
+                                    "The network bandwidth is exhausted."
+                        ],
+                        "correct": 1,
+                        "explanation": "Lock contention in a DLM is the primary reason why strict POSIX semantics fail at Exascale."
+            },
+            {
+                        "question": "In the context of BeeGFS tuning, why is NUMA (Non-Uniform Memory Access) awareness critical for the Storage Daemon?",
+                        "options": [
+                                    "It reduces electricity cost.",
+                                    "To ensure the daemon, the network card interrupts (IRQs), and the NVMe drives are pinned to the same physical CPU socket, avoiding the high-latency UPI interconnect.",
+                                    "To allow BeeGFS to use GPUs.",
+                                    "It provides backup capabilities."
+                        ],
+                        "correct": 1,
+                        "explanation": "Crossing the UPI bus between CPU sockets adds significant microsecond latency, which destroys high-performance storage throughput."
+            },
+            {
+                        "question": "When configuring the underlying storage target for a BeeGFS OSS, why is XFS generally preferred over ZFS for HPC simulation workloads?",
+                        "options": [
+                                    "ZFS is not open source.",
+                                    "ZFS uses Copy-on-Write (CoW), which introduces severe overhead and ARC cache RAM bloat that degrades high-throughput sequential write performance compared to XFS Allocation Groups.",
+                                    "XFS has better snapshot capabilities.",
+                                    "XFS is immune to hardware failure."
+                        ],
+                        "correct": 1,
+                        "explanation": "While ZFS is excellent for integrity, its Copy-on-Write architecture penalizes the raw throughput and IOPS demanded by HPC."
+            },
+            {
+                        "question": "What specifically does Lustre's Distributed Namespace (DNE) Phase 2 accomplish?",
+                        "options": [
+                                    "It encrypts the entire namespace.",
+                                    "It allows the metadata of a *single* directory containing millions of files to be striped across multiple MDS nodes, providing linear scaling for metadata IOPS.",
+                                    "It distributes power across the server rack.",
+                                    "It translates Lustre commands to BeeGFS."
+                        ],
+                        "correct": 1,
+                        "explanation": "Before DNE Phase 2, a single directory's metadata could only reside on one MDS, creating a massive bottleneck for AI/ML datasets."
+            },
+            {
+                        "question": "How does Lustre Networking (LNET) achieve microsecond latency and extreme bandwidth?",
+                        "options": [
+                                    "By using massive TCP buffers.",
+                                    "By relying entirely on UDP.",
+                                    "By utilizing Remote Direct Memory Access (RDMA) to push data directly into a client's RAM without interrupting the client's CPU.",
+                                    "By compressing all data."
+                        ],
+                        "correct": 2,
+                        "explanation": "RDMA provides zero-copy, kernel-bypass data transfer, which is essential for HPC."
+            },
+            {
+                        "question": "What is DAOS (Distributed Asynchronous Object Storage)?",
+                        "options": [
+                                    "An old tape backup system.",
+                                    "A post-POSIX, user-space object store designed specifically for NVMe and Storage Class Memory (SCM) that bypasses the Linux kernel block layer.",
+                                    "A new CPU architecture.",
+                                    "A GUI for managing Lustre."
+                        ],
+                        "correct": 1,
+                        "explanation": "DAOS represents the future of Exascale storage by eliminating POSIX overhead and targeting persistent memory natively."
+            },
+            {
+                        "question": "How does DAOS handle concurrent writes without suffering from the lock contention of a traditional DLM?",
+                        "options": [
+                                    "It queues them sequentially.",
+                                    "It uses an epoch-based versioning system where writes do not block reads; instead, a new version of the object is created.",
+                                    "It deletes the oldest data.",
+                                    "It requires manual user intervention."
+                        ],
+                        "correct": 1,
+                        "explanation": "Epoch-based versioning eliminates the need for expensive, blocking distributed locks."
+            },
+            {
+                        "question": "Why is 'byte-granular I/O' in DAOS a massive advantage over traditional block storage?",
+                        "options": [
+                                    "It uses less electricity.",
+                                    "Traditional block storage forces updates in 4KB chunks, causing 'write amplification'. Byte-granular I/O allows updating exactly the bytes needed in persistent memory.",
+                                    "It makes files look smaller.",
+                                    "It requires no network."
+                        ],
+                        "correct": 1,
+                        "explanation": "Storage Class Memory allows direct byte-addressability, preventing the read-modify-write penalty of traditional block devices."
+            },
+            {
+                        "question": "Which benchmark is the industry standard for measuring metadata IOPS (Input/Output Operations Per Second) in HPC?",
+                        "options": [
+                                    "IOR",
+                                    "LINPACK",
+                                    "mdtest",
+                                    "iperf"
+                        ],
+                        "correct": 2,
+                        "explanation": "mdtest creates, stats, and removes massive numbers of tiny files to stress the Metadata Server (MDS)."
+            },
+            {
+                        "question": "In the Lustre Architecture, what is the role of the Object Storage Server (OSS)?",
+                        "options": [
+                                    "To manage file names and directory trees.",
+                                    "To execute compute jobs.",
+                                    "To manage the physical disks (OSTs) and handle the bulk transfer of striped file data directly to the clients.",
+                                    "To route internet traffic."
+                        ],
+                        "correct": 2,
+                        "explanation": "The OSS handles the heavy lifting of raw data transfer, entirely separate from the metadata operations."
+            },
+            {
+                        "question": "What defines a 'Scale-Out' storage architecture?",
+                        "options": [
+                                    "Adding more RAM to a single server.",
+                                    "Buying larger capacity hard drives.",
+                                    "Increasing total system bandwidth and IOPS linearly by adding more independent storage servers (nodes) to the cluster.",
+                                    "Moving the servers to a larger room."
+                        ],
+                        "correct": 2,
+                        "explanation": "Scale-Out achieves performance by aggregating the power of many smaller, independent machines in parallel."
+            },
+            {
+                        "question": "What happens if you attempt to run a high-performance, parallel write job (like IOR N-to-1) directly into an NFS mounted `/home` directory on a massive cluster?",
+                        "options": [
+                                    "It runs extremely fast.",
+                                    "The NFS server's DLM and single network interface become instantly overwhelmed, likely stalling the entire cluster.",
+                                    "NFS automatically converts to Lustre.",
+                                    "The files are compressed automatically."
+                        ],
+                        "correct": 1,
+                        "explanation": "NFS is not designed for parallel compute loads. The locking overhead and single-point bottleneck will crash or stall the server."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1: Local Infrastructure with Vagrant - Lab Guide - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_1_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 1</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Week 1: Local Infrastructure with Vagrant - Lab Guide</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<p><strong>Objective</strong>: Deploy a local testing environment using Infrastructure as Code (IaC).
+<strong>Goal</strong>: Install VirtualBox and Vagrant, and write a <code>Vagrantfile</code> that provisions 3 openEuler VMs (a Master Node and two Compute Nodes) with the correct network interfaces.</p>
+<hr />
+
+<h2>1. Introduction to the Tools</h2>
+<p>Before we can build an HPC cluster on the university's servers, we need a safe, local environment to experiment. We will use two tools:</p>
+<ul>
+    <li><strong>VirtualBox</strong>: A Type-2 Hypervisor that runs virtual machines on your personal laptop.</li>
+    <li><strong>Vagrant</strong>: A command-line utility for managing virtual machines. Instead of clicking through a GUI to create a VM, you write a configuration file (a <code>Vagrantfile</code>) and Vagrant automates the deployment. This is the foundation of <em>Infrastructure as Code</em>.</li>
+</ul>
+
+<hr />
+<h2>2. Installation</h2>
+
+<h3>2.1 Download and Install VirtualBox</h3>
+<p>Navigate to the <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">VirtualBox Downloads Page</a> and download the installer for your operating system (Windows, macOS, or Linux). Run the installer and follow the default prompts.</p>
+
+<h3>2.2 Download and Install Vagrant</h3>
+<p>Navigate to the <a href="https://developer.hashicorp.com/vagrant/downloads" target="_blank">Vagrant Downloads Page</a> and download the installer for your operating system. Run the installer and follow the default prompts.</p>
+<p>Once installed, open a Terminal (or PowerShell on Windows) and verify the installation:</p>
+<pre><code class="language-bash">vagrant --version</code></pre>
+
+<hr />
+<h2>3. Creating the Vagrantfile</h2>
+<p>We are going to deploy an <strong>openEuler</strong> virtual machine that will act as our "Master Node".</p>
+
+<p><strong>Explanation:</strong> A <code>Vagrantfile</code> is written in Ruby syntax. It tells Vagrant which OS image (called a "box") to download, how much RAM to allocate, and how to configure the network interfaces.</p>
+
+<p>1. Open your terminal/PowerShell and create a new directory for your HPC labs, then navigate into it:</p>
+<pre><code class="language-bash">mkdir hpc-labs
+cd hpc-labs</code></pre>
+
+<p>2. Create a file named exactly <code>Vagrantfile</code> (no extension) using a text editor. Paste the following configuration into it:</p>
+
+<pre><code class="language-ruby">Vagrant.configure("2") do |config|
+  # We use a generic openEuler box
+  config.vm.box = "generic/openeuler22" 
+
+  # Master Node (Control)
+  config.vm.define "master" do |master|
+    master.vm.hostname = "master"
+    
+    # NIC 1 is NAT (Internet) by default in Vagrant.
+    # We define NIC 2 here as our internal cluster network.
+    master.vm.network "private_network", ip: "10.0.0.1", netmask: "255.255.255.0"
+
+    master.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048" # 2 GB of RAM
+      vb.cpus = 2
+      vb.name = "hpc-master-node"
+    end
+  end
+
+  # Compute Node 01
+  config.vm.define "compute-01" do |node|
+    node.vm.hostname = "compute-01"
+    node.vm.network "private_network", ip: "10.0.0.101", netmask: "255.255.255.0"
+    node.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024" # 1 GB of RAM
+      vb.cpus = 1
+      vb.name = "hpc-compute-01"
+    end
+  end
+
+  # Compute Node 02
+  config.vm.define "compute-02" do |node|
+    node.vm.hostname = "compute-02"
+    node.vm.network "private_network", ip: "10.0.0.102", netmask: "255.255.255.0"
+    node.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024" # 1 GB of RAM
+      vb.cpus = 1
+      vb.name = "hpc-compute-02"
+    end
+  end
+end</code></pre>
+
+<hr />
+<h2>4. Deploying the Infrastructure</h2>
+
+<p>Now that our infrastructure is defined in code, we will deploy it.</p>
+
+<p><strong>Explanation:</strong> The <code>vagrant up</code> command reads the Vagrantfile, downloads the OS box from the internet (this might take a few minutes the first time), creates all 3 VMs in VirtualBox in sequence, sets up the networking, and boots them.</p>
+<pre><code class="language-bash">vagrant up</code></pre>
+
+<p>Once the command completes, you have a fully functional miniature cluster running in the background!</p>
+
+<hr />
+<h2>5. Accessing and Managing the Node</h2>
+
+<p>You do not need to open the VirtualBox GUI to log in. Vagrant manages the SSH keys automatically.</p>
+
+<h3>5.1 Logging In</h3>
+<p><strong>Explanation:</strong> The <code>vagrant ssh</code> command automatically uses the private key Vagrant generated to log you securely into the virtual machine without needing a password.</p>
+<pre><code class="language-bash">vagrant ssh master</code></pre>
+
+<p>Verify your IP addresses inside the Master VM:</p>
+<pre><code class="language-bash">ip addr show</code></pre>
+<p><em>You should see `eth0` (NAT/Internet) and `eth1` (10.0.0.1 - Your cluster network).</em></p>
+
+<h3>5.2 Network Testing</h3>
+<p>Because Vagrant deployed the VMs onto the same Private Network, they can communicate with each other. From the Master node, verify you can reach the compute nodes:</p>
+<pre><code class="language-bash">ping -c 4 10.0.0.101
+ping -c 4 10.0.0.102</code></pre>
+
+<p>Type <code>exit</code> to log out of the VM and return to your host terminal.</p>
+
+<h3>5.3 Managing the VM State</h3>
+<p>When you are done with your lab session, you should power off the VMs to save resources on your laptop.</p>
+
+<pre><code class="language-bash"># To gracefully shut down the VM:
+vagrant halt
+
+# To turn it back on later:
+vagrant up
+
+# To completely delete the VM and its hard drive:
+vagrant destroy</code></pre>
+
+<hr />
+<h2>6. Submission</h2>
+<p>Take a screenshot showing your terminal window with:</p>
+<ol>
+    <li>The output of <code>vagrant status</code> showing all 3 nodes running.</li>
+    <li>An active <code>vagrant ssh master</code> session where you ran the <code>ping -c 4 10.0.0.101</code> command showing successful replies from the compute node.</li>
+</ol>
+<p>Save this screenshot as <code>Week1_Lab_Surname.png</code>.</p>
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1 Quiz: HPC Introduction and Architectures</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_1_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 1 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of HPC Introduction and Architectures</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What is the primary characteristic of the Von Neumann Architecture?",
+                        "options": [
+                                    "Separate memory spaces for data and instructions.",
+                                    "A single shared memory space for both data and instructions.",
+                                    "A decentralized memory model without a central processing unit.",
+                                    "Execution of multiple instruction streams simultaneously (MIMD)."
+                        ],
+                        "correct": 1,
+                        "explanation": "Von Neumann architecture stores both the program instructions and the data in a single, unified memory space."
+            },
+            {
+                        "question": "What does the 'Memory Wall' refer to?",
+                        "options": [
+                                    "The physical limit of how much RAM can be installed on a motherboard.",
+                                    "The growing disparity between CPU speed and memory access latency.",
+                                    "A firewall mechanism protecting system memory from unauthorized access.",
+                                    "The maximum bandwidth limit of a PCIe bus."
+                        ],
+                        "correct": 1,
+                        "explanation": "The Memory Wall describes the phenomenon where processor speeds increased much faster than memory access times, causing CPUs to frequently idle while waiting for data."
+            },
+            {
+                        "question": "In Flynn's Taxonomy, which category best describes modern GPUs?",
+                        "options": [
+                                    "SISD",
+                                    "SIMD",
+                                    "MISD",
+                                    "MIMD"
+                        ],
+                        "correct": 1,
+                        "explanation": "GPUs are essentially SIMD (Single Instruction, Multiple Data) machines, executing the exact same mathematical operation simultaneously across thousands of data points."
+            },
+            {
+                        "question": "Which of the following best defines Moore's Law?",
+                        "options": [
+                                    "The speed of light is the ultimate limit for data transmission.",
+                                    "The number of transistors on a microchip doubles approximately every two years.",
+                                    "The power consumption of a processor halves every 18 months.",
+                                    "Software speed decreases as hardware speed increases."
+                        ],
+                        "correct": 1,
+                        "explanation": "Moore's Law is the observation that the number of transistors in a dense integrated circuit doubles about every two years."
+            },
+            {
+                        "question": "What was Dennard Scaling?",
+                        "options": [
+                                    "As transistors get smaller, their power density remains constant.",
+                                    "The speed of a processor scales linearly with the number of cores.",
+                                    "The network bandwidth must scale with the processor speed.",
+                                    "Memory size must double every two years."
+                        ],
+                        "correct": 0,
+                        "explanation": "Dennard Scaling stated that as transistors shrink, their power density stays constant, meaning performance per watt increases. Its breakdown led to the multi-core era."
+            },
+            {
+                        "question": "According to Amdahl's Law, what limits the maximum speedup of a parallel program?",
+                        "options": [
+                                    "The number of processors.",
+                                    "The speed of the network interconnect.",
+                                    "The fraction of the code that is strictly serial.",
+                                    "The amount of available RAM."
+                        ],
+                        "correct": 2,
+                        "explanation": "Amdahl's Law states that the theoretical maximum speedup is strictly limited by the serial portion of the program."
+            },
+            {
+                        "question": "What does SISD stand for in Flynn's Taxonomy?",
+                        "options": [
+                                    "Single Instruction, Single Data",
+                                    "Standard Instruction, Shared Data",
+                                    "Synchronous Instruction, Single Data",
+                                    "Systematic Instruction, Shared Data"
+                        ],
+                        "correct": 0,
+                        "explanation": "SISD stands for Single Instruction, Single Data, which characterizes a traditional uniprocessor system."
+            },
+            {
+                        "question": "What does MIMD stand for in Flynn's Taxonomy?",
+                        "options": [
+                                    "Multiple Instruction, Multiple Data",
+                                    "Memory Instruction, Memory Data",
+                                    "Main Instruction, Main Data",
+                                    "Multiple Iteration, Multiple Data"
+                        ],
+                        "correct": 0,
+                        "explanation": "MIMD stands for Multiple Instruction, Multiple Data, typical of modern multi-core processors and HPC clusters."
+            },
+            {
+                        "question": "Which of the following is a key characteristic of a computing cluster?",
+                        "options": [
+                                    "It consists of a single massive processor.",
+                                    "It connects multiple independent computers via a network to act as a single system.",
+                                    "It runs only single-threaded applications.",
+                                    "It shares a single continuous block of physical memory across all nodes."
+                        ],
+                        "correct": 1,
+                        "explanation": "A cluster connects multiple standalone machines (nodes) via a high-speed network to work collaboratively on computational tasks."
+            },
+            {
+                        "question": "What was the main driver for the shift to multi-core processors?",
+                        "options": [
+                                    "The inability to manufacture larger silicon wafers.",
+                                    "The breakdown of Dennard Scaling and the 'power wall'.",
+                                    "A shortage of memory bandwidth.",
+                                    "The invention of GPUs."
+                        ],
+                        "correct": 1,
+                        "explanation": "When Dennard Scaling broke down, increasing clock speeds led to excessive heat (the power wall), forcing manufacturers to use multiple slower cores instead."
+            },
+            {
+                        "question": "In a Distributed Memory architecture, how do processors access each other's memory?",
+                        "options": [
+                                    "Directly via the memory bus.",
+                                    "Through explicit message passing over a network.",
+                                    "Via a shared Level 3 cache.",
+                                    "By reading and writing to a central shared hard drive."
+                        ],
+                        "correct": 1,
+                        "explanation": "In distributed memory systems (like a cluster), nodes cannot access each other's RAM directly; they must send and receive data explicitly over a network."
+            },
+            {
+                        "question": "What is the primary role of a high-speed interconnect in an HPC cluster?",
+                        "options": [
+                                    "To connect the cluster to the internet.",
+                                    "To provide power to the compute nodes.",
+                                    "To facilitate fast, low-latency communication between compute nodes.",
+                                    "To connect the monitor and keyboard to the head node."
+                        ],
+                        "correct": 2,
+                        "explanation": "Interconnects like Infiniband are designed for extremely high bandwidth and low latency communication between nodes, essential for parallel applications."
+            },
+            {
+                        "question": "What constitutes a 'compute node' in a cluster?",
+                        "options": [
+                                    "A specialized hard drive.",
+                                    "An individual server containing CPUs, memory, and a network interface.",
+                                    "The software that schedules jobs.",
+                                    "The main switch that routes traffic."
+                        ],
+                        "correct": 1,
+                        "explanation": "A compute node is essentially a standalone server that acts as a single worker unit within the larger cluster."
+            },
+            {
+                        "question": "What is the primary difference between a CPU and a GPU?",
+                        "options": [
+                                    "CPUs have more cores than GPUs.",
+                                    "GPUs are optimized for serial execution, while CPUs are optimized for parallel execution.",
+                                    "CPUs are optimized for low latency and complex logic, while GPUs are optimized for high throughput and parallel data processing.",
+                                    "CPUs only process integers, while GPUs process floating-point numbers."
+                        ],
+                        "correct": 2,
+                        "explanation": "CPUs use complex cores for fast sequential processing, whereas GPUs use thousands of simpler cores for massive data parallelism."
+            },
+            {
+                        "question": "How is Peak FLOPS typically calculated for a processor?",
+                        "options": [
+                                    "Cores x Clock Frequency x FLOPs per Cycle",
+                                    "Memory Bandwidth x Clock Frequency",
+                                    "Number of Transistors x Power Consumption",
+                                    "Network Latency x Number of Nodes"
+                        ],
+                        "correct": 0,
+                        "explanation": "Theoretical peak performance is calculated by multiplying the number of cores, the clock speed, and the number of floating-point operations the core can execute per cycle."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

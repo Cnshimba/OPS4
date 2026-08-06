@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5 Quiz: Benchmarking and Tuning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_5_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 5 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of Benchmarking and Tuning</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What is the purpose of the High Performance Linpack (HPL) benchmark?",
+                        "options": [
+                                    "To measure memory bandwidth.",
+                                    "To measure disk I/O performance.",
+                                    "To measure the peak floating-point computing power of a cluster.",
+                                    "To test network latency."
+                        ],
+                        "correct": 2,
+                        "explanation": "HPL solves a dense linear system of equations to measure the floating-point execution rate (FLOPs) of a cluster, and is the standard used for the Top500 list."
+            },
+            {
+                        "question": "What does STREAM benchmark specifically measure?",
+                        "options": [
+                                    "Sustainable memory bandwidth.",
+                                    "CPU clock speed.",
+                                    "Storage read/write speeds.",
+                                    "Network bisection bandwidth."
+                        ],
+                        "correct": 0,
+                        "explanation": "STREAM is the industry standard for measuring sustained memory bandwidth (in GB/s) for simple vector kernels."
+            },
+            {
+                        "question": "Why is profiling important before attempting to optimize code?",
+                        "options": [
+                                    "It increases the compilation speed.",
+                                    "It identifies the 'hotspots' where the program spends the most time.",
+                                    "It automatically parallelizes the code.",
+                                    "It reduces the memory footprint."
+                        ],
+                        "correct": 1,
+                        "explanation": "Profiling reveals where the application actually spends its time, allowing you to focus optimization efforts on the bottlenecks that matter most (Amdahl's Law)."
+            },
+            {
+                        "question": "What is the difference between GFLOPS and TFLOPS?",
+                        "options": [
+                                    "GFLOPS is memory speed, TFLOPS is disk speed.",
+                                    "GFLOPS is billions of FLOPs, TFLOPS is trillions of FLOPs.",
+                                    "GFLOPS is for CPUs, TFLOPS is for GPUs.",
+                                    "There is no difference."
+                        ],
+                        "correct": 1,
+                        "explanation": "GigaFLOPS (10^9) represents billions of operations per second, while TeraFLOPS (10^12) represents trillions."
+            },
+            {
+                        "question": "What is 'Strong Scaling'?",
+                        "options": [
+                                    "Increasing the problem size while keeping the number of processors constant.",
+                                    "Keeping the overall problem size fixed while increasing the number of processors.",
+                                    "Using stronger, faster processors.",
+                                    "Scaling the network bandwidth."
+                        ],
+                        "correct": 1,
+                        "explanation": "Strong scaling measures how the time to solve a fixed-size problem decreases as more processors are added."
+            },
+            {
+                        "question": "What is 'Weak Scaling'?",
+                        "options": [
+                                    "Using older, slower processors.",
+                                    "Keeping the problem size fixed while reducing processors.",
+                                    "Increasing the problem size proportionally as the number of processors increases.",
+                                    "Decreasing the memory bandwidth."
+                        ],
+                        "correct": 2,
+                        "explanation": "Weak scaling measures efficiency when the workload per processor is kept constant, meaning the total problem size grows as you add nodes."
+            },
+            {
+                        "question": "According to Amdahl's Law, if 10% of a program is serial, what is the maximum theoretical speedup regardless of how many cores you use?",
+                        "options": [
+                                    "10x",
+                                    "100x",
+                                    "Infinite",
+                                    "2x"
+                        ],
+                        "correct": 0,
+                        "explanation": "Amdahl's Law states Speedup = 1 / (Serial Fraction). 1 / 0.10 = 10. You can never achieve more than a 10x speedup."
+            },
+            {
+                        "question": "How does Gustafson's Law change the perspective of Amdahl's Law?",
+                        "options": [
+                                    "It proves Amdahl wrong.",
+                                    "It argues that as we get more processors, we don't solve the same problem faster; we solve a much larger problem in the same amount of time.",
+                                    "It states that serial code doesn't exist.",
+                                    "It focuses purely on GPU acceleration."
+                        ],
+                        "correct": 1,
+                        "explanation": "Gustafson's Law relates to weak scaling, recognizing that researchers scale up the size of their simulations when given more computing power, reducing the impact of the serial portion."
+            },
+            {
+                        "question": "What is the primary cause of a 'cache miss'?",
+                        "options": [
+                                    "The CPU clock speed is too fast.",
+                                    "The data the CPU needs is not in the fast cache, forcing it to wait for a fetch from slower main memory.",
+                                    "The program has a syntax error.",
+                                    "The network cable is unplugged."
+                        ],
+                        "correct": 1,
+                        "explanation": "Cache misses occur when data is not found in the L1/L2/L3 cache, resulting in significant CPU stall times while data is retrieved from RAM."
+            },
+            {
+                        "question": "What does a compiler optimization flag like `-O3` do?",
+                        "options": [
+                                    "It deletes the source code.",
+                                    "It applies aggressive automatic optimizations (like loop unrolling and vectorization) to make the executable run faster.",
+                                    "It forces the code to run sequentially.",
+                                    "It turns off all warnings."
+                        ],
+                        "correct": 1,
+                        "explanation": "Compiler optimization flags instruct the compiler to spend more time analyzing the code to generate highly optimized, faster machine code."
+            },
+            {
+                        "question": "What is the 'Roofline Model'?",
+                        "options": [
+                                    "A model for cluster cooling efficiency.",
+                                    "A visual performance model that relates processor performance to off-chip memory traffic.",
+                                    "A method for physical server rack layout.",
+                                    "A pricing model for cloud HPC."
+                        ],
+                        "correct": 1,
+                        "explanation": "The Roofline model shows whether an application is compute-bound (limited by the CPU's peak FLOPS) or memory-bound (limited by memory bandwidth)."
+            },
+            {
+                        "question": "What is HPCG (High Performance Conjugate Gradients)?",
+                        "options": [
+                                    "A new type of graphics card.",
+                                    "A benchmark designed to complement HPL by measuring memory bandwidth and irregular data access, which better represents modern scientific codes.",
+                                    "A compiler flag.",
+                                    "A file system."
+                        ],
+                        "correct": 1,
+                        "explanation": "HPCG is a modern benchmark that stresses memory and network latency, providing a more realistic performance metric for memory-bound applications than HPL."
+            },
+            {
+                        "question": "What is 'OS Jitter' (or OS Noise) in HPC?",
+                        "options": [
+                                    "Vibrations in the server rack.",
+                                    "Small interruptions caused by background operating system tasks that can severely desynchronize tightly coupled parallel applications.",
+                                    "Static on the network cables.",
+                                    "Random crashes of the Slurm daemon."
+                        ],
+                        "correct": 1,
+                        "explanation": "OS Jitter refers to the microsecond delays caused by OS interrupts (like cron jobs or network polling). In a cluster with thousands of nodes, these tiny delays compound and drastically reduce performance."
+            },
+            {
+                        "question": "What does it mean if an application is 'Memory Bound'?",
+                        "options": [
+                                    "It uses too much hard drive space.",
+                                    "Its performance is limited by how fast data can be delivered from RAM to the CPU, not by the CPU's calculating speed.",
+                                    "It has a memory leak and will crash.",
+                                    "It can only run on a single node."
+                        ],
+                        "correct": 1,
+                        "explanation": "A memory-bound application spends most of its time waiting for data to arrive from memory because the CPU processes data faster than the RAM can supply it."
+            },
+            {
+                        "question": "What does it mean if an application is 'Compute Bound'?",
+                        "options": [
+                                    "It is tied to a specific computer.",
+                                    "Its performance is limited by the speed of the CPU's arithmetic logic units (FLOPS), not by memory delivery.",
+                                    "It requires a calculator.",
+                                    "It cannot use GPUs."
+                        ],
+                        "correct": 1,
+                        "explanation": "A compute-bound application has plenty of data available in cache/registers and is purely limited by how fast the CPU can crunch the numbers."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

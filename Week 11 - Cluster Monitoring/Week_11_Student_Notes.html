@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 11: Cluster Monitoring - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_11_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 11</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Cluster Monitoring</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<h1>Cluster Monitoring and Analytics</h1>
+<p><strong>Course</strong>: Operating Systems 4 (HPC)
+<strong>Module</strong>: EIOSY4A
+<strong>Week</strong>: 11</p>
+<hr />
+<h2>Overview</h2>
+<p>A Supercomputer is a complex machine with thousands of moving parts. If a single fan fails, a node can overheat and shut down. If a user runs a broken script, they can flood the network and stall everyone else. <strong>Monitoring</strong> is the eyes and ears of the System Administrator. This week, we implement the modern standard for cloud and HPC monitoring: <strong>Prometheus</strong> and <strong>Grafana</strong>.</p>
+<hr />
+<h2>1. HPC System Administration</h2>
+<p>Before we install tools, we must understand the role of the System Administrator. An HPC site is not just hardware; it is a service.</p>
+<h3>1.1 The Administrator's Mandate</h3>
+<p>The primary goal of HPC System Administration is <strong>RAS</strong>:</p>
+<ul>
+    <li><strong>Reliability</strong>: The system works when needed.</li>
+    <li><strong>Availability</strong>: The percentage of time the system is up (Target: 99.9%).</li>
+    <li><strong>Serviceability</strong>: How easy it is to fix when it breaks.</li>
+</ul>
+<h3>1.2 System Life Cycle</h3>
+<p>The lifecycle of a supercomputer follows four clear phases. <strong>Installation</strong> (Weeks 1-2) involves the physical assembly and cabling. <strong>Configuration</strong> (Weeks 3-7) sets up the software stack, Scheduler, and Network overlays. The bulk of the machine's life is spent in <strong>Operation</strong>, which focuses on daily monitoring and user management. Finally, the system reaches <strong>Decommission</strong>, where data is migrated and hardware is retired.</p>
+<h3>1.3 Measuring System State</h3>
+<p>You cannot manage what you cannot measure. Administration requires tracking <strong>Workload</strong> to ensure schedulers are efficient and nodes are not idling wastefully. To predict when a cluster will become "saturated," we use the <strong>Utilization Law</strong> from queueing theory:</p>
+<p>$$ U = \frac{\lambda}{\mu} $$</p>
+<ul>
+    <li><strong>$U$ (Utilization)</strong>: The percentage of time the system is busy (0 to 1).</li>
+    <li><strong>$\lambda$ (Arrival Rate)</strong>: The frequency at which new jobs are submitted to the queue.</li>
+    <li><strong>$\mu$ (Service Rate)</strong>: The speed at which the cluster finishes jobs.</li>
+</ul>
+<p>As $U$ approaches 1 (100%), the wait time in the queue grows exponentially. A well-managed cluster typically aims for a utilization of 80-90% to balance throughput with responsiveness. Modern administration moves away from legacy ad-hoc checks towards standardized tools like Prometheus to visualize these states over time.</p>
+
+<hr />
+<h2>2. The Philosophy of Monitoring</h2>
+<h3>2.1 "Is it Up?" vs "How is it Running?"</h3>
+<p>Legacy monitoring systems like Nagios focused on binary states, simply asking "Is Node 1 Pingable?". Modern observability tools like Prometheus shift the focus to metrics over time, asking more complex questions such as "What is Node 1's CPU load compared to 10 minutes ago?".</p>
+<h3>2.2 Push vs Pull Architecture</h3>
+<p>Monitoring systems generally follow one of two data collection models. In a <strong>Push (Agent)</strong> model, nodes send data to the server. This carries a risk: if 1000 nodes push simultaneously, they can inadvertently DDoS the monitoring server. Conversely, a <strong>Pull (Scraping)</strong> model—used by Prometheus—has the server visit each node to request data. This creates a more stable system where the server controls the load; if it becomes busy, it simply scrapes less frequently.</p>
+<hr />
+<h2>3. Prometheus Architecture</h2>
+<p>Prometheus is a <strong>Time-Series Database (TSDB)</strong>. Unlike a SQL database providing a snapshot of <em>now</em>, a TSDB is designed to track how values change <em>over time</em>. It specifically stores data as a stream of values associated with a timestamp.</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Prometheus Architecture" src="../images/prometheus_architecture.png" />
+<strong>Figure 11.1</strong>: <em>The Prometheus Architecture. Note the "Pull" mechanism where the Server retrieves data from Exporters.</em></p>
+<h3>3.1 The Core Components</h3>
+<p>The ecosystem consists of three main components:</p>
+<ol>
+<li>
+<p><strong>The Exporters (The Agents)</strong>:
+    These are lightweight binaries running on your Compute Nodes. They don't "send" data; they simply expose a web page (e.g., <code>http://node01:9100/metrics</code>) displaying their current status. Common exporters include:</p>
+<ul>
+<li><code>node_exporter</code>: Hardware OS metrics (CPU, RAM, Disk I/O).</li>
+<li><code>slurm_exporter</code>: Scheduler metrics (Queue length, wait times).</li>
+<li><code>mysqld_exporter</code>: Database performance metrics.</li>
+</ul>
+</li>
+<li>
+<p><strong>The Server (The Brain)</strong>:
+    This is the central process. It manages a <strong>Retrieval</strong> worker that wakes up every 15 seconds (the <em>Scrape Interval</em>), connects to the list of defined targets, reads their metrics page, and stores the data in its local TSDB.</p>
+<ul>
+<li><em>Reliability</em>: Because the server initiates the connection (Pull), a crashed node simply results in a "time out" rather than crashing the monitoring system.</li>
+</ul>
+</li>
+<li>
+<p><strong>The Alertmanager (The Voice)</strong>:
+    Prometheus doesn't send emails. Instead, check rules (e.g., <code>IF node_down &gt; 5min</code>) are evaluated. If true, an alert is pushed to the Alertmanager, which handles grouping (don't send 100 emails for 100 nodes) and routing (send criticals to PagerDuty, warnings to Slack).</p>
+</li>
+</ol>
+<hr />
+<h2>4. Visualization with Grafana</h2>
+<p>Prometheus is excellent at storing data but lacks efficient visualization capabilities. <strong>Grafana</strong> acts as a "Single Pane of Glass"—a dashboard layer that can query Prometheus (and other databases like MySQL or InfluxDB) and render the data into actionable insights.</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm mx-auto block" alt="Grafana Dashboard" src="../images/grafana_dashboard.png" />
+<strong>Figure 11.2</strong>: <em>A typical HPC Dashboard showing high-level cluster state (Gauges) and historical trends (Graphs).</em></p>
+<h3>4.1 Why Graphics Matter</h3>
+<p>In HPC, the primary goal of visualization is <strong>Pattern Recognition</strong>:</p>
+<ul>
+    <li><strong>Correlation</strong>: Does disk I/O spike every time the CPU drops? (Indicates I/O bottleneck).</li>
+    <li><strong>Saturation</strong>: Are we hitting 100% Network capacity during job startups?</li>
+    <li><strong>Outliers</strong>: In a cluster of 100 nodes, a Heatmap can instantly reveal the one node that is running 10°C hotter than the others.</li>
+</ul>
+<h3>4.2 Building a Dashboard</h3>
+<p>A dashboard is built from <strong>Panels</strong>. Each panel is a specific query visualized in a specific way:</p>
+<ul>
+    <li><strong>Graph</strong>: Best for trends over time (e.g., Memory usage over the last 24 hours).</li>
+    <li><strong>Gauge/Stat</strong>: Best for current snapshot state (e.g., "12 Jobs Running").</li>
+    <li><strong>Heatmap</strong>: Best for distribution across many nodes (e.g., CPU Load across 500 cores).</li>
+    <li><strong>Table</strong>: Best for exact values (e.g., List of nodes in "Drain" state).</li>
+</ul>
+<hr />
+<h2>4. Intelligent Monitoring (IPMI)</h2>
+<p>Beyond the Operating System, administrators often need to communicate directly with the hardware. <strong>IPMI (Intelligent Platform Management Interface)</strong> allows this via a separate management controller (BMC) inside the server that stays powered on even when the main OS has crashed. This provides access to critical physical sensors like Fan RPM, CPU Voltage, and Chassis Intrusion detection.</p>
+<hr />
+<hr />
+
+<hr />
+<h2>5. Deep Dive: PromQL (Prometheus Query Language)</h2>
+<p>To truly utilize Prometheus, an administrator must master its native query language, <strong>PromQL</strong>. Unlike SQL, which queries rows in tables, PromQL queries multi-dimensional time series data.</p>
+
+<h3>5.1 Basic PromQL Queries</h3>
+<ul>
+    <li><strong>Instant Vector:</strong> Returns a single value for each time series. For example, <code>node_cpu_seconds_total</code> returns the total CPU time consumed since boot.</li>
+    <li><strong>Range Vector:</strong> Returns a set of values over a time range. Useful for calculating rates. For example, <code>node_cpu_seconds_total[5m]</code> returns the data points collected over the last 5 minutes.</li>
+</ul>
+
+<h3>5.2 Calculating Rates (The Most Common Query)</h3>
+<p>Because many metrics are <em>counters</em> (they only go up, like total bytes sent), you usually want to know the <em>rate of increase</em> per second (e.g., bandwidth). You do this using the <code>irate()</code> or <code>rate()</code> functions.</p>
+<pre><code># Calculate CPU usage percentage per core over the last 5 minutes:
+100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)</code></pre>
+<p>This query takes the rate of the "idle" mode CPU counter, averages it by CPU core, and subtracts it from 100 to get the active utilization.</p>
+
+<hr />
+
+<h2>6. Practical Alerting with Alertmanager</h2>
+<p>Monitoring is only useful if it wakes you up when something goes wrong. Alertmanager handles grouping, inhibiting, and routing alerts.</p>
+
+<h3>6.1 Defining Alert Rules</h3>
+<p>Rules are defined in YAML format on the Prometheus server. If the PromQL expression evaluates to true for a given duration, the alert fires.</p>
+<pre><code>groups:
+- name: NodeAlerts
+  rules:
+  - alert: HighCPULoad
+    expr: node_load1 > 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Instance {{ $labels.instance }} under high load"</code></pre>
+<p>This rule checks if the 1-minute load average (<code>node_load1</code>) exceeds 10 for 5 consecutive minutes. If so, it sends a Warning alert.</p>
+
+<h3>6.2 Alert Routing</h3>
+<p>Once Alertmanager receives the <code>HighCPULoad</code> alert, it looks at its routing tree. It might send "warning" severity alerts to a Slack channel, but "critical" alerts (like an entire rack losing power) to a PagerDuty system to wake up an on-call engineer.</p>
+
+<hr />
+
+<h2>7. Summary and Next Steps</h2>
+<p>This week, we transitioned from building the system to <strong>Operating</strong> it. We learned about the RAS goals (Reliability, Availability, Serviceability) and implemented a modern Observability stack using <strong>Prometheus</strong> (Pull-based TSDB) and <strong>Grafana</strong> (Visualization). You now have a dashboard that tells you the health of your cluster in real-time.</p>
+<h3>Preparing for Week 12</h3>
+<p>Next week is the <strong>Capstone Project</strong>. There is no new lecture content. You will be tasked with integrating everything you have learned—Hardware, Provisioning, Scheduling, Storage, Applications, and Monitoring—into a final, polished delivery.</p>
+<p><strong>Checklist:</strong></p>
+<ul>
+    <li>[ ] Can you explain the difference between Push and Pull monitoring?</li>
+    <li>[ ] Do you understand the concept of a Time Series Database?</li>
+    <li>[ ] Can you identify a "straggler" node using a heatmap?</li>
+</ul>
+<h3>References</h3>
+<ul>
+<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann. Chapter 13.</li>
+<li><strong>Prometheus Authors (2023)</strong>. <em>Prometheus Documentation</em>. [Online]. Available at: https://prometheus.io/docs/introduction/overview/.</li>
+<li><strong>Grafana Labs (2023)</strong>. <em>Grafana Documentation</em>. [Online]. Available at: https://grafana.com/docs/grafana/latest/.</li>
+</ul>
+        
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_11_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%2010%20-%20HPC%20Applications/Week_10_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 10</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%2012%20-%20Capstone%20Project/Week_12_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 12</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

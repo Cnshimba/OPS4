@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 3 Quiz: Node Provisioning with Warewulf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn { transition: all 0.2s ease; }
+        .option-btn.selected { background-color: #002F6E; color: white; border-color: #002F6E; }
+        .option-btn.correct { background-color: #10b981; color: white; border-color: #10b981; }
+        .option-btn.wrong { background-color: #ef4444; color: white; border-color: #ef4444; }
+        .explanation { display: none; }
+        .explanation.show { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_3_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 3 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of Node Provisioning</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions injected via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What does PXE stand for?",
+                        "options": [
+                                    "Preboot Execution Environment",
+                                    "Parallel XML Extractor",
+                                    "Primary X Server Environment",
+                                    "Processor Execution Engine"
+                        ],
+                        "correct": 0,
+                        "explanation": "PXE (Preboot Execution Environment) is an industry standard that allows computers to boot an operating system directly from the network instead of a local disk."
+            },
+            {
+                        "question": "What is the role of DHCP in the network boot process?",
+                        "options": [
+                                    "It transfers the operating system files.",
+                                    "It provides the booting node with an IP address and the location of the boot server.",
+                                    "It encrypts the boot image.",
+                                    "It formats the local hard drive."
+                        ],
+                        "correct": 1,
+                        "explanation": "DHCP (Dynamic Host Configuration Protocol) assigns an IP address to the node and provides the 'next-server' and boot filename required to start the PXE process."
+            },
+            {
+                        "question": "Which protocol is typically used to transfer the initial bootloader (like pxelinux or iPXE) during a network boot?",
+                        "options": [
+                                    "HTTP",
+                                    "FTP",
+                                    "TFTP",
+                                    "SSH"
+                        ],
+                        "correct": 2,
+                        "explanation": "TFTP (Trivial File Transfer Protocol) is a simple, UDP-based protocol used to transfer the small initial bootloader because it requires minimal implementation in the network card's firmware."
+            },
+            {
+                        "question": "What is a 'stateless' compute node?",
+                        "options": [
+                                    "A node that does not have an IP address.",
+                                    "A node that boots its OS entirely into RAM from the network, maintaining no persistent local OS state.",
+                                    "A node that cannot run MPI jobs.",
+                                    "A node that is powered off."
+                        ],
+                        "correct": 1,
+                        "explanation": "Stateless nodes run their OS from a RAM disk. Any changes made to the OS are lost upon reboot, ensuring the node always starts in a known, clean state."
+            },
+            {
+                        "question": "What is the primary function of Warewulf?",
+                        "options": [
+                                    "To compile parallel code.",
+                                    "To schedule jobs on a cluster.",
+                                    "To provision and manage operating system images across a cluster of compute nodes.",
+                                    "To monitor network traffic."
+                        ],
+                        "correct": 2,
+                        "explanation": "Warewulf is an open-source cluster provisioning system that builds OS images and distributes them to compute nodes over the network."
+            },
+            {
+                        "question": "What is a VNFS in the context of Warewulf?",
+                        "options": [
+                                    "Virtual Network Firewall System",
+                                    "Virtual Node File System - the encapsulated OS image deployed to nodes.",
+                                    "Volatile Node Failure State",
+                                    "Verified Network File Share"
+                        ],
+                        "correct": 1,
+                        "explanation": "The VNFS is the root filesystem image that Warewulf constructs and serves to the compute nodes during the boot process."
+            },
+            {
+                        "question": "What is the purpose of a 'chroot' environment when building cluster images?",
+                        "options": [
+                                    "To change the root password.",
+                                    "To create an isolated directory tree that acts as a separate root filesystem, allowing you to install and configure software for the nodes without affecting the head node.",
+                                    "To compress the filesystem.",
+                                    "To encrypt the hard drive."
+                        ],
+                        "correct": 1,
+                        "explanation": "A chroot (change root) allows administrators to build and modify the OS image (the VNFS) in an isolated space on the head node before deploying it."
+            },
+            {
+                        "question": "Why is iPXE often used instead of standard PXE?",
+                        "options": [
+                                    "It is older and more compatible.",
+                                    "It supports booting over HTTP, which is much faster and more reliable than TFTP.",
+                                    "It requires no DHCP server.",
+                                    "It only works on wireless networks."
+                        ],
+                        "correct": 1,
+                        "explanation": "iPXE extends traditional PXE capabilities, notably adding support for HTTP, which vastly speeds up the transfer of the large OS image compared to TFTP."
+            },
+            {
+                        "question": "What is a major advantage of diskless booting (stateless provisioning)?",
+                        "options": [
+                                    "Nodes use more power.",
+                                    "Every node is guaranteed to run the exact same, synchronized software image.",
+                                    "It requires a hard drive in every node.",
+                                    "It is immune to network failures."
+                        ],
+                        "correct": 1,
+                        "explanation": "Because all nodes pull their OS from the same master image on the head node, software consistency across the cluster is absolutely guaranteed."
+            },
+            {
+                        "question": "In a Warewulf cluster, what generates the `/etc/hosts` file on the compute nodes?",
+                        "options": [
+                                    "The user must manually write it on every node.",
+                                    "Warewulf dynamically generates it based on its internal node database.",
+                                    "It is downloaded from the internet.",
+                                    "It is copied from the Windows domain controller."
+                        ],
+                        "correct": 1,
+                        "explanation": "Warewulf acts as the source of truth and automatically generates cluster-wide configuration files like /etc/hosts using templates and its node database."
+            },
+            {
+                        "question": "What does the kernel payload do in the Warewulf boot process?",
+                        "options": [
+                                    "It compiles C code.",
+                                    "It provides the Linux kernel and initial RAM disk (initramfs) necessary to start the OS and mount the VNFS.",
+                                    "It schedules jobs.",
+                                    "It manages user passwords."
+                        ],
+                        "correct": 1,
+                        "explanation": "The kernel payload is the first piece of Linux executed by the bootloader; it initializes hardware and pulls down the rest of the OS image."
+            },
+            {
+                        "question": "How does Warewulf handle node-specific configurations (like hostnames or IP addresses) if all nodes use the same image?",
+                        "options": [
+                                    "It relies on users to set them after booting.",
+                                    "It uses 'Overlays'\u2014small, dynamically generated file archives applied over the base image at boot time.",
+                                    "It creates a completely separate 10GB image for every single node.",
+                                    "It doesn't; all nodes have the same hostname."
+                        ],
+                        "correct": 1,
+                        "explanation": "Warewulf uses overlays to inject node-specific files (like network configs or hostnames) into the stateless image right as the node boots."
+            },
+            {
+                        "question": "What is the primary identifier used by the DHCP server to recognize a specific bare-metal compute node?",
+                        "options": [
+                                    "Its CPU model.",
+                                    "Its MAC address.",
+                                    "Its hard drive serial number.",
+                                    "Its BIOS version."
+                        ],
+                        "correct": 1,
+                        "explanation": "The MAC address is a unique hardware identifier on the network card, used by DHCP and Warewulf to identify the node and assign its specific IP and image."
+            },
+            {
+                        "question": "If a stateless compute node reboots, what happens to temporary files written to `/tmp`?",
+                        "options": [
+                                    "They are saved to the head node.",
+                                    "They are preserved on the local hard drive.",
+                                    "They are permanently lost because the filesystem exists only in RAM.",
+                                    "They are emailed to the administrator."
+                        ],
+                        "correct": 2,
+                        "explanation": "Stateless nodes run in a RAM disk (tmpfs). A reboot wipes the memory, destroying any local modifications or temporary files."
+            },
+            {
+                        "question": "Why must the head node have two network interfaces in a standard cluster design?",
+                        "options": [
+                                    "To double the internet speed.",
+                                    "One for the public external network, and one for the private internal cluster network.",
+                                    "One for Windows and one for Linux.",
+                                    "To provide a backup if one cable breaks."
+                        ],
+                        "correct": 1,
+                        "explanation": "The head node bridges the outside world (public IP) and the isolated compute nodes (private network), acting as a gateway and NAT router."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

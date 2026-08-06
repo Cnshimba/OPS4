@@ -1,0 +1,344 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 8: Advanced Storage Concepts - Lab Guide - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_8_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 8</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Week 8: Advanced Storage Concepts - Lab Guide</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<h1>Week 8 Lab Part 2: Deploying BeeGFS</h1>
+<p><strong>Objective</strong>: Deploy a high-performance Parallel File System.
+<strong>Goal</strong>: Create a shared <code>/scratch</code> space using the local disks of the Compute Nodes.</p>
+<hr />
+<h2>1. Prerequisites</h2>
+<ul>
+<li>[ ] <strong>Master Node</strong>: Will host the <code>mgmtd</code> and <code>meta</code> services.</li>
+<li>[ ] <strong>Compute Nodes</strong>: Will host the <code>storage</code> service (Converged Architecture).</li>
+<li>[ ] <strong>Networking</strong>: BeeGFS relies heavily on DNS. Ensure <code>/etc/hosts</code> works on all nodes.</li>
+</ul>
+<hr />
+<h2>2. Install BeeGFS Repositories</h2>
+<p>We need to add the BeeGFS repo to all nodes.</p>
+<h3>2.1 On Master</h3>
+<ul>
+<li>[ ] Get the repo file:
+    <code>bash
+    sudo wget -O /etc/yum.repos.d/beegfs-rhel9.repo https://www.beegfs.io/release/beegfs_7_4/dists/beegfs-rhel9.repo</code></li>
+</ul>
+<h3>2.2 On Compute Nodes (via Warewulf)</h3>
+<p>Add the repo to your node image/container (e.g., <code>rocky-9</code>):</p>
+<ul>
+    <li>[ ] Enter the container:</li>
+</ul>
+<p>    <code>bash
+    sudo wwctl container exec rocky-9 /bin/bash</code></p>
+<ul>
+    <li>[ ] Add the repo (Inside Container):</li>
+</ul>
+<p>    <code>bash
+    wget -O /etc/yum.repos.d/beegfs-rhel9.repo https://www.beegfs.io/release/beegfs_7_4/dists/beegfs-rhel9.repo</code></p>
+<ul>
+    <li>[ ] Exit and Rebuild:</li>
+</ul>
+<p>    <code>bash
+    exit
+    sudo wwctl container build rocky-9</code></p>
+<hr />
+<h2>3. Configure Master Services (Mgmtd &amp; Meta)</h2>
+<h3>3.1 Install</h3>
+<ul>
+<li>[ ] Install packages:
+    <code>bash
+    sudo dnf install beegfs-mgmtd beegfs-meta beegfs-utils -y</code></li>
+</ul>
+<h3>3.2 Initialize Management Service</h3>
+<ul>
+<li>[ ] Setup Mgmtd service:
+    <code>bash
+    sudo /opt/beegfs/sbin/beegfs-setup-mgmtd -p /var/beegfs/mgmtd -S beegfs-mgmtd</code></li>
+</ul>
+<h3>3.3 Initialize Metadata Service</h3>
+<ul>
+<li>[ ] Setup Meta service:
+    <code>bash
+    sudo /opt/beegfs/sbin/beegfs-setup-meta -p /var/beegfs/meta -s 2 -m master</code>
+    <em>(Explanation: <code>-s 2</code> sets the ServiceID, <code>-m master</code> points to the Management server).</em></li>
+</ul>
+<h3>3.4 Start Master Services</h3>
+<ul>
+<li>[ ] Enable and Start:
+    <code>bash
+    sudo systemctl enable --now beegfs-mgmtd beegfs-meta</code></li>
+</ul>
+<hr />
+<h2>4. Configure Compute Services (Storage)</h2>
+<p>Now we turn our Compute Nodes into Storage servers.</p>
+<h3>4.1 Install (Inside Container)</h3>
+<p>The storage service binary must exist in the image.</p>
+<ul>
+    <li>[ ] Install storage package:</li>
+</ul>
+<p>    <code>bash
+    sudo wwctl container exec rocky-9 dnf install beegfs-storage -y</code></p>
+<ul>
+    <li>[ ] Rebuild and Reboot:</li>
+</ul>
+<p>    <code>bash
+    sudo wwctl container build rocky-9
+    sudo wwctl power cycle node[01-04]</code></p>
+<h3>4.2 Initialize Storage Service (On Each Node)</h3>
+<p>Log into <code>node01</code> (and similarly for others):</p>
+<ul>
+    <li>[ ] Create local storage directory:</li>
+</ul>
+<p>    <code>bash
+    mkdir -p /data/beegfs/storage</code></p>
+<ul>
+    <li>[ ] Setup the service (Use distinct IDs: 3, 4, 5, 6 for nodes 1-4):</li>
+</ul>
+<p>    <code>bash
+    # Example for Node01 (ID 301)
+    sudo /opt/beegfs/sbin/beegfs-setup-storage -p /data/beegfs/storage -s 3 -i 301 -m master</code></p>
+<ul>
+    <li>[ ] Start the service:</li>
+</ul>
+<p>    <code>bash
+    sudo systemctl enable --now beegfs-storage</code></p>
+<hr />
+<h2>5. Mount the Filesystem (Client)</h2>
+<p>Now that the servers are running, let's mount the filesystem.</p>
+<h3>5.1 Install Client</h3>
+<ul>
+<li>[ ] Install client packages:
+    <code>bash
+    sudo dnf install beegfs-client beegfs-helperd beegfs-utils -y</code></li>
+</ul>
+<h3>5.2 Configure Client</h3>
+<ul>
+<li>[ ] Point client to Master:
+    <code>bash
+    sudo /opt/beegfs/sbin/beegfs-setup-client -m master</code></li>
+</ul>
+<h3>5.3 Start Client</h3>
+<ul>
+<li>[ ] Start client service:
+    <code>bash
+    sudo systemctl enable --now beegfs-helperd beegfs-client</code></li>
+<li>[ ] <strong>Verification</strong>: Check if mounted:
+    <code>bash
+    df -h | grep beegfs
+    # Should see: beegfs_nodev ... /mnt/beegfs</code></li>
+</ul>
+<hr />
+<h2>6. Verification &amp; Striping Test (Interactive)</h2>
+<h3>6.1 Check Health</h3>
+<p>On the Master, check connectivity:</p>
+<ul>
+    <li>[ ] List Metadata Nodes:</li>
+</ul>
+<p>    <code>bash
+    beegfs-ctl --listnodes --nodetype=meta</code></p>
+<ul>
+    <li>[ ] List Storage Nodes:</li>
+</ul>
+<p>    <code>bash
+    beegfs-ctl --listnodes --nodetype=storage</code>
+    <em>Result</em>: Do you see all your compute nodes listed?</p>
+<h3>6.2 Stripe Test</h3>
+<p>Create a file, write to it, and see where the chunks go.</p>
+<ul>
+    <li>[ ] Set stripe pattern (Spread across 2 nodes):</li>
+</ul>
+<p>    <code>bash
+    beegfs-ctl --setpattern --numtargets=2 /mnt/beegfs</code></p>
+<ul>
+    <li>[ ] Create a 1GB file:</li>
+</ul>
+<p>    <code>bash
+    dd if=/dev/zero of=/mnt/beegfs/testfile bs=1M count=1000</code></p>
+<ul>
+    <li>[ ] Check chunk distribution:</li>
+</ul>
+<p>    <code>bash
+    beegfs-ctl --getentryinfo /mnt/beegfs/testfile</code>
+    <em>Observation</em>: You should see that the file is split across, for example, Target ID 301 (Node 1) and Target ID 401 (Node 2).</p>
+<hr />
+<h2>7. Submission</h2>
+<p>Submit a screenshot of:</p>
+<ul>
+    <li>[ ] <code>beegfs-ctl --listnodes --nodetype=storage</code> showing all your nodes.</li>
+    <li>[ ] <code>df -h</code> showing the <code>/mnt/beegfs</code> mount.</li>
+</ul>
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+</div>
+
+</body>
+</html>

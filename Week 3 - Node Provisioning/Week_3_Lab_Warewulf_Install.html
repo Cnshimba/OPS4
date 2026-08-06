@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 3: Node Provisioning - Lab Guide - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_3_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 3</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Week 3: Node Provisioning - Lab Guide</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<p><strong>Objective</strong>: Deploy a fully functional HPC provisioning system using the OpenHPC 4.1 methodology.
+<strong>Goal</strong>: Install Warewulf 4 on openEuler 24.03, import an openEuler container image, configure it automatically using OpenHPC scripts, and successfully boot a "diskless" compute node.</p>
+<hr />
+<h2>1. Prerequisites</h2>
+<p>Ensure your Master Node has:</p>
+<ol>
+    <li><strong>Static IP</strong>: <code>10.0.0.1</code> configured on your internal network adapter.</li>
+    <li><strong>Hostname</strong>: <code>master</code>.</li>
+    <li><strong>Internet Access</strong>: Required to download the container image and packages.</li>
+</ol>
+
+<hr />
+<h2>2. Environment Configuration (Crucial Step)</h2>
+<p><strong>Explanation</strong>: This block loads the local site variables into the bash environment. These variables are subsequently substituted into configuration files automatically, minimizing manual typing errors. We created this configuration file in Week 1.</p>
+
+<p>Apply the variables to your current session:</p>
+<pre><code class="language-bash">source cluster_env.sh</code></pre>
+
+<hr />
+<h2>3. Configure Base OS</h2>
+
+<h3>3.1 Configure Firewall</h3>
+<p>Warewulf relies on DHCP, TFTP, and HTTP. We will disable the firewall for this lab to avoid issues.</p>
+<p><strong>Explanation</strong>: This command stops and disables the default <code>firewalld</code> service so that Warewulf's internal TFTP/DHCP traffic is not blocked.</p>
+<pre><code class="language-bash">sudo systemctl disable --now firewalld || true
+</code></pre>
+
+<h3>3.2 Configure NTP</h3>
+<p>HPC systems rely on synchronized clocks. We will configure Chrony.</p>
+<p><strong>Explanation</strong>: These commands install the <code>chrony</code> time service, enable it to start on boot, configure it to allow time queries from the local network (using the <code>ntp_server</code> variable we defined), and restart the service to apply changes.</p>
+<pre><code class="language-bash">sudo dnf -y install chrony
+sudo systemctl enable chronyd.service
+sudo echo "local stratum 10" >> /etc/chrony.conf
+sudo echo "server ${NTP_SERVER}" >> /etc/chrony.conf
+sudo echo "allow all" >> /etc/chrony.conf
+sudo systemctl restart chronyd
+</code></pre>
+
+<hr />
+<h2>4. Install OpenHPC Components</h2>
+<p>We will add the OpenHPC repository to the master node.</p>
+<p><strong>Explanation</strong>: This command fetches the official <code>ohpc-release</code> RPM, which configures the local <code>dnf</code> package manager to securely download software from the OpenHPC 4.1 community repository.</p>
+<pre><code class="language-bash">sudo dnf -y install http://repos.openhpc.community/OpenHPC/4/openEuler_24.03/x86_64/ohpc-release-4-1.oe2403.x86_64.rpm
+</code></pre>
+
+<hr />
+<h2>5. Install Warewulf Provisioner</h2>
+
+<h3>5.1 Install Packages and Create Directories</h3>
+<p>Install Warewulf and the <code>yq</code> utility (used for configuring YAML files).</p>
+<p><strong>Explanation</strong>: We install <code>warewulf-ohpc</code> which provides the provisioning framework, and <code>yq</code>, a command-line YAML processor. We also manually create the TFTP boot directory which Warewulf requires to serve bootloader files.</p>
+<pre><code class="language-bash">sudo dnf -y install warewulf-ohpc yq
+sudo install -d -m 0755 /var/lib/tftpboot
+</code></pre>
+
+<h3>5.2 Configure Warewulf (warewulf.conf & nodes.conf)</h3>
+<p>We use <code>yq</code> to automatically update the configuration based on the variables we exported earlier.</p>
+<p><strong>Explanation</strong>: Instead of using a text editor like <code>nano</code> or <code>vim</code>, we use <code>yq</code> to surgically modify the <code>warewulf.conf</code> YAML file using the environment variables defined in Section 2. We also use <code>sed</code> to update <code>nodes.conf</code> to mount `/opt` automatically. Finally, we enable the Warewulf service.</p>
+<pre><code class="language-bash"># Edit the warewulf.conf file to use appropriate interface and settings
+sudo yq -i '.ipaddr = "'"${SMS_IP}"'"' /etc/warewulf/warewulf.conf
+sudo yq -i '.netmask = "'"${INTERNAL_NETMASK}"'"' /etc/warewulf/warewulf.conf
+sudo yq -i '.network = "'"${INTERNAL_NETWORK}"'"' /etc/warewulf/warewulf.conf
+sudo yq -i '.dhcp["range start"] = "'"${INTERNAL_NETWORK}"'"' /etc/warewulf/warewulf.conf
+sudo yq -i '.dhcp["range end"] = "static"' /etc/warewulf/warewulf.conf
+sudo yq -i '.dhcp.template = "static"' /etc/warewulf/warewulf.conf
+
+# Edit the nodes.conf to mount /opt on boot
+sudo sed -i "s/defaults,noauto,nofail,ro/defaults,nofail,ro/" /etc/warewulf/nodes.conf
+
+# Turn on debugging messages
+sudo yq -i '.nodeprofiles.default.kernel.args -= ["quiet"]' /etc/warewulf/nodes.conf
+sudo echo "log-debug" >> /etc/dnsmasq.d/ww4-debug.conf
+
+# Enable and start the warewulfd service before using wwctl.
+sudo systemctl enable --now warewulfd
+</code></pre>
+
+<h3>5.3 Configure Node Profiles and Overlays</h3>
+<p><strong>Explanation</strong>: These commands create a base Warewulf profile called "nodes" and a configuration overlay called "nodeconfig". The <code>wwctl profile set</code> commands attach the network variables to the profile so that any node using this profile inherits the correct network routing.</p>
+<pre><code class="language-bash"># Create a new "nodes" profile and inherit the "default" profile
+sudo wwctl profile add nodes --profile default --comment "Nodes profile"
+
+# Create a new "nodeconfig" overlay to store node configuration files
+sudo wwctl overlay create nodeconfig
+sudo wwctl profile set --yes nodes --system-overlays nodeconfig --runtime-overlays syncuser
+
+# Set default network configuration
+sudo wwctl profile set -y nodes --netname=default --netdev="${COMPUTE_ETH_INTERNAL}"
+sudo wwctl profile set -y nodes --netname=default --netmask="${INTERNAL_NETMASK}"
+sudo wwctl profile set -y nodes --netname=default --gateway="${IPV4_GATEWAY}"
+sudo wwctl profile set -y nodes --netname=default --nettagadd=DNS="${DNS_SERVERS}"
+
+# Configuring Warewulf will restart/enable relevant services
+sudo wwctl configure --all
+</code></pre>
+
+<hr />
+<h2>6. Create Compute Node Image</h2>
+
+<h3>6.1 Import Base Image</h3>
+<p>We will pull the official openEuler image for Warewulf.</p>
+<p><strong>Explanation</strong>: This pulls a pre-built openEuler 24.03 container image from the GitHub Container Registry. Warewulf converts this into a bootable format. We also export the <code>CHROOT</code> location to a variable.</p>
+<pre><code class="language-bash">sudo wwctl image import docker://ghcr.io/warewulf/warewulf-openeuler:24.03 openeuler-24.03 --syncuser
+export CHROOT=$(sudo wwctl image show openeuler-24.03)
+</code></pre>
+
+<h3>6.2 Install Packages into the Image</h3>
+<p>We will execute a script inside the container to install necessary base utilities and the OpenHPC compute package.</p>
+<p><strong>Explanation</strong>: The <code>wwctl image exec --build=false</code> command runs commands <em>inside</em> the container image. The <code>&lt;&lt;- EOF</code> blocks pass a list of installation commands natively to the container's shell, automating the configuration without the need for manual interactive logins.</p>
+<pre><code class="language-bash">sudo wwctl image exec --build=false openeuler-24.03 -- /bin/bash -ex &lt;&lt;- EOF
+dnf -y install dnf-utils
+dnf -y install http://repos.openhpc.community/OpenHPC/4/openEuler_24.03/x86_64/ohpc-release-4-1.oe2403.x86_64.rpm
+dnf -y update
+EOF
+
+sudo wwctl image exec --build=false openeuler-24.03 -- /bin/bash -ex &lt;&lt;- EOF
+dnf -y config-manager --add-repo https://eur.openeuler.openatom.cn/coprs/openhpc/OpenHPC/repo/openeuler-24.03_LTS_SP2/openhpc-OpenHPC-openeuler-24.03_LTS_SP2.repo
+dnf -y install openeuler-extra-repos
+dnf -y install ohpc-base-compute
+EOF
+</code></pre>
+
+<p>Set a root password for the image so you can log in later!</p>
+<p><strong>Explanation</strong>: Runs the <code>passwd</code> command inside the image so that the resulting compute node will have a known root password.</p>
+<pre><code class="language-bash">sudo wwctl image exec openeuler-24.03 /bin/passwd
+</code></pre>
+
+<hr />
+<h2>7. Deploy Cluster: Register Compute Nodes</h2>
+<p>We will configure our two compute nodes differently to demonstrate both provisioning models.</p>
+
+<h3>7.1 Stateless Node (compute-01)</h3>
+<p>This node will boot its OS entirely into RAM, leaving its local hard drive untouched. This is the default HPC behavior.</p>
+<pre><code class="language-bash">sudo wwctl node add --image=openeuler-24.03 --profile=nodes --netname=default \
+--ipaddr="${C_IP[0]}" --hwaddr="${C_MAC[0]}" "${C_NAME[0]}"
+</code></pre>
+
+<h3>7.2 Stateful Node (compute-02)</h3>
+<p>This node will PXE boot, but Warewulf will install the OS permanently onto its local hard drive (<code>/dev/sda</code>). This is known as Stateful provisioning, which is useful for nodes that require large local storage or specific disk configurations.</p>
+<p><strong>Explanation</strong>: We configure the node and tell Warewulf's `wwinit` utility to wipe the specified disk and install the OS persistently.</p>
+<pre><code class="language-bash">sudo wwctl node add --image=openeuler-24.03 --profile=nodes --netname=default \
+--ipaddr="${C_IP[1]}" --hwaddr="${C_MAC[1]}" "${C_NAME[1]}"
+
+# Configure the node to install the OS statefully to the first hard drive
+sudo wwctl profile set nodes --init=wwinit
+sudo wwctl node set "${C_NAME[1]}" --diskname=/dev/sda --diskwipe=true
+</code></pre>
+
+<h3>7.3 Finalize Configuration</h3>
+<p>Rebuild the container images and configuration overlays to apply all the changes.</p>
+<pre><code class="language-bash"># Rebuild image and overlays
+sudo wwctl image build openeuler-24.03
+sudo wwctl overlay build
+</code></pre>
+
+<hr />
+<h2>8. Boot the Nodes</h2>
+<ol>
+<li>Open the console/display of your <strong>Compute Nodes (compute-01 and compute-02)</strong>.</li>
+<li>Ensure the BIOS/Boot Order on both VMs is set to <strong>Network Boot / PXE</strong> as the first priority.</li>
+<li>Power on both nodes.</li>
+<li><strong>Observe the Differences</strong>:<ul>
+<li><strong>compute-01 (Stateless)</strong>: Downloads the kernel and initramfs via HTTP and boots directly to the login prompt. A reboot resets the system entirely.</li>
+<li><strong>compute-02 (Stateful)</strong>: Downloads the kernel, executes <code>wwinit</code>, formats the virtual hard drive, writes the openEuler filesystem to the disk, and then pivots root. Subsequent local boots will launch from the hard drive.</li>
+</ul>
+</li>
+</ol>
+
+<hr />
+<h2>9. Troubleshooting</h2>
+<p>If the node fails to boot:</p>
+<ol>
+<li><strong>DHCP Timeout</strong>: Could not get an IP.<ul>
+<li>Check <code>systemctl status warewulfd</code> on master.</li>
+<li>Verify the MAC address in <code>wwctl node list node01</code> matches the actual VM MAC.</li>
+</ul>
+</li>
+<li><strong>TFTP Timeout</strong>: Got IP, but stuck at "tftp...".<ul>
+<li>Firewall is usually the culprit (UDP port 69).</li>
+</ul>
+</li>
+</ol>
+
+<hr />
+<h2>10. Submission</h2>
+<p>Submit a PDF containing:</p>
+<ol>
+    <li>Screenshot of <code>wwctl image list</code> on the Master.</li>
+    <li>Screenshot of <code>wwctl node list</code> on the Master.</li>
+    <li>Screenshot of the <strong>Compute Node console</strong> showing a successful login prompt or successful boot log.</li>
+</ol>
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+</div>
+
+</body>
+</html>

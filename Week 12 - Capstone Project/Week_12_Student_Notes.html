@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 12: Capstone Project - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_12_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 12</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Capstone Project</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<h1>Capstone Project</h1>
+<p><strong>Course</strong>: Operating Systems 4 (HPC)
+<strong>Module</strong>: EIOSY4A
+<strong>Week</strong>: 12</p>
+<hr />
+<h2>Overview</h2>
+<p>This is it. The final challenge. There are no new lectures, no new theory. For the past 11 weeks, we have built the components of a commercial-grade Supercomputing Centre. Now, you must assemble them into a cohesive, functioning whole.</p>
+<p>You are required to:</p>
+<ol>
+    <li><strong>Provision</strong> the cluster using Warewulf.</li>
+    <li><strong>Monitor</strong> the cluster using Prometheus and Grafana.</li>
+    <li><strong>Program</strong> the cluster by writing and submitting a Parallel Matrix Multiplication script.</li>
+</ol>
+<hr />
+<h2>1. The Integration Challenge</h2>
+<p>In the real world, "installing software" is easy. Making software <strong>interoperate</strong> is hard.</p>
+<ul>
+    <li>NFS needs the network to be up.</li>
+    <li>The Network (via Warewulf) needs the nodes to boot.</li>
+    <li>Slurm needs the nodes to report "Ready".</li>
+    <li>The Application (MPI) needs Slurm to allocate resources.</li>
+</ul>
+<p>If <em>one</em> link in this chain breaks, the application fails. Your job in this Capstone is to be the <strong>Systems Integrator</strong>.</p>
+<hr />
+<h2>2. Grading Rubric</h2>
+<p>The Capstone Project is worth <strong>100 Marks</strong>. The breakdown is as follows:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Category</th>
+<th style="text-align: left;">Criterion</th>
+<th style="text-align: left;">Marks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Infrastructure (25%)</strong></td>
+<td style="text-align: left;">All nodes (SMS, NFS, CN01, CN02) are powered on and reachable via SSH.</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Warewulf reports all nodes as <code>READY</code> via <code>wwctl node list</code>.</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Network isolation is maintained (subnet <code>10.10.10.x</code>).</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Monitoring (25%)</strong></td>
+<td style="text-align: left;">Prometheus is successfully scraping node metrics.</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Grafana Dashboard displays real-time CPU/Ram usage for the compute nodes.</td>
+<td style="text-align: left;">15</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>HPC Task (50%)</strong></td>
+<td style="text-align: left;">Correct <code>sbatch</code> script syntax (Nodes, Tasks, Output logs).</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Successful execution of Parallel Matrix Multiplication on &gt;1 node.</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Code Logic (Demonstrating <code>MPI_Scatter</code>, <code>MPI_Gather</code>, or equivalent parallel patterns).</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>TOTAL</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>100</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. Project Specifications</h2>
+<p>Your goal is to demonstrate a fully functional "Mini-Cluster" running a real scientific workload.</p>
+<h3>3.1 Infrastructure</h3>
+<ul>
+<li><strong>Hardware</strong>: 1 Master Node, 4 Compute Nodes (Virtual Machines).</li>
+<li><strong>Network</strong>: A private cluster network (e.g., <code>10.0.0.x</code>) with functional DNS.</li>
+</ul>
+<h3>3.2 Management</h3>
+<ul>
+<li><strong>Operating System</strong>: <strong>Rocky Linux 9</strong> (x86_64).<ul>
+<li><em>Note: While the specific installation guide references OpenEuler (often used in ARM-based Supercomputers), we use Rocky Linux 9 for this Capstone to ensure stability in the VirtualBox x86 environment. The commands (<code>dnf</code>, <code>wwctl</code>, <code>scontrol</code>) are identical.</em></li>
+</ul>
+</li>
+<li><strong>Framework</strong>: <strong>OpenHPC v3.x</strong> (EL9 compatible).</li>
+<li><strong>Provisioning</strong>: <strong>Warewulf 4</strong>.<ul>
+<li>Nodes must boot statelessly (RAM).</li>
+<li>Nodes must automatically receive the correct overlays (Keys, Hosts).</li>
+</ul>
+</li>
+</ul>
+<h3>3.3 Scheduler</h3>
+<ul>
+<li><strong>Workload Manager</strong>: <strong>Slurm</strong>.<ul>
+<li>All nodes must be in the <code>idle</code> state (not <code>down</code> or <code>drained</code>).</li>
+<li>Must have at least one partition (e.g., <code>debug</code>).</li>
+</ul>
+</li>
+</ul>
+<h3>3.4 Storage</h3>
+<ul>
+<li><strong>Shared Home</strong>: <strong>NFS</strong> exporting <code>/home</code> from Master.<ul>
+<li>Compute nodes must mount <code>/home</code> from the SMS.</li>
+<li><em>Note: BeeGFS is removed for this Capstone to simplify the architecture.</em></li>
+</ul>
+</li>
+</ul>
+<h3>3.5 Application</h3>
+<ul>
+<li><strong>Workload</strong>: <strong>Parallel Matrix Multiplication</strong> (Python/MPI).</li>
+<li><strong>Execution</strong>: Must run via <code>sbatch</code> script on at least 2 nodes (4 cores).</li>
+<li><strong>Verification</strong>: Log file must show successful execution time.</li>
+</ul>
+<hr />
+<h2>3. Troubleshooting Guide (The Cheat Sheet)</h2>
+<p>When things go wrong (and they will), use this checklist.</p>
+<h3>3.1 Scenario: "Nodes won't boot"</h3>
+<ul>
+<li><strong>Check DHCP</strong>: <code>systemctl status dhcpd</code>. Is it running?</li>
+<li><strong>Check TFTP</strong>: Can you ping the Master? firewall?</li>
+<li><strong>Check Warewulf</strong>: <code>wwctl node list</code>. Is the HW address correct?</li>
+</ul>
+<h3>3.2 Scenario: "Slurm shows nodes as DOWN"</h3>
+<ul>
+<li><strong>Check Time</strong>: <code>date</code>. If clocks are out of sync by &gt;5 minutes, Slurm panics.</li>
+<li><strong>Check Munge</strong>: <code>systemctl status munge</code>. Munge keys must match exactly on all nodes.</li>
+<li><strong>Check Slurmd</strong>: Ssh into the node and check <code>systemctl status slurmd</code>.</li>
+</ul>
+<h3>3.3 Scenario: "Application crashes instantly"</h3>
+<ul>
+<li><strong>Check Storage</strong>: Can you see the file? <code>ls -l /home/user/case</code>.</li>
+<li><strong>Check Libraries</strong>: <code>module list</code>. Did you load OpenMPI?</li>
+</ul>
+<hr />
+<h2>Section Checkpoint</h2>
+<p><strong>Summary</strong>:</p>
+<ul>
+    <li><strong>Goal</strong>: Integrate Weeks 1-11.</li>
+    <li><strong>Specs</strong>: Warewulf + Slurm + NFS + Parallel Python.</li>
+    <li><strong>Method</strong>: Debug layer by layer (Network -&gt; OS -&gt; Middleware -&gt; App).</li>
+</ul>
+<p><strong>Reflection</strong>:</p>
+<ul>
+    <li>Why is Time Synchronization (NTP/Chrony) the #1 killer of distributed systems?</li>
+    <li>If you could redesign the cluster from Week 1, what would you change?</li>
+</ul>
+<hr />
+<h2>Resources</h2>
+<ul>
+<li>[Your Week 1-11 Notes]</li>
+<li>[Sterling Textbook]</li>
+</ul>
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%2011%20-%20Cluster%20Monitoring/Week_11_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 11</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+</div>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1 Student Notes - HPC Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            /* color removed to support highlight.js */
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_1_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">WEEK 1</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">HPC Introduction and Architectures</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1"></span>
+    </div>
+</div>
+
+            
+
+<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base [&>p]:!m-0"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br />
+<strong>Module</strong>: EIOSY4A<br />
+<strong>Topic</strong>: HPC Introduction, Architectures & Parallelism<br />
+<strong>Reading Time</strong>: ~20 Minutes</p></div></div>
+<hr />
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
+1. <strong>Critique</strong> the definition of High Performance Computing relative to standard IT infrastructure in complex environments.<br />
+2. <strong>Evaluate</strong> the role and impact of the South African HPC ecosystem (CHPC, DIRISA, SANReN) on regional research.<br />
+3. <strong>Analyze</strong> cluster performance using FLOPS and interpret top-tier benchmarking standards (Top500).<br />
+4. <strong>Contrast and evaluate</strong> the Von Neumann and Harvard architectures in the context of modern supercomputing.<br />
+5. <strong>Formulate</strong> strategies to mitigate the Memory Wall problem using advanced cache hierarchies.<br />
+6. <strong>Classify</strong> parallel computing systems critically using Flynn's Taxonomy.<br />
+7. <strong>Apply and analyze</strong> Amdahl's Law and Gustafson's Law to predict parallel speedup bounds.</p></div></div>
+<!-- break -->
+
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />
+Welcome to HPC 2026! This week we're cutting through the buzzwords and getting down to what "High Performance Computing" actually means in practice. We'll look at how modern processors are built from the ground up, and — more importantly — we'll learn the fundamental laws that tell us exactly how much speed we can squeeze out of parallel hardware.</p><br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
+<hr />
+<h2>1. Introduction to HPC</h2>
+<p>Let's get one thing straight from the start: High Performance Computing isn't just about having "fast computers." It's the science and engineering of pooling computing power together — hundreds or thousands of machines working as one — to tackle problems that no single desktop or server could ever handle alone (Sterling et al., 2018).</p>
+<h3>1.1 The Need for Speed (and Scale)</h3>
+<p>In everyday IT, we tend to think about throughput: how many web requests can a server handle per second? HPC flips the question. Here, what matters is <strong>Speedup</strong> — how much faster can we solve a <em>single, massive</em> problem by splitting the work across multiple processors?</p>
+<p>The real world makes the case better than any textbook. Training large AI models like GPT takes thousands of GPUs crunching through petabytes of text in parallel. In medicine, assembling a complete human genome and hunting for cancer mutations requires raw computational muscle that a single workstation simply can't provide. On the Johannesburg Stock Exchange (JSE), high-frequency trading algorithms analyse market data in microseconds — fall behind, and you lose money. Formula 1 teams use Computational Fluid Dynamics (CFD) to simulate airflow over car bodies long before they ever hit a wind tunnel. And right here at home, the South African Weather Service (SAWS) runs daily weather simulations — solving Navier-Stokes equations across a grid covering the entire country — to issue the storm warnings we all rely on.</p>
+<h3>1.2 Local Context: The South African Cyberinfrastructure Ecosystem</h3>
+<p>You might think supercomputing is a first-world luxury, but South Africa actually hosts the most advanced research computing infrastructure on the continent. It's all coordinated under the <strong>National Integrated Cyber Infrastructure System (NICIS)</strong>, which stands on three pillars (CHPC, 2024).</p>
+<p>The first is the <strong>Centre for High Performance Computing (CHPC)</strong> in Cape Town. Their flagship system, <em>Lengau</em>, is one of the fastest supercomputers in the Southern Hemisphere and it's available to any SA university or research council — including ours. Then there's <strong>DIRISA (Data Intensive Research Infrastructure of South Africa)</strong>, which handles the long-term storage and curation of massive research datasets, especially from astronomy projects. Tying it all together is <strong>SANReN (South African National Research Network)</strong>, the high-speed fibre backbone that lets researchers move terabytes of data between campuses and national facilities without bottlenecks (SANReN, 2024).</p>
+<p>This isn't just infrastructure for the sake of it — real projects depend on it every day. The <strong>Square Kilometre Array (SKA)</strong> radio telescope in the Karoo produces a firehose of cosmic data that demands Exascale processing. The <strong>South African Weather Service (SAWS)</strong> runs numerical weather prediction models on dedicated HPC clusters. And during the COVID-19 pandemic, the <strong>National Institute for Communicable Diseases (NICD)</strong> leaned heavily on these resources for genomic sequencing, tracking variants in near real-time (NICD, 2024).</p>
+<h3>1.3 Measuring Performance: The FLOP</h3>
+<p>In standard IT, we might measure a server's performance in "Instructions Per Second." But in scientific computing — where the workload is overwhelmingly mathematical — the yardstick is the <strong>Floating Point Operation (FLOP)</strong>. Think of it as a single multiplication or addition of two decimal numbers, like <code>2.5 * 3.14</code>. The laptop you're sitting with right now likely operates in the <strong>GigaFLOPS (GFLOPS)</strong> range — roughly $10^9$ operations per second. A beefy GPU can hit <strong>TeraFLOPS (TFLOPS)</strong> territory ($10^{12}$). The supercomputers we're studying this semester crunch numbers at the <strong>PetaFLOPS (PFLOPS)</strong> scale ($10^{15}$), and the newest machines have smashed through the <strong>ExaFLOPS (EFLOPS)</strong> barrier ($10^{18}$) — that's a quintillion calculations every single second.</p>
+<h3>1.4 The Top500 List</h3>
+<p>Every six months, the supercomputing community publishes the <a href="https://www.top500.org"><strong>Top500</strong> list</a> — a global ranking of the 500 most powerful non-distributed computer systems (Top500.org, 2024). The ranking is based on the <strong>HPL (High Performance Linpack)</strong> benchmark, which solves a dense system of linear equations. Here's the exciting part: we'll actually run this exact benchmark on our own cluster in Week 7.</p>
+<hr />
+<h2>2. System Architecture</h2>
+<p>Before we start bolting computers together into a cluster, we need to understand what's going on inside a single machine. Nearly every modern computer follows the <strong>Von Neumann Architecture</strong>, a design that dates all the way back to 1945 (Sterling et al., 2018).</p>
+<h3>2.1 The Von Neumann Model</h3>
+<p>At its heart, the Von Neumann model is a "stored-program" computer — meaning instructions and data live together in the same read-write memory (RAM). The system has three main parts: the Central Processing Unit (CPU), which houses both the Control Unit and the Arithmetic Logic Unit (ALU); Main Memory; and the I/O system. The crucial design decision? Everything shares a single bus.</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="Von Neumann Architecture Diagram" src="../images/von_neumann_architecture.png" />
+<em>Figure 1: The Von Neumann Architecture — a shared bus connects CPU, Memory, and I/O. Instructions and data compete for the same pathway, which creates a bottleneck.</em></p>
+<p>That shared pathway is exactly where the trouble starts. It creates what we call the <strong>Von Neumann Bottleneck</strong>. The CPU can crunch numbers far faster than the memory bus can deliver them, so the processor ends up sitting idle for hundreds of clock cycles just waiting for data to arrive. Think of it as a race car stuck in traffic — the engine is ready to go, but the road can't keep up. This "starvation" of the functional units remains the single biggest architectural headache in modern computing (Sterling et al., 2018).</p>
+<h3>2.2 The Harvard Architecture</h3>
+<p>The Harvard Architecture takes a different approach: it gives instructions and data their own <em>separate</em> storage and signal pathways. That means the processor can fetch the next instruction and read data at the same time, essentially doubling the bandwidth. In its pure form, you'll mostly find Harvard architectures in Digital Signal Processors (DSPs) and embedded microcontrollers. But here's the interesting bit: modern general-purpose CPUs — your Intel Core i9, your AMD EPYC server chips — actually use a <strong>Modified Harvard Architecture</strong> internally. They keep separate L1 caches for Instructions (L1i) and Data (L1d) to get the bandwidth benefits, while still presenting a single, unified memory address space to the programmer. It's the best of both worlds.</p>
+<hr />
+<h2>3. The Memory Wall and Caching</h2>
+<h3>3.1 The Memory Wall</h3>
+<p>Here's a problem that has haunted computer architects for decades. Over the last forty years, processor speeds have improved exponentially — riding Moore's Law upward — while DRAM memory latency has crept along at a much slower, roughly linear pace. The gap between these two curves keeps widening, and that gap has a name: the <strong>Memory Wall</strong>.</p>
+<p>To put this in concrete terms: a modern CPU core running at 4GHz can execute a simple instruction in about 0.25 nanoseconds. But fetching a piece of data from main memory (DRAM) takes roughly 100 nanoseconds. That means a single cache miss — one unlucky memory fetch — leaves the processor sitting idle for about 400 clock cycles. For high-performance applications, that kind of waste is devastating.</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="The Memory Wall Graph" src="../images/memory_wall.png" />
+<em>Figure 2: The Memory Wall — the widening gap between CPU speed (exponential growth) and Memory speed (linear growth) is the reason we need complex caching strategies.</em></p>
+<h3>3.2 The Solution: Cache Hierarchy</h3>
+<p>So how do we deal with a CPU that can think a hundred times faster than memory can deliver? The answer is caching. Architects insert layers of smaller, faster, and more expensive Static RAM (SRAM) between the CPU and DRAM. This <strong>Cache Hierarchy</strong> works because of a simple observation called <strong>Locality of Reference</strong> — programs tend to access the same data (or nearby data) repeatedly. There are two flavours: <strong>Temporal Locality</strong> means that if you just used a variable (say, a loop counter), you'll probably use it again very soon. <strong>Spatial Locality</strong> means that if you accessed <code>Matrix[i][0]</code>, you'll likely want <code>Matrix[i][1]</code> next.</p>
+<p>Modern HPC processors like the AMD EPYC take this idea and run with it. The <strong>L1 Cache</strong> is tiny (32KB–64KB) but blazing fast — it runs at the core's full clock speed and is split into separate Instruction and Data halves. The <strong>L2 Cache</strong> sits one step back (512KB–1MB), usually private to a single core. Then there's the <strong>L3 Cache</strong>, which is much larger (32MB up to 1GB with AMD's 3D V-Cache technology) and shared across all cores on the chip. L3 is essentially the last line of defence before the CPU has to go all the way out to slow DRAM.</p>
+<hr />
+<h2>4. Processor Architecture (Sterling Chapter 3)</h2>
+<p>When we're trying to reason about parallel algorithms, it helps to start with an idealised model. The <strong>PRAM (Parallel Random Access Machine)</strong> gives us exactly that — an imaginary machine where multiple processors all share a single pool of memory. Real clusters are messier (they use distributed memory connected by networks), but the PRAM model lets us think clearly about algorithmic complexity before we worry about hardware headaches.</p>
+
+<p>At its core, the whole point of HPC processor design is simple: execute more floating-point operations per second. For years, the industry achieved this by cranking up the clock speed — a strategy called Frequency Scaling. But around 2005, physics hit back. Pushing frequencies higher produced more heat than conventional cooling could handle — a barrier known as the <strong>Power Wall</strong>. Since then, the focus has shifted from making individual cores faster to making them smarter through parallelism (Sterling et al., 2018).</p>
+<h3>4.1 Pipelining and Superscalar Execution</h3>
+<p>How do you get more work done without turning up the clock? One answer is <strong>Instruction Pipelining</strong>. Think of it like a car assembly line: instead of one worker building an entire car from scratch before starting the next one, you break the process into stages — Fetch, Decode, Execute, Write-back — and overlap them. While one instruction is being executed, the next one is already being decoded, and a third is being fetched. The result? You finish one instruction every clock cycle instead of every four, effectively quadrupling throughput. Modern <strong>Superscalar</strong> processors take it further by duplicating the pipeline itself, so they can issue multiple independent instructions — what we call Instruction Level Parallelism (ILP) — in a single cycle.</p>
+<h3>4.2 Flynn's Taxonomy</h3>
+<p>Now that we've seen how individual cores squeeze out performance, let's zoom out. <strong>Flynn's Taxonomy</strong> gives us a clean framework for classifying parallel architectures based on how many instruction streams and data streams they handle at once (Sterling et al., 2018).</p>
+<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="Flynn's Taxonomy" src="../images/flynn_taxonomy.png" />
+<em>Figure 3: Flynn's Taxonomy — SISD (traditional sequential), SIMD (vector processing / GPU), and MIMD (cluster computing).</em></p>
+<h4>4.2.1 SISD (Single Instruction, Single Data)</h4>
+<p>This is the classic sequential model — one processor, one instruction at a time, one piece of data. It's what you'd find in early computers and basic microcontrollers. There's no parallelism at all; everything happens strictly one step after the other. An <code>ADD</code> instruction finishes before a <code>LOAD</code> can begin.</p>
+<h4>4.2.2 MIMD (Multiple Instruction, Multiple Data)</h4>
+<p>MIMD is the model that describes an HPC <strong>Cluster</strong> as a whole. You have multiple autonomous processors, each running its own independent program on its own data. Node 1 might be simulating airflow over a wing, while Node 2 is calculating engine heat dissipation — completely different tasks, running simultaneously, coordinated by a management layer. This is the "big picture" parallelism of supercomputing.</p>
+<h4>4.2.3 SIMD (Single Instruction, Multiple Data)</h4>
+<p>While MIMD handles the cluster level, <strong>SIMD</strong> is where the magic happens inside each <em>individual core</em>. The idea is beautifully simple: one instruction does the same thing to many data points at once. This is called <strong>Vectorization</strong>. Instead of writing a loop that adds two numbers at a time (<code>C = A + B</code>), a SIMD instruction loads a whole "vector" of data — say, 8 double-precision numbers — into a wide 512-bit register (like Intel's AVX-512) and adds them all in a single clock cycle. That's an 8x speedup for number-heavy workloads like matrix multiplication, which is the bread and butter of almost every scientific simulation.</p>
+<h3>4.3 Multicore and Amdahl's Law</h3>
+<p>Since individual cores hit the Power Wall and couldn't run any faster, manufacturers started putting more cores on a single chip. But here's the catch — more cores doesn't automatically mean proportionally faster programs. <strong>Amdahl's Law</strong> defines the hard theoretical limit on speedup ($S$), and it all comes down to the fraction of your program that <em>can't</em> be parallelised ($1-p$).</p>
+<p>$$ S = \frac{1}{(1-p) + \frac{p}{s}} $$</p>
+<p>The maths is sobering. Even with infinite processors ($s \to \infty$), the speedup is capped by the serial portion. If just 10% of your code is inherently sequential — say, reading an input file or writing final results — then no matter how many cores you throw at the problem, you will never run more than 10x faster. That's a reality check every HPC programmer has to face.</p>
+<h3>4.4 Gustafson's Law: The HPC Justification</h3>
+<p>Amdahl's Law paints a pretty grim picture, but it makes one key assumption: that the problem size stays fixed (this is called <strong>Strong Scaling</strong>). <strong>Gustafson's Law</strong> offers a much more hopeful perspective. It says: as we get more processors, we won't just solve the same problem faster — we'll solve <em>bigger</em> problems. This is <strong>Weak Scaling</strong>.</p>
+<p>$$ S_p = p + (1-p)s $$</p>
+<p>Here, $s$ is the serial fraction of execution time. The key insight is that the serial part doesn't bottleneck you nearly as much when the parallel portion of the workload grows with the machine. And this is precisely the justification for building Exascale systems: we're not just trying to run yesterday's weather model in fewer seconds — we're trying to run tomorrow's global climate model at a resolution that was never possible before.</p>
+
+<hr />
+<h2>5. Career Pathways in HPC</h2>
+<p>So where does all this knowledge take you professionally? The most direct path is becoming an <strong>HPC Systems Engineer</strong> — designing and tuning the massive supercomputers at national labs or research universities. But the skills you're learning here transfer directly to industry roles too. A <strong>Cloud Solutions Architect</strong> or <strong>Site Reliability Engineer (SRE)</strong> at a company like Amazon or Takealot needs the exact same understanding of latency, throughput, and resource scheduling — they're just managing Kubernetes clusters instead of Beowulf ones. There's also a rapidly growing role called <strong>Research Software Engineer (RSE)</strong>, which bridges the gap between scientists who write messy code and the hardware that has to run it. RSEs optimise algorithmic code for parallel hardware, and they're in huge demand in Fintech and AI development.</p>
+
+<hr />
+<h2>6. Summary and Next Steps</h2>
+<p>Let's recap what we covered this week. We've drawn a clear line between everyday computing (focused on latency) and HPC (focused on throughput and speedup). We've explored the landscape of parallel architectures — from the basic SISD model all the way up to MIMD clusters and SIMD vectorization. And we've grounded all of this in a South African context, understanding that the <strong>CHPC</strong> isn't some distant concept — it's a national resource that researchers at our university can actually use.</p>
+
+<p><strong>Next Week</strong>: We move from abstract architectures to concrete system design — <strong>System Design and Memory</strong>.</p>
+
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Checklist for Next Week</strong><br />
+&#9744; Can you explain the difference between <strong>Throughput</strong> and <strong>Latency</strong>?<br />
+&#9744; Do you know which classification (SISD, SIMD, MISD, MIMD) a modern GPU falls into?<br />
+&#9744; Have you identified the Top 500 list and where South Africa stands?<br />
+&#9744; If a CPU has AVX-512 (can process 8 doubles at once), do you understand why vectorized code is faster than scalar code?</p></div></div>
+
+<h3>Resources</h3>
+<ul>
+<li><strong>Centre for High Performance Computing (CHPC)</strong>. (2024). <em>About the CHPC</em>. Available at: https://www.chpc.ac.za (Accessed: 22 December 2025).</li>
+<li><strong>National Institute for Communicable Diseases (NICD)</strong>. (2024). <em>Genomic Surveillance</em>. Available at: https://www.nicd.ac.za (Accessed: 22 December 2025).</li>
+<li><strong>SANReN</strong>. (2024). <em>South African National Research Network Overview</em>. Available at: https://www.sanren.ac.za (Accessed: 22 December 2025).</li>
+<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann.</li>
+<li><strong>Top500.org</strong>. (2024). <em>TOP500 Supercomputer Sites</em>. Available at: https://www.top500.org (Accessed: 22 December 2025).</li>
+<li><strong>Trobec, R., Slivnik, B., Bulić, P. and Robič, B. (2018)</strong>. <em>Introduction to Parallel Computing</em>. Springer.</li>
+</ul>
+            
+            
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_1_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%202%20-%20System%20Design%20and%20Memory/Week_2_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 2</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 10: HPC Applications - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_10_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 10</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">HPC Applications</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+
+<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br /><strong>Module</strong>: EIOSY4A<br /><strong>Topic</strong>: Real-World HPC Applications<br /><strong>Reading Time</strong>: ~15 Minutes</p></div></div>
+<hr />
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
+1. <strong>Analyze</strong> the computational requirements and HPC resource utilization of Computational Fluid Dynamics (CFD) applications.<br />
+2. <strong>Evaluate</strong> the role and integration of bioinformatics pipelines (e.g., BLAST, GATK) in genomic research.<br />
+3. <strong>Contrast</strong> the architectural demands of modern AI/ML workloads (PyTorch, TensorFlow) against traditional HPC simulations.<br />
+4. <strong>Design</strong> multi-step scientific pipelines using advanced workflow managers.<br />
+5. <strong>Select and justify</strong> specific scheduler directives and software tools tailored to distinct scientific domains.</p></div></div>
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />Welcome to Week 10! This week we become the users of the system we have spent 9 weeks building. We explore what scientists and engineers actually compute on a supercomputer - from simulating turbulent airflow to sequencing entire genomes.<br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
+<hr />
+<h2>Overview</h2>
+<p>We have spent 9 weeks building the infrastructure (Warewulf), scheduling capability (Slurm), programming models (MPI), and storage (BeeGFS). Now, what do people actually <em>do</em> with these supercomputers? In this week, we pivot from system administration to application science. We will explore the major scientific domains that rely on HPC, analyze their unique computational profiles, and understand why cluster hardware must be carefully tailored to the specific workloads it will run.</p>
+
+<hr />
+
+<h2>1. Computational Fluid Dynamics (CFD)</h2>
+<p>CFD is the simulation of fluid flow—whether that is airflow over a Formula 1 car, water flowing through a dam, or blood pumping through a human heart. It relies on solving the Navier-Stokes equations numerically across a discretized physical space.</p>
+
+<h3>1.1 OpenFOAM and Mesh Generation</h3>
+<p><strong>OpenFOAM</strong> (Open Field Operation and Manipulation) is the premier open-source CFD toolbox. The CFD process generally involves:</p>
+<ol>
+    <li><strong>Meshing:</strong> The physical volume is divided into millions (or billions) of tiny geometric cells forming a "mesh".</li>
+    <li><strong>Solving:</strong> The physics equations (pressure, velocity, temperature) are solved iteratively for every single cell, stepping forward in time.</li>
+    <li><strong>Post-Processing:</strong> Visualizing the massive output datasets (often using tools like ParaView).</li>
+</ol>
+
+<h3>1.2 HPC Workload Profile for CFD</h3>
+<p>CFD is the quintessential <strong>Tightly Coupled</strong> workload. Because the fluid in one cell directly affects the fluid in the adjacent cells, processors must constantly communicate with their neighbors.</p>
+<ul>
+    <li><strong>Parallel Model:</strong> MPI (Message Passing Interface) using Domain Decomposition (splitting the mesh geometrically).</li>
+    <li><strong>Hardware Demands:</strong> Requires an extremely low-latency network (e.g., <strong>InfiniBand</strong>). If the network is slow, processors waste cycles waiting for boundary data (Halo Exchange) from their neighbors.</li>
+    <li><strong>CPU Focus:</strong> High clock speeds and large CPU caches are critical. GPUs are notoriously difficult to apply to unstructured CFD meshes due to branching and scattered memory access.</li>
+</ul>
+
+<hr />
+
+<h2>2. Bioinformatics and Genomics</h2>
+<p>Bioinformatics applies computational science to biological data. The most common HPC task in this domain is genomic sequence analysis—reading the DNA or RNA of an organism, assembling it, and comparing it to known databases to find mutations or similarities.</p>
+
+<h3>2.1 Common Pipelines: BLAST and GATK</h3>
+<ul>
+    <li><strong>BLAST (Basic Local Alignment Search Tool):</strong> Compares an unknown sequence against massive biological databases to find matches.</li>
+    <li><strong>GATK (Genome Analysis Toolkit):</strong> The industry standard for identifying SNPs (Single Nucleotide Polymorphisms) and indels in DNA and RNA sequence data.</li>
+</ul>
+
+<h3>2.2 HPC Workload Profile for Bioinformatics</h3>
+<p>Unlike CFD, genomic workloads are generally <strong>Loosely Coupled</strong> or <strong>Embarrassingly Parallel</strong>.</p>
+<ul>
+    <li><strong>Parallel Model:</strong> Often involves running thousands of independent tasks simultaneously (Task Farms/Manager-Worker).</li>
+    <li><strong>Hardware Demands:</strong> Highly <strong>I/O Bound</strong>. Genomic databases are massive (terabytes). The cluster requires a robust Parallel File System (like BeeGFS or Lustre) capable of sustaining massive read throughput from thousands of nodes at once.</li>
+    <li><strong>Memory Focus:</strong> Certain tasks, like <em>de novo</em> genome assembly, require "Fat Nodes"—servers with immense amounts of RAM (1TB to 4TB+ per node) to hold the entire sequence graph in memory.</li>
+</ul>
+
+<hr />
+
+<h2>3. Molecular Dynamics (MD)</h2>
+<p>Molecular Dynamics simulates the physical movements of atoms and molecules. It is heavily used in drug discovery to simulate how a potential medicine binds to a target protein (like a virus spike) at the atomic level.</p>
+
+<h3>3.1 GROMACS, NAMD, and LAMMPS</h3>
+<p>These are the dominant open-source MD engines. They calculate the electrostatic and van der Waals forces between every pair of atoms in a system for millions of microscopic time steps (femtoseconds).</p>
+
+<h3>3.2 HPC Workload Profile for MD</h3>
+<p>MD is highly floating-point math intensive and predictable.</p>
+<ul>
+    <li><strong>Parallel Model:</strong> Hybrid MPI (across nodes) and OpenMP/CUDA (within nodes).</li>
+    <li><strong>Hardware Demands:</strong> <strong>GPUs (Accelerators)</strong> are the absolute king here. Because calculating forces between atoms is highly repetitive and uniform, it maps perfectly to the thousands of cores on an NVIDIA GPU. A single GPU node can often outperform 20 standard CPU nodes for MD workloads.</li>
+</ul>
+
+<hr />
+
+<h2>4. Weather Forecasting and Climate Modeling</h2>
+<p>Predicting the weather is one of the oldest and most vital uses of supercomputing.</p>
+
+<h3>4.1 WRF (Weather Research and Forecasting)</h3>
+<p>WRF divides the atmosphere into a 3D grid, calculating thermodynamics, solar radiation, and moisture transport. Weather forecasting operates on strict deadlines—a 24-hour forecast must compute in just an hour to be useful.</p>
+
+<h3>4.2 HPC Workload Profile for Weather</h3>
+<ul>
+    <li><strong>I/O Demands:</strong> Generates massive amounts of checkpoint data. Because WRF models run for days, they must constantly dump their state to disk so the run can be resumed if a node crashes.</li>
+    <li><strong>Network Demands:</strong> Highly sensitive to network latency, similar to CFD.</li>
+</ul>
+
+<hr />
+
+<h2>5. Artificial Intelligence and Machine Learning (AI/ML)</h2>
+<p>The explosive growth of Deep Learning and Large Language Models (LLMs) has fundamentally altered HPC architecture.</p>
+
+<h3>5.1 Distributed Training</h3>
+<p>Training a model like GPT-4 requires thousands of GPUs working together for months. Frameworks like PyTorch and TensorFlow use specialized communication backends (like NVIDIA NCCL) to synchronize neural network weights across the cluster.</p>
+
+<h3>5.2 HPC Workload Profile for AI</h3>
+<ul>
+    <li><strong>Hardware Demands:</strong> Dense GPU nodes (e.g., 4 to 8 GPUs per node) interconnected by proprietary high-speed links like NVLink.</li>
+    <li><strong>Storage Demands:</strong> "Burst Buffers" (NVMe flash arrays) are used to feed training data (images, text) into the GPUs as fast as possible to keep them from sitting idle.</li>
+</ul>
+
+<hr />
+
+
+<hr />
+
+<h2>6. Engineering and Finite Element Analysis (FEA)</h2>
+<p>Beyond fluids (CFD), HPC is heavily utilized in structural engineering and manufacturing. Before a physical car is ever built, it is crashed thousands of times in a supercomputer.</p>
+
+<h3>6.1 Crash Simulations (LS-DYNA)</h3>
+<p>Finite Element Analysis (FEA) breaks a solid object (like a car chassis) into a mesh of finite elements. Software like <strong>LS-DYNA</strong> simulates how these elements deform, transfer energy, and break upon impact over milliseconds.</p>
+
+<h3>6.2 HPC Workload Profile for FEA</h3>
+<ul>
+    <li><strong>Parallel Model:</strong> MPI for domain decomposition (distributing parts of the car to different nodes).</li>
+    <li><strong>Hardware Demands:</strong> Highly reliant on high CPU clock speeds and low-latency networking. Unlike CFD, structural meshes can become highly distorted during a crash, requiring complex dynamic load balancing across the cluster.</li>
+</ul>
+
+<hr />
+
+<h2>7. Cyber Security and Cryptography</h2>
+<p>HPC plays a dual role in Cyber Security: acting as the ultimate weapon to break encryption, and the ultimate shield to analyze massive streams of network traffic.</p>
+
+<h3>7.1 Cryptanalysis and Password Cracking (Hashcat)</h3>
+<p>Brute-forcing encryption keys or cracking hashed passwords involves performing the same mathematical hash function (e.g., SHA-256) billions of times per second.</p>
+<ul>
+    <li><strong>Parallel Model:</strong> Purely Embarrassingly Parallel. No nodes need to talk to each other; they just need to try different combinations.</li>
+    <li><strong>Hardware Demands:</strong> <strong>Extreme GPU Density</strong>. Tools like <em>Hashcat</em> leverage the thousands of ALUs in GPUs. A specialized password-cracking cluster will often feature 8 to 10 GPUs per node with minimal RAM or networking infrastructure.</li>
+</ul>
+
+<h3>7.2 Large-Scale Network Anomaly Detection</h3>
+<p>National security agencies and large ISPs capture petabytes of network flow data. Using frameworks like Apache Spark or Hadoop on HPC clusters, they apply machine learning algorithms to detect subtle anomalies indicative of advanced persistent threats (APTs).</p>
+
+<hr />
+
+<h2>8. Computer Systems Engineering (EDA)</h2>
+<p>How do you design a new CPU like an Apple M3 or NVIDIA H100 that has 80 billion transistors? You use a supercomputer to simulate the supercomputer you are building.</p>
+
+<h3>8.1 Electronic Design Automation (EDA)</h3>
+<p>EDA tools simulate the electrical timing, logic gates, and thermal properties of a silicon chip before it is sent to a fabrication plant. This process is called RTL (Register-Transfer Level) Simulation.</p>
+
+<h3>8.2 HPC Workload Profile for EDA</h3>
+<ul>
+    <li><strong>Hardware Demands:</strong> <strong>Massive RAM and Fast Storage</strong>. Unlike many other physics simulations, EDA workloads are notoriously difficult to parallelize across multiple nodes because a chip's logic is highly interconnected. Therefore, EDA heavily relies on <em>Scale-Up</em> servers (Fat Nodes) with extremely high single-thread CPU performance and massive amounts of RAM (2TB+) to hold the entire chip design in memory.</li>
+    <li><strong>Storage:</strong> High IOPS (Input/Output Operations Per Second) are required for reading massive standard cell libraries.</li>
+</ul>
+
+<h2>9. Summary</h2>
+<p>Understanding these workloads is critical for an HPC administrator. If your university specializes in Genomics, you must spend your budget on massive storage arrays and high-RAM nodes. If they specialize in Deep Learning, every cent should go into GPUs. There is no "one size fits all" supercomputer.</p>
+
+<h3>Preparing for Week 11</h3>
+<p>Next week, we will tackle <strong>System Administration and Monitoring</strong>. How do we know if these massive applications are actually using the hardware efficiently? We will deploy <strong>Prometheus</strong> and <strong>Grafana</strong> to visualize the heartbeat of our supercomputer.</p>
+        
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_10_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%209%20-%20Accelerators/Week_9_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 9</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%2011%20-%20Cluster%20Monitoring/Week_11_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 11</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

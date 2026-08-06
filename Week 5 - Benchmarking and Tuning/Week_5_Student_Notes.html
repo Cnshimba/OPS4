@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5: Benchmarking and Tuning - Student Notes - OPS4 Course</title>
+    
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: { sans: ['Inter', 'sans-serif'] },
+                colors: {
+                    primary: '#002F6E', // VUT Midnight Blue
+                    secondary: '#c9984a', // Gold
+                    background: '#f8fafc',
+                    card: '#ffffff',
+                },
+                typography: {
+                    DEFAULT: {
+                        css: {
+                            color: '#334155',
+                            maxWidth: '100%',
+                            h1: { color: '#002F6E' },
+                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+                            h3: { color: '#002F6E' },
+                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+                            'code::before': { content: '""' },
+                            'code::after': { content: '""' }
+                        }
+                    },
+                    dark: {
+                        css: {
+                            color: '#cbd5e1',
+                            h1: { color: '#38bdf8' }, // Sky 400
+                            h2: { color: '#c9984a' },
+                            h3: { color: '#38bdf8' },
+                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            iconSun.classList.remove('hidden');
+            iconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            iconSun.classList.add('hidden');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                iconSun.classList.remove('hidden');
+                iconMoon.classList.add('hidden');
+            }
+        });
+    });
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Glossary Tooltip */
+        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+        .glossary-term:hover { color: #002F6E; }
+        html.dark .glossary-term:hover { color: #ffffff; }
+        /* OPS3-Style Code Blocks (VUT Theme) */
+        pre {
+            background: #0f0f0f !important;
+            border-left: 4px solid #c9984a !important; /* VUT Gold */
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            border-radius: 5px !important;
+            overflow-x: auto !important;
+            font-size: 1.1em !important;
+            line-height: 1.5 !important;
+            color: #e2e8f0 !important;
+        }
+        code {
+            font-family: 'Courier New', monospace !important;
+        }
+        /* Override prose defaults */
+        .prose pre {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+    
+<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+            <div class="flex flex-col">
+                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+                </span>
+            </div>
+        </a>
+        <div class="flex items-center space-x-6">
+            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+    </div>
+</nav>
+
+    
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+            
+
+<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+            <img src="../images/week_5_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+        </div>
+        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 5</span>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h1 class="text-3xl font-bold text-secondary m-0">Benchmarking and Tuning</h1>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    </div>
+</div>
+
+<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base [&>p]:!m-0"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br />
+<strong>Module</strong>: EIOSY4A<br />
+<strong>Topic</strong>: HPC Benchmarking and Performance Tuning<br />
+<strong>Reading Time</strong>: ~15 Minutes</p></div></div>
+<hr />
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
+1. <strong>Analyze</strong> key HPC performance constraints including FLOPs, memory bandwidth, and network latency.<br />
+2. <strong>Apply</strong> the Roofline Model to diagnose and classify computational codes as compute-bound or memory-bound.<br />
+3. <strong>Execute and evaluate</strong> the HPL benchmark, interpreting its practical results against theoretical Rpeak.<br />
+4. <strong>Critique</strong> memory bandwidth limitations by analyzing STREAM benchmark outputs.<br />
+5. <strong>Formulate</strong> basic code optimization strategies utilizing compiler flags and specialized numerical libraries.</p></div></div>
+
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />
+Welcome to Week 5! Our cluster is built and managed. But is it actually <em>fast</em>? This week, we move from "it works" to "it performs." You will run the same benchmarks used to rank the Top500 supercomputers, giving you objective, industry-recognized measurements of your cluster's capabilities.<br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
+<hr />
+<h2>Overview</h2>
+<p>We have now built a cluster (Weeks 1-4) and written parallel programs for it (Weeks 5-6). But how do we know if our cluster is "fast"? How do we define "performance"? This week focuses on <strong>Benchmarking</strong>—the science of measuring system performance. We will explore the theoretical limits of hardware (the Roofline Model) and use industry-standard tools (HPL, STREAM) to quantify the capabilities of our infrastructure.</p>
+<hr />
+<h2>1. Performance Metrics</h2>
+<p>In HPC, "speed" is a vague term. We use specific metrics to quantify different aspects of system performance.</p>
+<h3>1.1 FLOPs (Floating Point Operations per Second)</h3>
+<p>This is the standard unit of <strong>Compute Power</strong>. It measures how many mathematical calculations (specifically, floating-point additions or multiplications) a processor can perform in one second.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Unit</th>
+<th style="text-align: left;">Value</th>
+<th style="text-align: left;">Magnitude</th>
+<th style="text-align: left;">Typical Scale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>GFLOPS</strong></td>
+<td style="text-align: left;">$10^9$</td>
+<td style="text-align: left;">Billions</td>
+<td style="text-align: left;">Standard laptop</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>TFLOPS</strong></td>
+<td style="text-align: left;">$10^{12}$</td>
+<td style="text-align: left;">Trillions</td>
+<td style="text-align: left;">Single GPU or HPC Node</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>PFLOPS</strong></td>
+<td style="text-align: left;">$10^{15}$</td>
+<td style="text-align: left;">Quadrillions</td>
+<td style="text-align: left;">Supercomputer</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>EFLOPS</strong></td>
+<td style="text-align: left;">$10^{18}$</td>
+<td style="text-align: left;">Quintillions</td>
+<td style="text-align: left;">Exascale Frontier</td>
+</tr>
+</tbody>
+</table>
+<h3>1.2 Bandwidth (GB/s)</h3>
+<p>This measures <strong>Data Movement</strong>. It is the rate at which data can be transferred between memory and the CPU, or between nodes over the network. <strong>Memory Bandwidth</strong> determines how fast the CPU can read from RAM (e.g., 50 GB/s on DDR4), while <strong>Network Bandwidth</strong> dictates how fast nodes can communicate (e.g., 100 Gbps Infiniband).</p>
+<h3>1.3 Latency</h3>
+<p>This measures <strong>Delay</strong>. It is the time it takes for a single bit of data to travel from Source to Destination. In HPC, low latency is critical for synchronization in MPI programs. Measuring latency often reveals the overhead of the network stack.</p>
+<p>Recall the <strong>Hockney Model</strong> ($T = \alpha + \beta n$) from Week 2. When benchmarking a network, we must distinguish between the startup cost ($\alpha$) and the transfer cost ($\beta$). A system might have high bandwidth but poor latency, making it unsuitable for algorithms that require frequent, small-scale synchronization.</p>
+
+<hr />
+<h2>2. The Memory Wall and Roofline Model</h2>
+<p>A common misconception is that a faster CPU always makes code run faster. Real-world performance is often limited not by how fast the CPU calculates, but by how fast it can get data from memory. This is known as the <strong>Von Neumann Bottleneck</strong> or the <strong>Memory Wall</strong>.</p>
+<h3>2.1 Arithmetic Intensity</h3>
+<p>To understand performance limits, we calculate the <strong>Arithmetic Intensity (AI)</strong> of an algorithm:
+$$ AI = \frac{\text{Floating Point Operations (FLOPs)}}{\text{Bytes of Data Moved (Bytes)}} $$</p>
+<p>Code can be classified into two categories:</p>
+<ul>
+    <li><strong>Compute-Bound</strong>: High AI. The code does extensive math on small data (e.g., Matrix Multiplication). Performance is limited by CPU Speed.</li>
+    <li><strong>Memory-Bound</strong>: Low AI. The code does simple math on massive data (e.g., Vector Addition). Performance is limited by RAM Speed.</li>
+</ul>
+<h3>2.2 The Roofline Model</h3>
+<p>The Roofline Model is a visual tool used to determine if a code is performing optimally. It plots Arithmetic Intensity (X-axis) against Performance (Y-axis). The <strong>Horizontal Roof</strong> represents the theoretical peak CPU speed, indicating the maximum possible calculation rate. The <strong>Diagonal Roof</strong> represents the peak Memory Bandwidth. Optimizing code involves moving the performance point <strong>Up</strong> (closer to the roof) or <strong>Right</strong> (increasing arithmetic intensity).</p>
+<hr />
+<h2>3. High Performance Linpack (HPL)</h2>
+<p>HPL is the most famous benchmark in the world. It is the sole metric used to rank the <strong>TOP500</strong> supercomputers.</p>
+<h3>3.1 What it Solves</h3>
+<p>HPL solves a dense linear system of equations of the form $Ax = b$ using LU decomposition with partial pivoting. It is an $O(N^3)$ algorithm operating on $O(N^2)$ data, meaning it has very high Arithmetic Intensity. As a result, HPL is typically <strong>Compute-Bound</strong> and achieves close to the theoretical peak performance of the CPU.</p>
+<h3>3.2 The HPL Input File (HPL.dat)</h3>
+<p>Tuning HPL requires adjusting parameters in <code>HPL.dat</code>. The combination of these values determines the problem size and efficient distribution across the cluster.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Tuning Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>N</strong> (Problem Size)</td>
+<td style="text-align: left;">The size of the matrix.</td>
+<td style="text-align: left;">Larger N usually yields better performance (better CPU/Memory ratio).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NB</strong> (Block Size)</td>
+<td style="text-align: left;">The size of data chunks sent to cache.</td>
+<td style="text-align: left;">Critical for tuning; usually 128 or 256.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>P x Q</strong> (Process Grid)</td>
+<td style="text-align: left;">Arrangement of MPI ranks.</td>
+<td style="text-align: left;">$P \times Q$ must equal total processes. usually $P \le Q$.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>4. STREAM Benchmark</h2>
+<p>While HPL measures the CPU, <strong>STREAM</strong> measures the Memory Subsystem. It performs simple vector operations to test sustained memory bandwidth.</p>
+<h3>4.1 The Four Kernels</h3>
+<p>These four operations characterize different memory access patterns.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Kernel</th>
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Copy</strong></td>
+<td style="text-align: left;"><code>a[i] = b[i]</code></td>
+<td style="text-align: left;">Measures pure transfer rates.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Scale</strong></td>
+<td style="text-align: left;"><code>a[i] = q * b[i]</code></td>
+<td style="text-align: left;">Measures simple arithmetic.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Add</strong></td>
+<td style="text-align: left;"><code>a[i] = b[i] + c[i]</code></td>
+<td style="text-align: left;">Measures 2 reads + 1 store.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Triad</strong></td>
+<td style="text-align: left;"><code>a[i] = b[i] + q * c[i]</code></td>
+<td style="text-align: left;">Complex mix; best predictor for real apps.</td>
+</tr>
+</tbody>
+</table>
+<p>For many real-world scientific applications (like Fluids or Weather simulation), the <strong>STREAM Triad</strong> result is a better predictor of actual performance than HPL.</p>
+<hr />
+<h2>5. HPCG (High Performance Conjugate Multi-Gradient)</h2>
+<p>HPL has been criticized for being "too easy" to optimize and not representative of modern complex physics. <strong>HPCG</strong> is a newer benchmark designed to stress the system differently. It uses sparse matrix operations and irregular memory access patterns, punishing systems with poor interconnects or high latency. It is now a standard companion to HPL.</p>
+<hr />
+<h2>6. Tuning Fundamentals</h2>
+<p>Before rewriting code, administrators use <strong>Tuning</strong> to get free performance gains.</p>
+<h3>6.1 Compiler Optimization Flags</h3>
+<p>The compiler (GCC, Intel ICC) translates C/Fortran into Machine Code.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Flag</th>
+<th style="text-align: left;">Optimization Level</th>
+<th style="text-align: left;">Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>-O0</code></td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">Debugging (slower, but exact).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>-O2</code></td>
+<td style="text-align: left;">Moderate</td>
+<td style="text-align: left;">Standard for production.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>-O3</code></td>
+<td style="text-align: left;">Aggressive</td>
+<td style="text-align: left;">Maximum speed; vectorizes loops; may break strict math compliance.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>-march=native</code></td>
+<td style="text-align: left;">Architecture Specific</td>
+<td style="text-align: left;">Uses instruction sets (AVX2, AVX-512) for the host CPU.</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 Libraries (BLAS/LAPACK)</h3>
+<p>Never write your own Matrix Multiplication function. Optimized libraries like <strong>OpenBLAS</strong> or <strong>Intel MKL</strong> are hand-tuned assembly code that is often 10-100x faster than generic C code.</p>
+<h3>6.3 Network Tuning: Message Packing</h3>
+<p>Based on the Hockney Model, we know that every message incurs a latency cost ($\alpha$). If your benchmarking reveals that your code is spending more time in communication than calculation, consider <strong>Message Packing</strong> (or Buffer Aggregation). Instead of sending many small 1KB messages, buffer them into a single 1MB message. This pays the $\alpha$ cost once instead of 1000 times, significantly improving the effective bandwidth utilized by the application.</p>
+
+<hr />
+<h2>Section Checkpoint</h2>
+<h2>7. Summary and Next Steps</h2>
+<p>This week, we moved from functionality to performance. We learned that a working cluster is not necessarily a fast one. We identified the critical metrics of <strong>Throughput (FLOPS)</strong> and <strong>Bandwidth (GB/s)</strong>, and used the <strong>Roofline Model</strong> to visualize whether our applications are Compute-Bound or Memory-Bound. We mastered standard benchmarks like <strong>HPL</strong> (The Top500 Standard) and <strong>STREAM</strong>, providing a baseline for all future optimization.</p>
+<p>To conclude our performance study, we use the <strong>Iso-efficiency Function</strong> to evaluate the scalability of our cluster. It defines the relationship between the problem size ($W$) and the number of processors ($P$) required to maintain a constant efficiency ($E$):</p>
+<p>$$ W = f(P) $$</p>
+<p>If an algorithm is perfectly scalable, the problem size only needs to grow linearly with the number of processors. This mathematical foundation allows us to predict the performance of our software before deploying it on expensive supercomputing hardware.</p>
+
+<h3>Preparing for Week 6</h3>
+<p>Next week, we will finally become users of our own system. We will dive into <strong>Parallel Programming</strong>. We will break down the "Magic" of parallelism, learning the fundamental models (Shared Memory vs. Distributed Memory) and writing our first parallel code using <strong>OpenMP</strong>.</p>
+<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Checklist for Next Week</strong><br />
+&#9744; Can you calculate the theoretical peak performance (Rpeak) of a CPU given its Clock Speed, Core Count, and FLOPs/Cycle?<br />
+&#9744; Why does <strong>HPL</strong> stress the CPU while <strong>STREAM</strong> stresses the Memory Bus?<br />
+&#9744; What does it mean to be "Memory Bound," and why does buying a faster CPU not solve this problem?<br />
+&#9744; How do compiler flags like <code>-O3</code> and <code>-march=native</code> "freely" improve performance?</div></div>
+
+<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
+    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
+    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
+    <a href="Week_5_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
+        Start Quiz
+    </a>
+</div>
+<h3>Resources</h3>
+<ul>
+<li><strong>Dongarra, J. et al.</strong> (2024). <em>HPL - A Portable Implementation of the High-Performance Linpack Benchmark</em>. Available at: https://www.netlib.org/benchmark/hpl/ (Accessed: 22 December 2025).</li>
+<li><strong>McCalpin, J.D.</strong> (1995). <em>Memory Bandwidth and Machine Balance in Current High Performance Computers</em>. IEEE TCAA Newsletter. Available at: https://www.cs.virginia.edu/stream/ (Accessed: 22 December 2025).</li>
+<li><strong>Top500.org</strong>. (2024). <em>The Top 500 List</em>. Available at: https://www.top500.org (Accessed: 22 December 2025).</li>
+</ul>
+        </article>
+    </main>
+
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    </footer>
+
+    
+<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+    
+                        <a href="../Week%204%20-%20Resource%20Management/Week_4_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 4</span>
+                        </a>
+                        
+    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        </div>
+        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+    </a>
+    
+                        <a href="../Week%206%20-%20Parallel%20Programming/Week_6_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 6</span>
+                        </a>
+                        
+</div>
+
+</body>
+</html>

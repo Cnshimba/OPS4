@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2 Quiz: System Design and Networking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn.selected {
+            background-color: #002F6E;
+            color: white;
+            border-color: #002F6E;
+        }
+        .option-btn.correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .option-btn.wrong {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .explanation {
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_2_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 2 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of System Design and Networking</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What is the primary metric used to rank systems on the Top500 list?",
+                        "options": [
+                                    "Total storage capacity",
+                                    "Peak memory bandwidth",
+                                    "Maximum sustained floating-point performance (Linpack)",
+                                    "Lowest network latency"
+                        ],
+                        "correct": 2,
+                        "explanation": "The Top500 list ranks the world's fastest supercomputers based on their Rmax score (sustained performance) achieved running the High Performance Linpack (HPL) benchmark."
+            },
+            {
+                        "question": "What is the function of a PCIe bus in a modern compute node?",
+                        "options": [
+                                    "It connects the CPU to the L1 cache.",
+                                    "It provides a high-speed interface for connecting peripherals like GPUs and network cards to the CPU.",
+                                    "It routes data between different compute nodes in the cluster.",
+                                    "It is the primary power supply line for the motherboard."
+                        ],
+                        "correct": 1,
+                        "explanation": "Peripheral Component Interconnect Express (PCIe) is the high-speed serial computer expansion bus standard used to attach hardware devices to a computer."
+            },
+            {
+                        "question": "What does RDMA stand for, and what is its primary advantage?",
+                        "options": [
+                                    "Remote Direct Memory Access; it allows data transfer between nodes without involving the remote CPU.",
+                                    "Rapid Disk Management Architecture; it speeds up hard drive reads.",
+                                    "Remote Data Mapping Algorithm; it compresses data over the network.",
+                                    "Random Direct Memory Allocation; it prevents memory leaks."
+                        ],
+                        "correct": 0,
+                        "explanation": "RDMA allows a network card to transfer data directly to or from the application memory on a remote node, bypassing the CPU and operating system for ultra-low latency."
+            },
+            {
+                        "question": "Why is InfiniBand often preferred over standard Ethernet in HPC environments?",
+                        "options": [
+                                    "It uses cheaper cables.",
+                                    "It offers significantly lower latency and natively supports RDMA.",
+                                    "It operates wirelessly.",
+                                    "It is natively compatible with Windows without drivers."
+                        ],
+                        "correct": 1,
+                        "explanation": "InfiniBand is designed specifically for HPC, offering extreme bandwidth, microsecond latency, and native RDMA, which are critical for tight parallel coupling."
+            },
+            {
+                        "question": "What is NUMA?",
+                        "options": [
+                                    "Non-Uniform Memory Access: memory access time depends on the memory location relative to the processor.",
+                                    "Network User Management API: a tool for managing cluster users.",
+                                    "New Unified Memory Architecture: a system where all memory is exactly the same distance from all CPUs.",
+                                    "Node Utilization Metric Analysis: a benchmarking tool."
+                        ],
+                        "correct": 0,
+                        "explanation": "In NUMA systems, a CPU can access its own local memory faster than memory attached to another CPU on the same motherboard."
+            },
+            {
+                        "question": "What is the purpose of cache coherence protocols in multi-core processors?",
+                        "options": [
+                                    "To increase the size of the L3 cache.",
+                                    "To ensure that all cores see a consistent view of memory, even if they have local cached copies.",
+                                    "To compress data before storing it in cache.",
+                                    "To clear the cache automatically when a program crashes."
+                        ],
+                        "correct": 1,
+                        "explanation": "Cache coherence ensures that if one core modifies a variable in its local cache, other cores will not read stale, outdated versions of that variable."
+            },
+            {
+                        "question": "What is a Baseboard Management Controller (BMC)?",
+                        "options": [
+                                    "The primary CPU of the compute node.",
+                                    "A specialized microcontroller that manages the interface between system-management software and platform hardware.",
+                                    "The network switch connecting the cluster.",
+                                    "A software program for managing MPI jobs."
+                        ],
+                        "correct": 1,
+                        "explanation": "The BMC provides out-of-band management, allowing administrators to monitor hardware health, power cycle the node, and access the console remotely, even if the OS is unresponsive."
+            },
+            {
+                        "question": "What is the primary role of a 'Head Node' (or Login Node)?",
+                        "options": [
+                                    "To perform the heaviest computational tasks.",
+                                    "To provide a secure entry point for users to compile code and submit jobs to the compute nodes.",
+                                    "To store all the backup data for the cluster.",
+                                    "To regulate the cooling system of the server racks."
+                        ],
+                        "correct": 1,
+                        "explanation": "The head node acts as the gateway to the cluster. Users log in here to edit files, compile software, and submit jobs to the batch scheduler, rather than running computations on it directly."
+            },
+            {
+                        "question": "In rack-mounted server hardware, what does '1U' denote?",
+                        "options": [
+                                    "1 User",
+                                    "1 Unit of processing power",
+                                    "1 Rack Unit of height (1.75 inches)",
+                                    "1 Uninterruptible power supply"
+                        ],
+                        "correct": 2,
+                        "explanation": "A Rack Unit (U) is a unit of measure describing the height of equipment designed to mount in a 19-inch rack. 1U equals 1.75 inches (44.45 mm)."
+            },
+            {
+                        "question": "Why do enterprise servers often have redundant Power Supply Units (PSUs)?",
+                        "options": [
+                                    "To double the clock speed of the processors.",
+                                    "To ensure the server remains operational if one power supply fails or loses its power source.",
+                                    "To generate more heat for the cooling system to process.",
+                                    "To separate power for the CPU and the RAM."
+                        ],
+                        "correct": 1,
+                        "explanation": "Redundancy ensures high availability. If one PSU fails, the other can handle the full load, preventing the server from crashing."
+            },
+            {
+                        "question": "Which of the following represents the correct order of the memory hierarchy, from fastest/smallest to slowest/largest?",
+                        "options": [
+                                    "RAM, L1 Cache, Registers, NVMe Storage",
+                                    "Registers, L1 Cache, RAM, NVMe Storage",
+                                    "NVMe Storage, RAM, L1 Cache, Registers",
+                                    "L1 Cache, Registers, NVMe Storage, RAM"
+                        ],
+                        "correct": 1,
+                        "explanation": "Registers are the fastest and smallest, followed by cache (L1, L2, L3), then main memory (RAM), and finally persistent storage (like NVMe SSDs)."
+            },
+            {
+                        "question": "What does 'network oversubscription' mean in cluster design?",
+                        "options": [
+                                    "Paying for more bandwidth than you need.",
+                                    "Having more downlink bandwidth to the nodes than uplink bandwidth between switches.",
+                                    "Having too many users logged into the head node.",
+                                    "Running network cables that are too long."
+                        ],
+                        "correct": 1,
+                        "explanation": "Oversubscription occurs when a switch has more bandwidth connected to its local nodes than it has bandwidth to send traffic to other switches, creating a potential bottleneck."
+            },
+            {
+                        "question": "What is IPMI used for?",
+                        "options": [
+                                    "Internet Protocol for Message Passing Interface.",
+                                    "Intelligent Platform Management Interface, used for remote, out-of-band management of servers.",
+                                    "Internal Processor Memory Interface.",
+                                    "Integrated Parallel Management Instructions."
+                        ],
+                        "correct": 1,
+                        "explanation": "IPMI is the standardized protocol used by the BMC to allow remote monitoring, power control, and console access to a server."
+            },
+            {
+                        "question": "Why is efficient cooling critical in HPC data centers?",
+                        "options": [
+                                    "Because CPUs run faster at room temperature.",
+                                    "Because high-density compute nodes generate massive amounts of heat, which can cause thermal throttling or hardware failure.",
+                                    "Because hard drives require low temperatures to spin.",
+                                    "Because network cables degrade in heat."
+                        ],
+                        "correct": 1,
+                        "explanation": "HPC clusters pack immense computing power into small physical spaces, generating significant heat. Without adequate cooling, components will overheat and either slow down (throttle) or fail."
+            },
+            {
+                        "question": "What is the function of a network topology like a 'Fat Tree'?",
+                        "options": [
+                                    "To connect nodes in a single straight line.",
+                                    "To provide multiple paths and high bisection bandwidth between any two nodes in the cluster.",
+                                    "To organize files on the hard drive.",
+                                    "To visualize the execution flow of a program."
+                        ],
+                        "correct": 1,
+                        "explanation": "A Fat Tree topology ensures that communication between nodes in different parts of the cluster has sufficient bandwidth, often providing non-blocking communication."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4 Quiz: Resource Management with Slurm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#002F6E',
+                        secondary: '#c9984a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .option-btn { transition: all 0.2s ease; }
+        .option-btn.selected { background-color: #002F6E; color: white; border-color: #002F6E; }
+        .option-btn.correct { background-color: #10b981; color: white; border-color: #10b981; }
+        .option-btn.wrong { background-color: #ef4444; color: white; border-color: #ef4444; }
+        .explanation { display: none; }
+        .explanation.show { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen pt-12 pb-24 transition-colors duration-300">
+
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="Week_4_Student_Notes.html" class="text-primary dark:text-sky-400 hover:underline flex items-center mb-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Notes
+                </a>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Week 4 Quiz</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-2">Test your understanding of Resource Management with Slurm</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8">
+            <!-- Questions injected via JS -->
+        </div>
+
+        <div id="results-container" class="hidden mt-12 p-8 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+            <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+            <p class="text-xl mb-6">You scored <span id="score-display" class="font-bold text-primary dark:text-sky-400">0</span> out of <span id="total-display">0</span>.</p>
+            <button onclick="location.reload()" class="px-6 py-3 bg-secondary text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors">
+                Retry Quiz
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                        "question": "What is the primary purpose of a resource manager/job scheduler like Slurm?",
+                        "options": [
+                                    "To provision operating systems.",
+                                    "To compile C code automatically.",
+                                    "To arbitrate access to cluster resources, ensuring fair usage and efficient packing of jobs.",
+                                    "To manage user passwords."
+                        ],
+                        "correct": 2,
+                        "explanation": "Slurm manages the queue of user jobs, allocating compute nodes and starting tasks based on policies, priorities, and resource availability."
+            },
+            {
+                        "question": "What does a 'Partition' represent in Slurm?",
+                        "options": [
+                                    "A division of a hard drive.",
+                                    "A logical grouping of compute nodes, often functioning as a specific queue with distinct limits and access controls.",
+                                    "A segmented network VLAN.",
+                                    "A slice of a CPU core."
+                        ],
+                        "correct": 1,
+                        "explanation": "Partitions in Slurm group nodes together (e.g., 'debug', 'gpu', 'batch') and define job limits like maximum runtime or node count."
+            },
+            {
+                        "question": "Which command is used to submit a batch script to Slurm?",
+                        "options": [
+                                    "srun",
+                                    "sbatch",
+                                    "squeue",
+                                    "sinfo"
+                        ],
+                        "correct": 1,
+                        "explanation": "The 'sbatch' command parses a submission script, allocates resources, and runs the script in the background when resources become available."
+            },
+            {
+                        "question": "How does 'srun' differ from 'sbatch'?",
+                        "options": [
+                                    "srun is used for compiling, sbatch is for running.",
+                                    "srun submits a background job, sbatch runs interactively.",
+                                    "srun executes a command in real-time, often interactively or as a step within a batch script, while sbatch submits a script for later execution.",
+                                    "There is no difference."
+                        ],
+                        "correct": 2,
+                        "explanation": "srun launches parallel tasks in real-time across allocated resources, whereas sbatch puts a script into the queue to run unattended."
+            },
+            {
+                        "question": "What command allows you to view the status of jobs in the Slurm queue?",
+                        "options": [
+                                    "sview",
+                                    "squeue",
+                                    "sinfo",
+                                    "sstat"
+                        ],
+                        "correct": 1,
+                        "explanation": "The 'squeue' command lists the jobs currently running or waiting in the Slurm scheduling queue."
+            },
+            {
+                        "question": "If you submit a job by mistake, how do you stop it in Slurm?",
+                        "options": [
+                                    "kill -9",
+                                    "scancel <jobid>",
+                                    "sstop <jobid>",
+                                    "srm <jobid>"
+                        ],
+                        "correct": 1,
+                        "explanation": "The 'scancel' command followed by the job ID will terminate a running or pending job."
+            },
+            {
+                        "question": "What is 'Fairshare' scheduling?",
+                        "options": [
+                                    "A policy that gives all users exactly equal CPU time every day.",
+                                    "An algorithm that adjusts job priority based on a user's historical resource usage compared to their allocated share.",
+                                    "A system that shares memory between nodes.",
+                                    "A licensing agreement for HPC software."
+                        ],
+                        "correct": 1,
+                        "explanation": "Fairshare ensures long-term fairness. If a user has recently consumed a lot of resources, their priority drops, allowing users who haven't run jobs recently to move up the queue."
+            },
+            {
+                        "question": "What is the purpose of 'Backfill' scheduling?",
+                        "options": [
+                                    "To fill empty hard drive space with random data.",
+                                    "To allow smaller, shorter jobs to run immediately in the gaps left while the system waits for resources to free up for a massive job.",
+                                    "To restart failed jobs automatically.",
+                                    "To copy data from compute nodes back to the head node."
+                        ],
+                        "correct": 1,
+                        "explanation": "Backfill drastically improves cluster utilization by fitting small jobs into idle nodes, provided they will finish before the nodes are needed for the next high-priority large job."
+            },
+            {
+                        "question": "Why must users accurately estimate the Wall Time (`--time`) for their jobs?",
+                        "options": [
+                                    "If they underestimate, the job is killed; if they overestimate, it may delay backfill scheduling.",
+                                    "Because Slurm charges them real money per hour.",
+                                    "Because the CPU clock speed depends on the wall time.",
+                                    "Because Slurm will randomly pause the job."
+                        ],
+                        "correct": 0,
+                        "explanation": "Slurm strictly enforces the time limit (killing jobs that exceed it), but overestimating prevents the backfill scheduler from fitting the job into gaps, leaving it pending longer."
+            },
+            {
+                        "question": "What does the `sinfo` command display?",
+                        "options": [
+                                    "Information about the user's account.",
+                                    "The status and configuration of nodes and partitions in the cluster.",
+                                    "The memory usage of a running job.",
+                                    "The version of Slurm installed."
+                        ],
+                        "correct": 1,
+                        "explanation": "The 'sinfo' command gives a high-level view of cluster state, showing which nodes are allocated, idle, or down, grouped by partition."
+            },
+            {
+                        "question": "What does the '#SBATCH' directive do in a script?",
+                        "options": [
+                                    "It is a comment ignored by Slurm.",
+                                    "It instructs the bash shell to execute the line.",
+                                    "It provides resource requests and configuration flags to the Slurm scheduler.",
+                                    "It defines a variable in Python."
+                        ],
+                        "correct": 2,
+                        "explanation": "Slurm parses lines starting with #SBATCH to understand how many nodes, cores, and hours the job requires."
+            },
+            {
+                        "question": "What does a node state of 'drain' indicate in Slurm?",
+                        "options": [
+                                    "The node is actively running jobs.",
+                                    "The node is physically leaking coolant.",
+                                    "The node is marked to accept no new jobs, usually pending maintenance or investigation of a hardware issue.",
+                                    "The node is booting up."
+                        ],
+                        "correct": 2,
+                        "explanation": "Draining a node prevents Slurm from scheduling new jobs on it, allowing current jobs to finish so the node can be safely taken offline."
+            },
+            {
+                        "question": "What is the role of the `slurmctld` daemon?",
+                        "options": [
+                                    "It runs on compute nodes to launch tasks.",
+                                    "It is the central controller running on the head node that manages state, queues, and allocations.",
+                                    "It manages the database backend.",
+                                    "It provides a web interface for users."
+                        ],
+                        "correct": 1,
+                        "explanation": "The slurmctld (Slurm Control Daemon) is the brain of Slurm, managing the entire cluster's scheduling and state."
+            },
+            {
+                        "question": "What is the role of the `slurmd` daemon?",
+                        "options": [
+                                    "It runs on compute nodes, awaiting instructions from the controller to launch tasks and monitor resources.",
+                                    "It is the central controller.",
+                                    "It generates billing reports.",
+                                    "It provisions the operating system."
+                        ],
+                        "correct": 0,
+                        "explanation": "slurmd runs on every compute node, acting as the worker daemon that executes tasks assigned by slurmctld."
+            },
+            {
+                        "question": "What is 'Exclusive' allocation in Slurm?",
+                        "options": [
+                                    "A job that requires a special license to run.",
+                                    "A job that is granted entire compute nodes, preventing any other user's jobs from sharing those nodes.",
+                                    "A job that runs only on weekends.",
+                                    "A job that uses all nodes in the cluster."
+                        ],
+                        "correct": 1,
+                        "explanation": "Exclusive mode gives a job dedicated access to whole nodes, preventing performance interference from other users' processes."
+            }
+];
+
+        let score = 0;
+        let answeredQuestions = 0;
+
+        const quizContainer = document.getElementById('quiz-container');
+
+        questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700';
+            
+            let optionsHtml = '';
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <button class="option-btn w-full text-left p-4 mb-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg hover:border-primary dark:hover:border-sky-400 dark:bg-slate-700/50" 
+                            onclick="checkAnswer(${index}, ${optIndex}, this)">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            qDiv.innerHTML = `
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-white"><span class="text-primary dark:text-sky-400 mr-2">Q${index + 1}.</span>${q.question}</h3>
+                <div class="options-container" id="options-${index}">
+                    ${optionsHtml}
+                </div>
+                <div id="explanation-${index}" class="explanation mt-6 p-4 bg-gray-50 dark:bg-slate-900 border-l-4 border-primary rounded-r text-sm">
+                    ${q.explanation}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
+        });
+
+        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
+            const container = document.getElementById(`options-${questionIndex}`);
+            if (container.classList.contains('answered')) return;
+            
+            container.classList.add('answered');
+            const buttons = container.getElementsByTagName('button');
+            const correctIndex = questions[questionIndex].correct;
+
+            if (selectedOptionIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            for (let btn of buttons) {
+                btn.classList.remove('hover:border-primary');
+                btn.classList.remove('dark:hover:border-sky-400');
+                btn.style.cursor = 'default';
+            }
+
+            document.getElementById(`explanation-${questionIndex}`).classList.add('show');
+            
+            answeredQuestions++;
+            if (answeredQuestions === questions.length) {
+                setTimeout(showResults, 800);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('total-display').textContent = questions.length;
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

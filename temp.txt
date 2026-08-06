@@ -1,0 +1,733 @@
+1: <!DOCTYPE html>
+2: <html lang="en">
+3: <head>
+4:     <meta charset="UTF-8">
+5:     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6:     <title>Week 3: Node Provisioning - Student Notes - OPS4 Course</title>
+7:     
+8: <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+9: <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+10: <script>
+11:     tailwind.config = {
+12:         darkMode: 'class',
+13:         theme: {
+14:             extend: {
+15:                 fontFamily: { sans: ['Inter', 'sans-serif'] },
+16:                 colors: {
+17:                     primary: '#002F6E', // VUT Midnight Blue
+18:                     secondary: '#c9984a', // Gold
+19:                     background: '#f8fafc',
+20:                     card: '#ffffff',
+21:                 },
+22:                 typography: {
+23:                     DEFAULT: {
+24:                         css: {
+25:                             color: '#334155',
+26:                             maxWidth: '100%',
+27:                             h1: { color: '#002F6E' },
+28:                             h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
+29:                             h3: { color: '#002F6E' },
+30:                             a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
+31:                             blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
+32:                             code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
+33:                             'code::before': { content: '""' },
+34:                             'code::after': { content: '""' }
+35:                         }
+36:                     },
+37:                     dark: {
+38:                         css: {
+39:                             color: '#cbd5e1',
+40:                             h1: { color: '#38bdf8' }, // Sky 400
+41:                             h2: { color: '#c9984a' },
+42:                             h3: { color: '#38bdf8' },
+43:                             a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
+44:                             blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
+45:                             code: { color: '#f472b6', backgroundColor: '#1e293b' }
+46:                         }
+47:                     }
+48:                 }
+49:             }
+50:         }
+51:     }
+52: </script>
+53: <script>
+54:     document.addEventListener('DOMContentLoaded', () => {
+55:         const themeToggle = document.getElementById('theme-toggle');
+56:         const html = document.documentElement;
+57:         const iconSun = document.getElementById('icon-sun');
+58:         const iconMoon = document.getElementById('icon-moon');
+59: 
+60:         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+61:             html.classList.add('dark');
+62:             iconSun.classList.remove('hidden');
+63:             iconMoon.classList.add('hidden');
+64:         } else {
+65:             html.classList.remove('dark');
+66:             iconSun.classList.add('hidden');
+67:             iconMoon.classList.remove('hidden');
+68:         }
+69: 
+70:         themeToggle.addEventListener('click', () => {
+71:             if (html.classList.contains('dark')) {
+72:                 html.classList.remove('dark');
+73:                 localStorage.theme = 'light';
+74:                 iconSun.classList.add('hidden');
+75:                 iconMoon.classList.remove('hidden');
+76:             } else {
+77:                 html.classList.add('dark');
+78:                 localStorage.theme = 'dark';
+79:                 iconSun.classList.remove('hidden');
+80:                 iconMoon.classList.add('hidden');
+81:             }
+82:         });
+83:     });
+84: </script>
+85: 
+86:     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+87:     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+88:     <script>hljs.highlightAll();</script>
+89:     <script>
+90:         window.MathJax = {
+91:             tex: {
+92:                 inlineMath: [['$', '$'], ['\\(', '\\)']]
+93:             }
+94:         };
+95:     </script>
+96:     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+97:     <style>
+98:         /* Glossary Tooltip */
+99:         .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
+100:         .glossary-term:hover { color: #002F6E; }
+101:         html.dark .glossary-term:hover { color: #ffffff; }
+102:         /* OPS3-Style Code Blocks (VUT Theme) */
+103:         pre {
+104:             background: #0f0f0f !important;
+105:             border-left: 4px solid #c9984a !important; /* VUT Gold */
+106:             padding: 20px !important;
+107:             margin: 20px 0 !important;
+108:             border-radius: 5px !important;
+109:             overflow-x: auto !important;
+110:             font-size: 1.1em !important;
+111:             line-height: 1.5 !important;
+112:             color: #e2e8f0 !important;
+113:         }
+114:         code {
+115:             font-family: 'Courier New', monospace !important;
+116:         }
+117:         /* Override prose defaults */
+118:         .prose pre {
+119:             background-color: transparent;
+120:             margin: 0;
+121:             padding: 0;
+122:         }
+123:     </style>
+124: </head>
+125: <body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+126:     
+127: <nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+128:     <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
+129:         <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
+130:             <div class="flex flex-col">
+131:                 <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
+132:                     <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
+133:                 </span>
+134:             </div>
+135:         </a>
+136:         <div class="flex items-center space-x-6">
+137:             <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
+138:             <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+139:                 <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+140:                 <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+141:             </button>
+142:         </div>
+143:     </div>
+144: </nav>
+145: 
+146:     
+147:     <main class="container mx-auto px-4 max-w-5xl mb-12">
+148:         <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+149:             
+150: <div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
+151:     <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
+152:         <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
+153:             <img src="../images/week_3_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+154:         </div>
+155:         <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 3</span>
+156:     </div>
+157:     <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+158:         <h1 class="text-3xl font-bold text-secondary m-0">Week 3: Node Provisioning - Student Notes</h1>
+159:         <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+160:     </div>
+161: </div>
+162: 
+163: <h1>Week 3: Node Provisioning with Warewulf 4 - Student Notes</h1>
+164: <p><strong>Course</strong>: Operating Systems 4 (HPC)
+165: <strong>Module</strong>: EIOSY4A
+166: <strong>Week</strong>: 3</p>
+167: <hr />
+168: <h2>Overview</h2>
+169: <p>In Week 2, we manually configured the essential services (DHCP, TFTP) required to boot a single machine over the network. While educational, manual configuration does not scale to clusters with hundreds or thousands of nodes. This week, we introduce <strong>Warewulf 4</strong>, a modern cluster provisioning system that automates the deployment and management of operating systems across large-scale infrastructure.</p>
+170: <p>Unlike traditional management tools that rely on installing an OS into a hard drive (Stateful), Warewulf specializes in <strong>Stateless Provisioning</strong>, where nodes boot a lightweight, pre-configured operating system directly into RAM. Warewulf 4 represents a significant architectural shift from its predecessors by adopting the <strong>OCI (Open Container Initiative)</strong> standard, allowing administrators to manage compute node images using standard tools like Docker or Podman.</p>
+171: <blockquote>
+172: <p><strong>Note</strong>: This module focuses on applied provisioning of on-premise HPC clusters typical of institutional and enterprise environments, rather than hyperscale or exascale systems.</p>
+173: </blockquote>
+174: <hr />
+175: <h2>Learning Outcomes</h2>
+176: <p>By the end of this week, students should be able to:</p>
+177: <ol>
+178:     <li>Explain the concept and benefits of stateless provisioning in HPC clusters.</li>
+179:     <li>Describe Warewulf 4’s architecture and its use of OCI-standard containers.</li>
+180:     <li>Configure nodes, profiles, and overlays using the <code>wwctl</code> command-line tool.</li>
+181:     <li>Explain how overlays enable dynamic, per-node customization of generic images.</li>
+182: </ol>
+183: <hr />
+184: <h2>1. The Provisioning Problem (Sterling Chapter 5 Extension)</h2>
+185: <p>Managing a high-performance cluster presents a unique system administration challenge: <strong>Scale</strong>. Installing an operating system on one server is a trivial task; installing, patching, and maintaining consistent configurations across 500 servers is a massive logistical burden. If a cluster administrator had to physically insert a USB drive or manually run an installer on every node, the cluster would never be operational.</p>
+186: <p>Furthermore, consistency is paramount. In an HPC cluster, every Compute Node must be mathematically identical. If Node 01 has <code>libmath-v1.2</code> and Node 02 has <code>libmath-v1.3</code>, a parallel simulation running across both might produce nondeterministic or erroneous results. We require a mechanism that ensures every node runs the exact same software stack, bit-for-bit, every time it boots.</p>
+187: <h3>1.1 Power Management (IPMI)</h3>
+188: <p>Before a node can be provisioned, it must be powered on. In a data center, sending a technician to physically press a power button on 1,000 servers is impractical. To address this, enterprise servers are equipped with a <strong>Baseboard Management Controller (BMC)</strong>—a specialized service processor that runs independently of the main CPU and OS. This controller implements the <strong>Intelligent Platform Management Interface (IPMI)</strong> protocol, allowing administrators to remotely control power states (On, Off, Cycle) and view serial consoles over the network. Warewulf integrates with IPMI to automate this process, allowing a single command (<code>wwctl power on node[01-99]</code>) to boot the entire cluster simultaneously.</p>
+189: <h3>1.2 Stateless Clustering</h3>
+190: <p>To solve the scale and consistency problems, HPC clusters typically adopt a <strong>Stateless</strong> architecture. In this model, the Compute Nodes do not have persistent operating systems installed on their local hard drives. Instead, the OS exists as a compressed image on the Controller Node. When a Compute Node powers on, it downloads this image into its Main Memory (RAM) and runs from there.</p>
+191: <p>This approach offers three critical advantages. First, <strong>Speed</strong>: Running the OS from RAM is significantly faster than reading from a mechanical hard drive or even an SSD. Second, <strong>Immutability</strong>: A reboot wipes the slate clean. If a user crashes the node or corrupts a system file, a simple reboot restores the node to its pristine "Golden State." Third, <strong>Manageability</strong>: To update the entire cluster, the administrator simply updates the single Golden Image on the Controller Node, rebuilds the container, and reboots the cluster. There is no need to run <code>dnf update</code> on 1,000 separate machines.</p>
+192: <hr />
+193: <h2>2. Warewulf 4 Design and Architecture</h2>
+194: <p>Warewulf is the standard open-source provisioning tool for HPC. Version 4 is a complete rewrite in the Go programming language, designed to leverage the modern ecosystem of Containers.</p>
+195: <h3>2.1 Design Tenets</h3>
+196: <p>Warewulf 4 is built on several core tenets (<a href="https://warewulf.org/">Warewulf.org</a>):</p>
+197: <table>
+198: <thead>
+199: <tr>
+200: <th style="text-align: left;">Tenet</th>
+201: <th style="text-align: left;">Description</th>
+202: </tr>
+203: </thead>
+204: <tbody>
+205: <tr>
+206: <td style="text-align: left;"><strong>Lightweight</strong></td>
+207: <td style="text-align: left;">Provisions stateless images and leaves no running agents consuming resources.</td>
+208: </tr>
+209: <tr>
+210: <td style="text-align: left;"><strong>Agnostic</strong></td>
+211: <td style="text-align: left;">Supports any Linux distribution (Rocky, Alma, Ubuntu, SUSE) on any hardware (x86, ARM).</td>
+212: </tr>
+213: <tr>
+214: <td style="text-align: left;"><strong>Stateless</strong></td>
+215: <td style="text-align: left;">Default mode runs entirely in RAM, ensuring nodes always return to a known-good state on reboot.</td>
+216: </tr>
+217: <tr>
+218: <td style="text-align: left;"><strong>Secure</strong></td>
+219: <td style="text-align: left;">Supports SELinux out-of-the-box.</td>
+220: </tr>
+221: </tbody>
+222: </table>
+223: <h3>2.2 The Move to OCI Containers</h3>
+224: <p>Previous versions of Warewulf used a custom format called a Virtual Node File System (VNFS), which was difficult to create and maintain. Warewulf 4 adopts the industry-standard <strong>OCI (Open Container Initiative)</strong> format. This means the operating system image that boots your compute nodes is effectively a standard container, identical to those used in Docker or Kubernetes.</p>
+225: <blockquote>
+226: <p><strong>Note</strong>: Although Warewulf uses OCI containers, these are full operating system images (including systemd, kernels, and shells), not minimal application containers like those used to deploy microservices.</p>
+227: </blockquote>
+228: <p>Administrators can pull a base image (e.g., <code>docker://rockylinux:9</code>) from a public registry, install HPC libraries into it using standard tools, and then <strong>distribute</strong> that container out to the nodes as a bootable OS.</p>
+229: <h4>2.2.1 Image Creation Workflow</h4>
+230: <p>The process of preparing a Node Image follows a standard "Import → Customize → Build" lifecycle:</p>
+231: <ol>
+232: <li><strong>Import</strong>: The administrator pulls a generic "Base Image" (like Rocky Linux 9) from Docker Hub. This image is pristine and contains no cluster-specific configurations.<ul>
+233: <li><em>Command</em>: <code>sudo wwctl container import docker://rockylinux:9 rocky-9</code></li>
+234: </ul>
+235: </li>
+236: <li><strong>Customize</strong>: The administrator enters the container (using a chroot shell) to install necessary packages such as the Slurm client, InfiniBand drivers, and compilers.<ul>
+237: <li><em>Command</em>: <code>sudo wwctl container shell rocky-9</code></li>
+238: </ul>
+239: </li>
+240: <li><strong>Build</strong>: Once the container is ready, it is "built" (compressed) into a deployable artifact that the Controller can serve via HTTP. This step prepares the image for network booting.<ul>
+241: <li><em>Command</em>: <code>sudo wwctl container build rocky-9</code></li>
+242: </ul>
+243: </li>
+244: </ol>
+245: <hr />
+246: <h3>2.3 OpenHPC Provisioning Alternatives</h3>
+247: <p>OpenHPC 4.0 officially supports three provisioning systems. While this course focuses on Warewulf 4, it is important to understand the alternatives available in the ecosystem.</p>
+248: <table>
+249: <thead>
+250: <tr>
+251: <th style="text-align: left;">System</th>
+252: <th style="text-align: left;"><strong>Warewulf 4</strong></th>
+253: <th style="text-align: left;"><strong>Confluent</strong></th>
+254: <th style="text-align: left;"><strong>OpenCHAMI</strong></th>
+255: </tr>
+256: </thead>
+257: <tbody>
+258: <tr>
+259: <td style="text-align: left;"><strong>Origin</strong></td>
+260: <td style="text-align: left;">Simple, community-driven Beowulf standard.</td>
+261: <td style="text-align: left;">Developed by Lenovo (Successor to xCAT).</td>
+262: <td style="text-align: left;">Cloud-Native microservices architecture.</td>
+263: </tr>
+264: <tr>
+265: <td style="text-align: left;"><strong>Philosophy</strong></td>
+266: <td style="text-align: left;"><strong>Container-Based</strong>: Boot OCI images. Simple "Golden Image" model.</td>
+267: <td style="text-align: left;"><strong>Hierarchical</strong>: Designed for massive scale and complex hardware discovery.</td>
+268: <td style="text-align: left;"><strong>Composable</strong>: "Infrastructure as Code" using microservices and APIs.</td>
+269: </tr>
+270: <tr>
+271: <td style="text-align: left;"><strong>Primary Use</strong></td>
+272: <td style="text-align: left;">Standard HPC clusters (hundreds of nodes).</td>
+273: <td style="text-align: left;">Enterprise/Vendor-specific clusters (thousands of nodes).</td>
+274: <td style="text-align: left;">Modern, heterogeneous, cloud-like environments.</td>
+275: </tr>
+276: <tr>
+277: <td style="text-align: left;"><strong>Key Feature</strong></td>
+278: <td style="text-align: left;">Stateless RAM boot; Easy to learn.</td>
+279: <td style="text-align: left;">Diskless or Disk-full; Heavy hardware control.</td>
+280: <td style="text-align: left;">HTTP boot; Zero-trust security model.</td>
+281: </tr>
+282: </tbody>
+283: </table>
+284: <p>We choose <strong>Warewulf 4</strong> for this module because strictly adhering to the OCI container standard provides the best learning path for students entering a cloud-hybrid world.</p>
+285: <h3>2.4 The Daemon Configuration (warewulf.conf)</h3>
+286: <p>The behavior of the Warewulf controller is governed by the global configuration file located at <code>/etc/warewulf/warewulf.conf</code>. This YAML file is the "Single Source of Truth" for how <code>warewulfd</code> interacts with the network and services.</p>
+287: <p>This file is divided into several specific sections. Below is a detailed breakdown of the critical parameters you will encounter.</p>
+288: <h4>2.4.1 General &amp; Network Settings (<code>warewulf</code> and top-level)</h4>
+289: <p>These settings define the Controller node's identity on the private cluster network. Since the Controller acts as the default gateway, DNS server, and boot server for all compute nodes, it is critical that this IP address is static and reachable by the nodes during the PXE boot process. Warewulf uses this specific interface to listen for DHCP requests and serve the operating system images.</p>
+290: <table>
+291: <thead>
+292: <tr>
+293: <th style="text-align: left;">Section</th>
+294: <th style="text-align: left;">Parameter</th>
+295: <th style="text-align: left;">Description</th>
+296: </tr>
+297: </thead>
+298: <tbody>
+299: <tr>
+300: <td style="text-align: left;"><strong>Network</strong></td>
+301: <td style="text-align: left;"><code>ipaddr</code></td>
+302: <td style="text-align: left;">The IPv4 address of the Controller node's cluster interface (e.g., <code>10.0.0.1</code>).</td>
+303: </tr>
+304: <tr>
+305: <td style="text-align: left;"></td>
+306: <td style="text-align: left;"><code>netmask</code></td>
+307: <td style="text-align: left;">The subnet mask (e.g., <code>255.255.255.0</code>).</td>
+308: </tr>
+309: <tr>
+310: <td style="text-align: left;"><strong>Warewulf</strong></td>
+311: <td style="text-align: left;"><code>port</code></td>
+312: <td style="text-align: left;">The TCP port for file transfers and API calls (Default: <code>9873</code>).</td>
+313: </tr>
+314: <tr>
+315: <td style="text-align: left;"></td>
+316: <td style="text-align: left;"><code>secure</code></td>
+317: <td style="text-align: left;">If <code>true</code>, restricts downloads to privileged ports (security hardening).</td>
+318: </tr>
+319: <tr>
+320: <td style="text-align: left;"></td>
+321: <td style="text-align: left;"><code>update interval</code></td>
+322: <td style="text-align: left;">How often nodes check for overlay updates (Default: 60s).</td>
+323: </tr>
+324: </tbody>
+325: </table>
+326: <h4>2.4.2 Service Management (<code>dhcp</code>, <code>tftp</code>, <code>nfs</code>)</h4>
+327: <p>One of Warewulf's most powerful features is its ability to orchestrate standard Linux services. Instead of manually editing <code>/etc/dhcp/dhcpd.conf</code> or <code>/etc/exports</code>, you define the desired state in <code>warewulf.conf</code>. When you run <code>wwctl configure -a</code>, Warewulf reads its internal database of nodes and rewrites the configuration files for these services, ensuring they are perfectly synchronized with your cluster inventory.</p>
+328: <table>
+329: <thead>
+330: <tr>
+331: <th style="text-align: left;">Section</th>
+332: <th style="text-align: left;">Parameter</th>
+333: <th style="text-align: left;">Description</th>
+334: </tr>
+335: </thead>
+336: <tbody>
+337: <tr>
+338: <td style="text-align: left;"><strong>DHCP</strong></td>
+339: <td style="text-align: left;"><code>enabled</code></td>
+340: <td style="text-align: left;"><code>true</code> uses systemd service (e.g. <code>isc-dhcp-server</code>). <strong>Set to <code>false</code> if using <code>dnsmasq</code>.</strong></td>
+341: </tr>
+342: <tr>
+343: <td style="text-align: left;"></td>
+344: <td style="text-align: left;"><code>range start</code> / <code>range end</code></td>
+345: <td style="text-align: left;">Defines the pool of dynamic IPs for unknown or temporary nodes.</td>
+346: </tr>
+347: <tr>
+348: <td style="text-align: left;"></td>
+349: <td style="text-align: left;"><code>systemd name</code></td>
+350: <td style="text-align: left;">The name of the service to restart.</td>
+351: </tr>
+352: <tr>
+353: <td style="text-align: left;"><strong>TFTP</strong></td>
+354: <td style="text-align: left;"><code>enabled</code></td>
+355: <td style="text-align: left;"><code>true</code> uses systemd service (e.g. <code>tftp.socket</code>). <strong>Set to <code>false</code> if using <code>dnsmasq</code>.</strong></td>
+356: </tr>
+357: <tr>
+358: <td style="text-align: left;"></td>
+359: <td style="text-align: left;"><code>tftproot</code></td>
+360: <td style="text-align: left;">Directory for bootloaders (default: <code>/var/lib/tftpboot</code>).</td>
+361: </tr>
+362: <tr>
+363: <td style="text-align: left;"></td>
+364: <td style="text-align: left;"><code>ipxe</code></td>
+365: <td style="text-align: left;">Maps architectures (x86_64, arm64) to specific <code>.efi</code> boot binaries.</td>
+366: </tr>
+367: <tr>
+368: <td style="text-align: left;"><strong>NFS</strong></td>
+369: <td style="text-align: left;"><code>enabled</code></td>
+370: <td style="text-align: left;"><code>true</code> allows Warewulf to manage <code>/etc/exports</code> for basic sharing.</td>
+371: </tr>
+372: <tr>
+373: <td style="text-align: left;"></td>
+374: <td style="text-align: left;"><code>export paths</code></td>
+375: <td style="text-align: left;">A list of paths (e.g., <code>/home</code>, <code>/opt</code>) to export to the cluster.</td>
+376: </tr>
+377: </tbody>
+378: </table>
+379: <h4>2.4.3 Advanced Paths (<code>paths</code>)</h4>
+380: <p>Introduced in Warewulf v4.5.0, the <code>paths</code> section allows administrators to override the default filesystem locations for critical Warewulf components. This is essential for adhering to site-specific storage policies, such as keeping large container images on specific high-capacity partitions (e.g., separate from the root filesystem) or strictly following the Filesystem Hierarchy Standard (FHS).</p>
+381: <table>
+382: <thead>
+383: <tr>
+384: <th style="text-align: left;">Section</th>
+385: <th style="text-align: left;">Parameter</th>
+386: <th style="text-align: left;">Description</th>
+387: </tr>
+388: </thead>
+389: <tbody>
+390: <tr>
+391: <td style="text-align: left;"><strong>Paths</strong></td>
+392: <td style="text-align: left;"><code>sysconfdir</code></td>
+393: <td style="text-align: left;">Location of config files (Default: <code>/etc</code>).</td>
+394: </tr>
+395: <tr>
+396: <td style="text-align: left;"></td>
+397: <td style="text-align: left;"><code>wwprovisiondir</code></td>
+398: <td style="text-align: left;">Where built container images are stored (Default: <code>/var/lib/warewulf/provision</code>).</td>
+399: </tr>
+400: <tr>
+401: <td style="text-align: left;"></td>
+402: <td style="text-align: left;"><code>ipxesource</code></td>
+403: <td style="text-align: left;">Where to find iPXE binaries to copy to the TFTP root.</td>
+404: </tr>
+405: </tbody>
+406: </table>
+407: <p><strong>Example Configuration Snippet</strong> (System-managed Services):</p>
+408: <pre><code class="language-yaml">ipaddr: 10.0.0.1
+409: netmask: 255.255.255.0
+410: warewulf:
+411:   port: 9873
+412:   secure: true
+413: dhcp:
+414:   enabled: true
+415:   systemd name: isc-dhcp-server
+416:   range start: 10.0.0.50
+417:   range end: 10.0.0.99
+418: tftp:
+419:   enabled: true
+420:   systemd name: tftp
+421: nfs:
+422:   enabled: true
+423:   export paths:
+424:     - path: /home
+425:       export options: rw,sync,no_root_squash
+426: </code></pre>
+427: <h3>2.5 The All-in-One Service: dnsmasq</h3>
+428: <p>In OpenHPC 4.0, <strong>dnsmasq</strong> is the default provider for Infrastructure Services (DHCP, TFTP, and DNS).</p>
+429: <h4>2.5.1 Why dnsmasq?</h4>
+430: <p>Unlike traditional enterprise setups that run separate, heavy daemons for each service (e.g., BIND for DNS, ISC-DHCP for IP assignment, and tftpd-hpa for boot files), <code>dnsmasq</code> combines all three into a single, lightweight binary.</p>
+431: <ul>
+432:     <li><strong>Simplicity</strong>: One configuration file (<code>/etc/dnsmasq.conf</code>) handles everything.</li>
+433:     <li><strong>Integration</strong>: It automatically reads <code>/etc/hosts</code> to provide DNS resolution for the cluster.</li>
+434: </ul>
+435: <h4>2.5.2 Configuration Strategy</h4>
+436: <p>If you choose to use <code>dnsmasq</code>, you must <strong>disable</strong> the system-managed DHCP and TFTP in <code>warewulf.conf</code> (set <code>enabled: false</code>) to prevent conflicts.</p>
+437: <p><strong>Sample <code>/etc/dnsmasq.conf</code>:</strong></p>
+438: <pre><code class="language-ini"># Only listen on the internal cluster interface
+439: interface=eth1
+440: bind-interfaces
+441: 
+442: # DHCP Settings
+443: dhcp-range=10.0.0.50,10.0.0.99,12h
+444: dhcp-option=option:router,10.0.0.1
+445: 
+446: # TFTP Settings (for PXE Boot)
+447: enable-tftp
+448: tftp-root=/var/lib/tftpboot
+449: dhcp-boot=undionly.kpxe
+450: </code></pre>
+451: <p>For this course, we will use <strong>dnsmasq</strong> to simplify our lab deployment. This means in your <code>warewulf.conf</code>, you will see <code>dhcp: enabled: false</code> because we are manually managing the <code>dnsmasq</code> service.</p>
+452: <hr />
+453: <h2>3. The Provisioning Process</h2>
+454: <p>When a cluster node boots from Warewulf, it follows a strict sequence of events:</p>
+455: <ol>
+456: <li><strong>Firmware Initialization</strong>: The BIOS/UEFI initializes hardware and the network card.</li>
+457: <li><strong>DHCP Request</strong>: The node broadcasts "Who am I?". The Warewulf server responds with an IP and a "Next-Server" option.</li>
+458: <li><strong>iPXE Boot</strong>: The node downloads the <strong>iPXE</strong> network bootloader via TFTP. Unlike legacy PXE, iPXE understands HTTP.</li>
+459: <li><strong>Container Fetch</strong>: iPXE contacts the Warewulf Controller (warewulfd) via HTTP to download the Kernel and the OCI Container Image.</li>
+460: <li><strong>Overlay Injection</strong>: Warewulf injects the "Overlays" (custom configs like <code>/etc/hostname</code>) into the container in RAM.</li>
+461: <li><strong>Switch Root</strong>: The kernel switches from the initramfs to the full container root filesystem, and the node is ready.</li>
+462: </ol>
+463: <p><strong>Visual Boot Flow</strong>:</p>
+464: <p><img alt="Warewulf Provisioning Flow" src="images/warewulf_provisioning_flow.png" />
+465: <em>Figure 3.1: The Warewulf 4 Stateless Provisioning Boot Process.</em></p>
+466: <p>Warewulf supports <strong>Two-Stage Provisioning</strong> (using a small <code>dracut</code> image first) for efficiency, but for this course, we treat the process as a seamless boot.</p>
+467: <hr />
+468: <h2>4. The Warewulf Object Model: Nodes and Profiles</h2>
+469: <p>Managing configurations for thousands of nodes individually is impossible. Warewulf solves this with a hierarchical <strong>Object Model</strong>.</p>
+470: <h3>4.1 Nodes</h3>
+471: <p>The <strong>Node</strong> object represents a physical machine. It is uniquely identified by its hardware address (MAC Address). A node object contains settings specific to that physical box.</p>
+472: <table>
+473: <thead>
+474: <tr>
+475: <th style="text-align: left;">Attribute</th>
+476: <th style="text-align: left;">Example</th>
+477: <th style="text-align: left;">Description</th>
+478: </tr>
+479: </thead>
+480: <tbody>
+481: <tr>
+482: <td style="text-align: left;"><strong>IP Address</strong></td>
+483: <td style="text-align: left;"><code>10.0.0.x</code></td>
+484: <td style="text-align: left;">The unique network identity.</td>
+485: </tr>
+486: <tr>
+487: <td style="text-align: left;"><strong>Hostname</strong></td>
+488: <td style="text-align: left;"><code>compute-01</code></td>
+489: <td style="text-align: left;">The system name.</td>
+490: </tr>
+491: <tr>
+492: <td style="text-align: left;"><strong>IPMI Address</strong></td>
+493: <td style="text-align: left;"><code>10.1.0.x</code></td>
+494: <td style="text-align: left;">The out-of-band management address.</td>
+495: </tr>
+496: </tbody>
+497: </table>
+498: <p><strong>Example Command</strong>:</p>
+499: <pre><code class="language-bash"># Register a node with specific hardware settings
+500: sudo wwctl node add node01 --ipaddr=10.0.0.2 --hwaddr=00:11:22:33:44:55
+501: </code></pre>
+502: <h3>4.2 Profiles</h3>
+503: <p>A <strong>Profile</strong> is a template or "Class" of configuration. It allows administrators to group nodes that share common characteristics. For example, you might create a <code>gpu-nodes</code> profile and a <code>login-nodes</code> profile.</p>
+504: <table>
+505: <thead>
+506: <tr>
+507: <th style="text-align: left;">Setting</th>
+508: <th style="text-align: left;">Example</th>
+509: <th style="text-align: left;">Purpose</th>
+510: </tr>
+511: </thead>
+512: <tbody>
+513: <tr>
+514: <td style="text-align: left;"><strong>Container</strong></td>
+515: <td style="text-align: left;"><code>rocky-9</code></td>
+516: <td style="text-align: left;">The OS image to boot.</td>
+517: </tr>
+518: <tr>
+519: <td style="text-align: left;"><strong>Kernel Args</strong></td>
+520: <td style="text-align: left;"><code>quiet splash</code></td>
+521: <td style="text-align: left;">Boot-time options passed to the kernel.</td>
+522: </tr>
+523: <tr>
+524: <td style="text-align: left;"><strong>Overlays</strong></td>
+525: <td style="text-align: left;"><code>system</code>, <code>munge</code></td>
+526: <td style="text-align: left;">Configuration files to inject.</td>
+527: </tr>
+528: </tbody>
+529: </table>
+530: <p><strong>Example Command</strong>:</p>
+531: <pre><code class="language-bash"># Create a profile for GPU nodes using a specific container
+532: sudo wwctl profile add gpu-nodes
+533: sudo wwctl profile set gpu-nodes --container rocky-9-gpu
+534: </code></pre>
+535: <h3>4.3 Inheritance</h3>
+536: <p>Warewulf uses a cascading inheritance model. If a setting is defined in the Profile, it applies to all member Nodes unless the Node explicitly overrides it.</p>
+537: <table>
+538: <thead>
+539: <tr>
+540: <th style="text-align: left;">Priority</th>
+541: <th style="text-align: left;">Level</th>
+542: <th style="text-align: left;">Scope</th>
+543: <th style="text-align: left;">Example</th>
+544: </tr>
+545: </thead>
+546: <tbody>
+547: <tr>
+548: <td style="text-align: left;"><strong>1 (Lowest)</strong></td>
+549: <td style="text-align: left;"><strong>Default Profile</strong></td>
+550: <td style="text-align: left;">All Nodes</td>
+551: <td style="text-align: left;">Netmask <code>255.255.255.0</code></td>
+552: </tr>
+553: <tr>
+554: <td style="text-align: left;"><strong>2 (Medium)</strong></td>
+555: <td style="text-align: left;"><strong>Specific Profile</strong></td>
+556: <td style="text-align: left;">Group of Nodes</td>
+557: <td style="text-align: left;">Container <code>rocky-9</code></td>
+558: </tr>
+559: <tr>
+560: <td style="text-align: left;"><strong>3 (Highest)</strong></td>
+561: <td style="text-align: left;"><strong>Node</strong></td>
+562: <td style="text-align: left;">Single Machine</td>
+563: <td style="text-align: left;">IP <code>10.0.0.5</code></td>
+564: </tr>
+565: </tbody>
+566: </table>
+567: <p><strong>Example Command</strong>:</p>
+568: <pre><code class="language-bash"># Set a default netmask for everyone
+569: sudo wwctl profile set default --netmask 255.255.255.0
+570: </code></pre>
+571: <p>If a setting is defined in the Profile, it applies to all member Nodes unless the Node explicitly overrides it. This allows for extremely concise configuration management.</p>
+572: <hr />
+573: <h2>5. Configuration Management: Overlays</h2>
+574: <p>A predefined container image solves the bulk of the provisioning problem, but it creates a new one: <strong>Uniqueness</strong>. While 99% of the OS should be identical across all nodes (the kernel, the libraries, the applications), 1% must be unique. For example, every node needs a unique Hostname and a unique IP Address. If every node booted the exact same container, they would all try to be <code>localhost</code> at <code>127.0.0.1</code>.</p>
+575: <p>Warewulf solves this with <strong>Overlays</strong>. An overlay is a set of files generated dynamically by the Controller Node and injected into the container image at boot time. The <strong>System Overlay</strong> contains files that must be unique per node, such as <code>/etc/hostname</code>, <code>/etc/hosts</code>, and <code>/etc/NetworkManager/system-connections/</code>. The <strong>Runtime Overlay</strong> is used to update user accounts, password files (<code>/etc/passwd</code>, <code>/etc/shadow</code>), and SSH keys across the cluster while the nodes are running, without requiring a reboot.</p>
+576: <p><strong>Example Command</strong>:</p>
+577: <pre><code class="language-bash"># List all available overlays
+578: sudo wwctl overlay list
+579: 
+580: # View the template for the hosts file
+581: sudo wwctl overlay show system /etc/hosts
+582: </code></pre>
+583: <p>When a node boots, it first loads the generic Container Image (the heavy lifting). Then, it applies the Overlays (the customization) on top of the filesystem in RAM. This allows a single generic image to service thousands of unique nodes.</p>
+584: <hr />
+585: <h2>6. Common Management Operations</h2>
+586: <p>Once the cluster is deployed, the administrator uses <code>wwctl</code> for daily maintenance tasks.</p>
+587: <table>
+588: <thead>
+589: <tr>
+590: <th style="text-align: left;">Categoriy</th>
+591: <th style="text-align: left;">Command</th>
+592: <th style="text-align: left;">Description</th>
+593: </tr>
+594: </thead>
+595: <tbody>
+596: <tr>
+597: <td style="text-align: left;"><strong>Status</strong></td>
+598: <td style="text-align: left;"><code>sudo wwctl node list -a</code></td>
+599: <td style="text-align: left;">List all nodes and their current status (e.g., last seen).</td>
+600: </tr>
+601: <tr>
+602: <td style="text-align: left;"></td>
+603: <td style="text-align: left;"><code>sudo wwctl node status &lt;node&gt;</code></td>
+604: <td style="text-align: left;">detailed status of a specific node.</td>
+605: </tr>
+606: <tr>
+607: <td style="text-align: left;"><strong>Power</strong></td>
+608: <td style="text-align: left;"><code>sudo wwctl power cycle &lt;node&gt;</code></td>
+609: <td style="text-align: left;">Reboot a node via IPMI.</td>
+610: </tr>
+611: <tr>
+612: <td style="text-align: left;"></td>
+613: <td style="text-align: left;"><code>sudo wwctl power on &lt;node&gt;</code></td>
+614: <td style="text-align: left;">Power on a node.</td>
+615: </tr>
+616: <tr>
+617: <td style="text-align: left;"><strong>Updates</strong></td>
+618: <td style="text-align: left;"><code>sudo wwctl overlay build</code></td>
+619: <td style="text-align: left;">Rebuild system overlays (run after editing <code>/etc/hosts</code> or overlays).</td>
+620: </tr>
+621: <tr>
+622: <td style="text-align: left;"></td>
+623: <td style="text-align: left;"><code>sudo wwctl configure -a</code></td>
+624: <td style="text-align: left;">Reconfigure DHCP/TFTP/NFS services after changes to <code>warewulf.conf</code>.</td>
+625: </tr>
+626: <tr>
+627: <td style="text-align: left;"><strong>Console</strong></td>
+628: <td style="text-align: left;"><code>sudo wwctl node console &lt;node&gt;</code></td>
+629: <td style="text-align: left;">Connect to the Serial-over-LAN console (troubleshooting boot issues).</td>
+630: </tr>
+631: </tbody>
+632: </table>
+633: <hr />
+634: <h2>7. Troubleshooting Common Issues</h2>
+635: <p>Provisioning is complex because it relies on the perfect synchronization of multiple services (DHCP, TFTP, HTTP). Failures often fall into two categories: getting the node to boot (Network), and getting the OS to run (Configuration).</p>
+636: <h3>7.1 Network &amp; Boot Phase Failures</h3>
+637: <p>These errors occur early in the boot process, usually before the Linux kernel has loaded. They almost always indicate a service failure (DHCP/TFTP) or a firewall blocking traffic.</p>
+638: <table>
+639: <thead>
+640: <tr>
+641: <th style="text-align: left;">Symptom</th>
+642: <th style="text-align: left;">Probable Cause</th>
+643: <th style="text-align: left;">Corrective Action</th>
+644: </tr>
+645: </thead>
+646: <tbody>
+647: <tr>
+648: <td style="text-align: left;"><strong>"Searching for DHCP..."</strong><br><em>(Infinite Loop)</em></td>
+649: <td style="text-align: left;"><code>dnsmasq</code> service is not running or the node is on the wrong interface.</td>
+650: <td style="text-align: left;">1. Check status: <code>sudo systemctl status dnsmasq</code><br>2. Check logs: <code>tail -f /var/log/messages</code><br>3. Verify IP: <code>ip addr show eth1</code> matches config.</td>
+651: </tr>
+652: <tr>
+653: <td style="text-align: left;"><strong>"Connection Refused"</strong><br><em>(iPXE Error)</em></td>
+654: <td style="text-align: left;">Firewall is blocking Warewulf (9873), TFTP (69), or DHCP.</td>
+655: <td style="text-align: left;"><strong>Open required ports</strong>:<br><code>sudo firewall-cmd --add-service=dns --permanent</code><br><code>sudo firewall-cmd --add-service=dhcp --permanent</code><br><code>sudo firewall-cmd --add-service=tftp --permanent</code><br><code>sudo firewall-cmd --add-port=9873/tcp --permanent</code><br><code>sudo firewall-cmd --reload</code></td>
+656: </tr>
+657: </tbody>
+658: </table>
+659: <h3>7.2 Image &amp; Configuration Failures</h3>
+660: <p>These errors occur after the node has successfully downloaded the kernel. They indicate problems with the container image itself or the configuration overlays.</p>
+661: <table>
+662: <thead>
+663: <tr>
+664: <th style="text-align: left;">Symptom</th>
+665: <th style="text-align: left;">Probable Cause</th>
+666: <th style="text-align: left;">Corrective Action</th>
+667: </tr>
+668: </thead>
+669: <tbody>
+670: <tr>
+671: <td style="text-align: left;"><strong>"Dracut Timeout"</strong><br><em>(Kernel Panic)</em></td>
+672: <td style="text-align: left;">The container image is missing hardware drivers (e.g., InfiniBand or specific Ethernet).</td>
+673: <td style="text-align: left;">1. Shell into container: <code>sudo wwctl container shell rocky-9</code><br>2. Install drivers: <code>dnf install kernel-modules-extra</code><br>3. Rebuild: <code>sudo wwctl container build rocky-9</code></td>
+674: </tr>
+675: <tr>
+676: <td style="text-align: left;"><strong>Wrong Hostname / Old IP</strong><br><em>(Stale State)</em></td>
+677: <td style="text-align: left;">Database changes were made (e.g., <code>wwctl node set</code>) but Overlays were not rebuilt.</td>
+678: <td style="text-align: left;"><strong>Rebuild Overlays</strong>:<br><code>sudo wwctl overlay build</code><br>Reboot the node.</td>
+679: </tr>
+680: </tbody>
+681: </table>
+682: <hr />
+683: <h2>8. Summary and Next Steps</h2>
+684: <p>This week, we solved the challenge of deploying software to hundreds of machines simultaneously. We mastered <strong>Warewulf</strong>, learning how to define <strong>Nodes</strong> and <strong>Profiles</strong> to manage hardware at scale. We explored the power of <strong>Stateless Provisioning</strong> (shipping the OS to RAM via PXE) and used <strong>Overlays</strong> to inject unique configurations into generic container images.</p>
+685: <h3>Preparing for Week 4</h3>
+686: <p>Next week, we will address the next major problem: How do users share this massive computer? We will introduce <strong>Slurm (Resource Management)</strong>. We will learn how to enforce fair usage policies, prioritize critical jobs, and prevent users from crashing the system by requesting more RAM than physically exists.</p>
+687: <p><strong>Checklist:</strong></p>
+688: <ul>
+689:     <li>Can you explain what happens when a node boots via PXE? (DHCP -&gt; TFTP -&gt; HTTP)</li>
+690:     <li>Do you understand the difference between a <strong>System Overlay</strong> (Boot time) and a <strong>Runtime Overlay</strong> (Live updates)?</li>
+691:     <li>Why is IPMI critical for managing a cluster that may be in a different building?</li>
+692:     <li>What is the role of <code>dnsmasq</code> in the provisioning process?</li>
+693: </ul>
+694: <h3>Resources</h3>
+695: <ul>
+696: <li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann.</li>
+697: <li><strong>Warewulf Project</strong>. (2024). <em>Warewulf 4 User Guide</em>. Available at: https://warewulf.org/docs/v4/ (Accessed: 22 December 2025).</li>
+698: </ul>
+699:         </article>
+700:     </main>
+701: 
+702:     <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
+703:         Vaal University of Technology - Operating Systems 4 (HPC) 2026
+704:     </footer>
+705: 
+706:     
+707: <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
+708:     
+709:                         <a href="../Week%202%20-%20System%20Design%20and%20Memory/Week_2_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+710:                             <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+711:                                 <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+712:                             </div>
+713:                             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 2</span>
+714:                         </a>
+715:                         
+716:     <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+717:         <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
+718:              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+719:         </div>
+720:         <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
+721:     </a>
+722:     
+723:                         <a href="../Week%204%20-%20Resource%20Management/Week_4_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
+724:                             <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
+725:                                 <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+726:                             </div>
+727:                             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 4</span>
+728:                         </a>
+729:                         
+730: </div>
+731: 
+732: </body>
+733: </html>
