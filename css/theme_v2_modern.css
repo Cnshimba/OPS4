@@ -1,0 +1,226 @@
+/* ============================================================
+   VUT HPC Course - Theme V2: Exascale Cyber-Glass (Next-Gen Modern)
+   Module: EIOPS4A
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+    --v2-font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --v2-font-mono: 'JetBrains Mono', monospace;
+    
+    /* Light Theme Tokens */
+    --v2-bg-light: #F8FAFC;
+    --v2-card-light: #FFFFFF;
+    --v2-border-light: #E2E8F0;
+    --v2-text-primary-light: #0F172A;
+    --v2-text-muted-light: #64748B;
+    
+    /* Dark Theme Tokens (OLED Cyber Slate) */
+    --v2-bg-dark: #070A12;
+    --v2-card-dark: rgba(15, 23, 42, 0.75);
+    --v2-border-dark: rgba(255, 255, 255, 0.08);
+    --v2-text-primary-dark: #F8FAFC;
+    --v2-text-muted-dark: #94A3B8;
+
+    /* Electric Accents */
+    --v2-cyan: #38BDF8;
+    --v2-amber: #F59E0B;
+    --v2-violet: #A855F7;
+    --v2-emerald: #10B981;
+}
+
+/* Global Font Family Overrides */
+html, body, button, input, select, textarea, .prose, .prose * {
+    font-family: var(--v2-font-sans) !important;
+}
+
+code, pre, kbd, samp, .font-mono, .cyber-code-block pre, .cyber-code-block code {
+    font-family: var(--v2-font-mono) !important;
+}
+
+/* Force Prose Heading Styles to match index.html design tokens */
+.prose h1, .prose h2, .prose h3, .prose h4 {
+    font-family: var(--v2-font-sans) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+}
+
+.prose h2 {
+    color: #0F172A !important;
+    border-bottom: 2px solid rgba(56, 189, 248, 0.3) !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 2.25rem !important;
+    margin-bottom: 1rem !important;
+}
+
+html.dark .prose h2 {
+    color: #F8FAFC !important;
+    border-bottom-color: rgba(56, 189, 248, 0.3) !important;
+}
+
+.prose h3 {
+    color: #0369A1 !important;
+    font-weight: 700 !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+html.dark .prose h3 {
+    color: #38BDF8 !important;
+}
+
+/* Glassmorphism Card Utilities */
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--v2-border-light);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+html.dark .glass-card {
+    background: var(--v2-card-dark);
+    border: 1px solid var(--v2-border-dark);
+    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.5), 0 0 40px -15px rgba(56, 189, 248, 0.1);
+}
+
+/* Modern Glowing Badge */
+.cyber-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.cyber-badge-sky {
+    background: #E0F2FE;
+    color: #0369A1;
+    border: 1px solid #7DD3FC;
+}
+
+html.dark .cyber-badge-sky {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38BDF8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.cyber-badge-gold {
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FCD34D;
+}
+
+html.dark .cyber-badge-gold {
+    background: rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+/* Cyber Code Block Terminal Container */
+.cyber-code-block {
+    position: relative;
+    border-radius: 12px !important;
+    background: #0B0F19 !important;
+    border: 1px solid rgba(56, 189, 248, 0.2) !important;
+    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6) !important;
+    margin: 1.5rem 0 !important;
+    overflow: hidden !important;
+}
+
+.cyber-code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1.25rem;
+    background: rgba(15, 23, 42, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cyber-code-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.cyber-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.dot-red { background-color: #EF4444; }
+.dot-yellow { background-color: #F59E0B; }
+.dot-green { background-color: #10B981; }
+
+.cyber-code-block pre {
+    margin: 0 !important;
+    padding: 1.25rem !important;
+    background: transparent !important;
+    border-left: none !important;
+    font-family: var(--v2-font-mono) !important;
+}
+
+/* Callout Alert Boxes */
+.cyber-callout {
+    position: relative;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    backdrop-filter: blur(8px);
+}
+
+.cyber-callout-info {
+    background: rgba(56, 189, 248, 0.08);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-left: 4px solid var(--v2-cyan);
+}
+
+.cyber-callout-gold {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-left: 4px solid var(--v2-amber);
+}
+
+/* Table Enhancements */
+.prose table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--v2-border-light);
+}
+
+html.dark .prose table {
+    border-color: var(--v2-border-dark);
+}
+
+.prose th {
+    background: rgba(241, 245, 249, 0.8);
+    padding: 0.85rem 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--v2-text-primary-light);
+}
+
+html.dark .prose th {
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--v2-cyan);
+}
+
+.prose td {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--v2-border-light);
+}
+
+html.dark .prose td {
+    border-top-color: var(--v2-border-dark);
+}
+
+.prose tr:hover td {
+    background: rgba(56, 189, 248, 0.04);
+}

@@ -1,319 +1,611 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 5: Benchmarking and Tuning - Lab Guide - OPS4 Course</title>
+    <title>Lab 5 Workbook: HPL & STREAM Benchmarking — OPS4 Course (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
-    
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
-            </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </div>
-</nav>
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_5_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 5 Workbook: HPL & STREAM Benchmarking</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_5_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
+                </a>
+                <a href="Week_5_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 5</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Course Home</span>
+                </a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 5</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 5: Benchmarking and Tuning - Lab Guide</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 5 Workbook: HPL & STREAM Benchmarking</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">HPC Cluster Performance Measurement & Memory Tuning</span>
+                </div>
+            </div>
+
+
+
+
+
+<p><strong>Subject:</strong> Operating Systems 4 (EIOPS4A) — Week 5: Shared-Memory Programming with OpenMP (Chapter 7)<br>
+<strong>Chapter Reference:</strong> Fork-Join model, thread variables, OpenMP directives, barriers, and critical sections</p>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📋 Overview</p>
+    <p class="m-0 mt-1 text-sm">This laboratory shifts from cluster-level network nodes to single-node <strong>Symmetric Multiprocessing (SMP)</strong> architectures. Students implement shared-memory parallel programs using the <strong>OpenMP</strong> API — utilising compiler directives, runtime library routines, and environment variables to orchestrate lightweight threads within a single unified memory domain.</p>
 </div>
 
-<p><strong>Objective</strong>: Characterize the performance of your cluster using standard benchmarks.
-<strong>Goal</strong>: Measure Memory Bandwidth (STREAM) and Compute Performance (HPL), and observe the effect of compiler flags.</p>
-<hr />
-<h2>1. The Impact of Compiler Optimizations</h2>
-<p>Before running complex benchmarks, let's see how much "free" speed we can get just by asking the compiler to work harder.</p>
-<h3>1.1 Create the Test Code</h3>
-<p>Create a file named <code>matrix_test.c</code>. This code simply multiplies two matrices.</p>
-<pre><code class="language-c">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;time.h&gt;
+<hr>
+<h2>Section 1: Lab Overview &amp; Architectural Goals</h2>
 
-#define N 1000
+<h3>1.1 The Fork-Join Execution Model</h3>
+<table>
+    <thead><tr><th>Phase</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><strong>Master Thread</strong> (Sequential)</td><td>The program begins as a single thread. It executes sequentially until it encounters an OpenMP <code>#pragma omp parallel</code> directive.</td></tr>
+        <tr><td><strong>Fork</strong> (Parallel Regions)</td><td>The Master thread forks (creates) a team of concurrent worker threads. Each thread executes instructions simultaneously.</td></tr>
+        <tr><td><strong>Join</strong> (Synchronisation)</td><td>At the end of the parallel block, a barrier synchronisation is implicitly enforced. Worker threads terminate, leaving only the master to resume sequential execution.</td></tr>
+    </tbody>
+</table>
+
+<h3>1.2 Flynn's Architecture Taxonomy</h3>
+<table>
+    <thead><tr><th>Class</th><th>Description</th><th>Example</th></tr></thead>
+    <tbody>
+        <tr><td><strong>SISD</strong></td><td>Single Instruction Single Data — standard single-threaded processors.</td><td>Sequential C programs</td></tr>
+        <tr><td><strong>SIMD</strong></td><td>Single Instruction Multiple Data — vector processors executing one instruction across a data vector.</td><td>CPU vectorisation, AVX</td></tr>
+        <tr><td><strong>MIMD</strong></td><td>Multiple Instruction Multiple Data — multi-core computers executing independent processor streams over different datasets. OpenMP and MPI are primary software examples.</td><td>OpenMP, MPI, GPU compute</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 2: Preparing the OpenMP Environment</h2>
+
+<h3>Step 1 – Connect to the Master Node</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">vagrant ssh master</code></pre>
+            </div>
+</div>
+
+<h3>Step 2 – Verify GCC OpenMP Support</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">gcc --version
+find /usr/lib/gcc/ -name "libgomp.so"</code></pre>
+            </div>
+</div>
+
+<h3>Step 3 – Setting Thread Count with Environment Variables</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">export OMP_NUM_THREADS=4
+echo $OMP_NUM_THREADS</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 3: Exercise 1 – Creating Basic Parallel Regions</h2>
+<p>Create <code>/shared/omp_hello.c</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#include &lt;omp.h&gt;
+#include &lt;stdio.h&gt;
 
 int main() {
-    double *A = malloc(N * N * sizeof(double));
-    double *B = malloc(N * N * sizeof(double));
-    double *C = malloc(N * N * sizeof(double));
+    // Set a parallel block using compiler pragmas
+    #pragma omp parallel
+    {
+        int thread_id = omp_get_thread_num();
+        int total_threads = omp_get_num_threads();
+        printf("Hello from OpenMP thread %d of %d\n", thread_id, total_threads);
+    }
+    return 0;
+}</code></pre>
+            </div>
+</div>
 
-    // Initialize
-    for(int i=0; i&lt;N*N; i++) { A[i] = 1.0; B[i] = 2.0; }
+<h3>Compile with the OpenMP Flag</h3>
+<p>The <code>-fopenmp</code> flag instructs GCC to link the OpenMP runtime library (<code>libgomp</code>) and translate pragmas into multithreaded instructions:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">gcc -fopenmp /shared/omp_hello.c -o /shared/omp_hello</code></pre>
+            </div>
+</div>
 
-    clock_t start = clock();
+<h3>Execute with Different Thread Counts</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">export OMP_NUM_THREADS=2
+/shared/omp_hello
+export OMP_NUM_THREADS=4
+/shared/omp_hello</code></pre>
+            </div>
+</div>
 
-    // Multiply
-    for(int i=0; i&lt;N; i++) {
-        for(int j=0; j&lt;N; j++) {
-            for(int k=0; k&lt;N; k++) {
-                C[i*N+j] += A[i*N+k] * B[k*N+j];
-            }
+<hr>
+<h2>Section 4: Exercise 2 – Parallel Loop Worksharing</h2>
+<p>Create <code>/shared/omp_vector_add.c</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#include &lt;omp.h&gt;
+#include &lt;stdio.h&gt;
+#define N 10000000
+float a[N], b[N], c[N];
+
+int main() {
+    for (int i = 0; i &lt; N; i++) { a[i] = 1.0f; b[i] = 2.0f; }
+
+    double start_time = omp_get_wtime();
+
+    // Parallelize the loop using worksharing directives
+    #pragma omp parallel for
+    for (int i = 0; i &lt; N; i++) {
+        c[i] = a[i] + b[i];
+    }
+
+    double end_time = omp_get_wtime();
+    printf("Vector addition completed in %.6f seconds\n", end_time - start_time);
+    return 0;
+}</code></pre>
+            </div>
+</div>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">gcc -O2 -fopenmp /shared/omp_vector_add.c -o /shared/omp_vector_add
+/shared/omp_vector_add</code></pre>
+            </div>
+</div>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📌 OpenMP Loop Scheduling</p>
+    <ul class="mt-2 mb-0 text-sm space-y-1">
+        <li><strong>static:</strong> Pre-allocates iterations evenly to each thread before execution (ideal for balanced loops).</li>
+        <li><strong>dynamic:</strong> Allocates chunks of iterations dynamically at runtime as threads become idle (ideal for unbalanced workloads).</li>
+        <li><strong>guided:</strong> Iteratively decreases chunk sizes to optimise tail latency.</li>
+    </ul>
+</div>
+
+<hr>
+<h2>Section 5: Exercise 3 – Private and Shared Variable Domains</h2>
+<table>
+    <thead><tr><th>Clause</th><th>Definition</th></tr></thead>
+    <tbody>
+        <tr><td><code>shared</code></td><td>A single memory storage location is referenced by all threads. Writes must be synchronised.</td></tr>
+        <tr><td><code>private</code></td><td>Each thread allocates a local copy of the variable on its local stack frame. Values do not persist outside the block.</td></tr>
+        <tr><td><code>firstprivate</code></td><td>Allocates thread-private storage initialised with the value of the variable before entering the parallel region.</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 6: Exercise 4 – Thread Reductions vs Critical Sections</h2>
+<p>Create <code>/shared/omp_reduction.c</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#include &lt;omp.h&gt;
+#include &lt;stdio.h&gt;
+#define N 1000000
+
+int main() {
+    double sum_race = 0.0, sum_critical = 0.0, sum_reduction = 0.0;
+
+    // 1. DATA RACE (INCORRECT - demonstrates the problem)
+    #pragma omp parallel for
+    for (int i = 1; i &lt;= N; i++) { sum_race += 1.0; }
+
+    // 2. CRITICAL SECTION (CORRECT BUT SLOW)
+    #pragma omp parallel for
+    for (int i = 1; i &lt;= N; i++) {
+        #pragma omp critical
+        { sum_critical += 1.0; }
+    }
+
+    // 3. REDUCTION DIRECTIVE (CORRECT AND FAST)
+    #pragma omp parallel for reduction(+:sum_reduction)
+    for (int i = 1; i &lt;= N; i++) { sum_reduction += 1.0; }
+
+    printf("Race Sum      : %.1f (Expected: %d.0)\n", sum_race, N);
+    printf("Critical Sum  : %.1f (Expected: %d.0)\n", sum_critical, N);
+    printf("Reduction Sum : %.1f (Expected: %d.0)\n", sum_reduction, N);
+    return 0;
+}</code></pre>
+            </div>
+</div>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">gcc -fopenmp /shared/omp_reduction.c -o /shared/omp_reduction
+/shared/omp_reduction</code></pre>
+            </div>
+</div>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">⭐ Core Concept: Reductions are Highly Optimised</p>
+    <p class="m-0 mt-1 text-sm">The <code>critical</code> directive locks the sum variable across threads, causing execution to bottleneck. In contrast, the <code>reduction(+:variable)</code> clause allocates a local copy per thread, accumulating loop iterations in parallel before performing a highly optimised global merge at the join synchronisation barrier.</p>
+</div>
+
+<hr>
+<h2>Section 7: Exercise 5 – OpenMP Matrix Multiplication &amp; Dynamic Scheduling</h2>
+<p>In this exercise, you will parallelise a 2D matrix multiplication kernel using the OpenMP <code>collapse(2)</code> clause and compare performance between <code>static</code> and <code>dynamic</code> loop schedules.</p>
+
+<p>Create <code>/shared/omp_matrix.c</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#include &lt;omp.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define N 500
+
+double A[N][N], B[N][N], C[N][N];
+
+int main() {
+    // Initialize matrices
+    for (int i = 0; i &lt; N; i++) {
+        for (int j = 0; j &lt; N; j++) {
+            A[i][j] = 1.0;
+            B[i][j] = 2.0;
+            C[i][j] = 0.0;
         }
     }
 
-    clock_t end = clock();
-    printf(&quot;Time: %f seconds\n&quot;, (double)(end - start) / CLOCKS_PER_SEC);
+    double start = omp_get_wtime();
+
+    // Collapse outer 2 loops into a single parallel iteration space
+    #pragma omp parallel for collapse(2) schedule(dynamic, 16)
+    for (int i = 0; i &lt; N; i++) {
+        for (int j = 0; j &lt; N; j++) {
+            double sum = 0.0;
+            for (int k = 0; k &lt; N; k++) {
+                sum += A[i][k] * B[k][j];
+            }
+            C[i][j] = sum;
+        }
+    }
+
+    double end = omp_get_wtime();
+    printf("Parallel Matrix Multiplication (%dx%d) completed in %.4f seconds\n", N, N, end - start);
     return 0;
-}
-</code></pre>
-<h3>1.2 Compile and Compare</h3>
-<ol>
-<li>
-<p><strong>Compile with No Optimization (-O0)</strong>:
-    <code>bash
-    gcc -O0 matrix_test.c -o matrix_slow
-    ./matrix_slow</code>
-    <em>Record the time.</em></p>
-</li>
-<li>
-<p><strong>Compile with Aggressive Optimization (-O3)</strong>:
-    <code>bash
-    gcc -O3 matrix_test.c -o matrix_fast
-    ./matrix_fast</code>
-    <em>Record the time.</em></p>
-</li>
-</ol>
-<p><strong>Result</strong>: You should see a drastic difference (often 10x or more) just from flags.</p>
-<hr />
-<h2>2. STREAM Benchmark (Memory Bandwidth)</h2>
-<p>We will use the <strong>STREAM</strong> benchmark to find the peak memory bandwidth of a single node.</p>
-<h3>2.1 Download and Compile</h3>
-<ol>
-<li>Download the source:
-    <code>bash
-    wget https://www.cs.virginia.edu/stream/FTP/Code/stream.c</code></li>
-<li>Compile with OpenMP support (to use all memory channels):
-    <code>bash
-    gcc -O3 -fopenmp -DSTREAM_ARRAY_SIZE=10000000 stream.c -o stream</code></li>
-</ol>
-<h3>2.2 Run the Benchmark</h3>
-<p>Run it on a single node (e.g., inside an <code>srun --pty bash</code> session):</p>
-<pre><code class="language-bash">export OMP_NUM_THREADS=4  # Match your Core count
-./stream
-</code></pre>
-<p><strong>Analyze</strong>: Look at the "Copy" and "Triad" values.
-<em>Result</em>: <code>______ MB/s</code></p>
-<hr />
-<h2>3. HPL (High Performance Linpack)</h2>
-<p>Now we measure the Peak Flops of the cluster.</p>
-<h3>3.1 Install HPL</h3>
-<p>Building HPL from source is complex (requires BLAS, MPI). For this lab, we will use a standard container or package if available, or a simplified build.
-<em>Assumption</em>: <code>hpl</code> is installed in the environment (e.g., <code>dnf install hpl</code> or via Spack). If not, download a pre-compiled binary provided by the instructor.</p>
-<h3>3.2 Configure HPL.dat</h3>
-<p>Create a file named <code>HPL.dat</code>. This is the configuration file HPL reads.</p>
-<pre><code class="language-text">HPLinpack benchmark input file
-Innovative Computing Laboratory, University of Tennessee
-HPL.out      output file name (if any)
-6            device out (6=stdout,7=stderr,file)
-1            # of problems sizes (N)
-5000         Ns
-1            # of NBs
-128          NBs
-0            PMAP process mapping (0=Row-,1=Column-major)
-1            # of process grids (P x Q)
-1            Ps
-1            Qs
-16.0         threshold
-1            # of panel fact
-2            PFACTs (0=left, 1=Crout, 2=Right)
-1            # of recursive stopping criterium
-4            NBMINs (&gt;= 1)
-1            # of panels in recursion
-2            NDIVs
-1            # of recursive panel fact.
-1            RFACTs (0=left, 1=Crout, 2=Right)
-1            # of broadcast
-1            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
-1            # of lookahead depth
-1            DEPTHs (&gt;=0)
-2            SWAP (0=bin-exch,1=long,2=mix)
-64           swapping threshold
-0            L1 in (0=transposed,1=no-transposed)
-0            U  in (0=transposed,1=no-transposed)
-1            Equilibration (0=no,1=yes)
-8            memory alignment in double (&gt; 0)
-</code></pre>
-<h3>3.3 Run on 1 Node</h3>
-<p>Run HPL on a single core (Serial):</p>
-<pre><code class="language-bash">mpirun -np 1 ./xhpl
-</code></pre>
-<ul>
-<li>Look for the final result: <code>Gflops</code>.</li>
-</ul>
-<h3>3.4 Run on 2 Nodes (Parallel)</h3>
-<ol>
-<li>Edit <code>HPL.dat</code>: Change <code>Ps</code> to <code>2</code> and <code>Qs</code> to <code>1</code> (Total 2 processes).</li>
-<li>Increase <code>Ns</code> to <code>8000</code> (More nodes = more RAM = bigger problem).</li>
-<li>Submit via Slurm:
-    <code>bash
-    srun -N 2 --ntasks-per-node=1 ./xhpl</code></li>
-</ol>
-<p><strong>Goal</strong>: Did your Gflops double? If not, why? (Network latency, small problem size?)</p>
-<hr />
-<h2>Submission</h2>
-<p>Submit a simple report (<code>Week7_Lab_Report.txt</code>):</p>
-<ol>
-    <li><strong>Matrix Time</strong>: -O0 vs -O3 results.</li>
-    <li><strong>STREAM</strong>: Peak Bandwidth (MB/s).</li>
-    <li><strong>HPL</strong>: Peak Gflops for 1 Node vs 2 Nodes.</li>
-</ol>
+}</code></pre>
+            </div>
+</div>
+
+<h3>Compile and Test Execution</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">gcc -O3 -fopenmp /shared/omp_matrix.c -o /shared/omp_matrix
+export OMP_NUM_THREADS=4
+/shared/omp_matrix</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 8: Troubleshooting Reference</h2>
+<table>
+    <thead><tr><th>Symptom</th><th>Possible Cause</th><th>Resolution</th></tr></thead>
+    <tbody>
+        <tr><td>Thread counts revert to 1</td><td>OMP_NUM_THREADS not defined, or compiled without -fopenmp.</td><td>Verify compilation contains <code>-fopenmp</code>. Run <code>export OMP_NUM_THREADS=4</code>.</td></tr>
+        <tr><td>Segmentation Fault inside parallel regions</td><td>Stack overflow: thread private variables exceeded allocation limits.</td><td>Run <code>export OMP_STACKSIZE=16M</code> or allocate on heap using malloc.</td></tr>
+        <tr><td>Sum variable values are unpredictable</td><td>Race condition: multiple threads writing to shared sum variable.</td><td>Use <code>#pragma omp critical</code> or the <code>reduction</code> clause.</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 9: Review Questions</h2>
+<div class="cyber-callout cyber-callout-gold not-prose">
+    <p class="font-semibold text-amber-700 dark:text-amber-300 m-0">💡 Review Questions</p>
+    <ol class="mt-2 mb-0 text-sm space-y-2">
+        <li><strong>Q1:</strong> Explain how OpenMP pragmas allow developers to incrementally parallelise existing sequential C code.</li>
+        <li><strong>Q2:</strong> What is a race condition in OpenMP, and how do critical sections or reduction clauses mitigate it?</li>
+        <li><strong>Q3:</strong> What is the purpose of the <code>collapse(2)</code> clause in nested loop parallelisation?</li>
+    </ol>
+</div>
+
+<hr>
+<h2>Section 10: Laboratory Verification Checklist</h2>
+<table>
+    <thead><tr><th>Milestone</th><th>Deliverable</th><th>Status</th></tr></thead>
+    <tbody>
+        <tr><td>Exercise 1 (Parallel Regions)</td><td>OpenMP hello world compiles, links, and schedules multi-threaded outputs.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 2 (Worksharing)</td><td>Parallel loop array add executes successfully, showing proper thread distribution.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 3 (Scopes)</td><td>Variables correctly segmented into private, shared, and firstprivate domains.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 4 (Reductions)</td><td>Race conditions protected and analysed using reductions and critical sections.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 5 (Matrix Parallelism)</td><td>Matrix multiplication executes in parallel using collapse(2) and dynamic schedule.</td><td>[ ] Assessor Sign-Off</td></tr>
+    </tbody>
+</table>
+
+
+
         </article>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>

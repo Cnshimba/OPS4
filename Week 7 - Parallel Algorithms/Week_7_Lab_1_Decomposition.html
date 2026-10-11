@@ -1,211 +1,715 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 7: Parallel Algorithms - Lab Guide - OPS4 Course</title>
+    <title>Lab 7 Workbook: MPI Distributed Parallelism — OPS4 Course (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
-    
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
-            </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </div>
-</nav>
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_7_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 7 Workbook: MPI Distributed Parallelism</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_7_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
+                </a>
+                <a href="Week_7_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 7</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Course Home</span>
+                </a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 7</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 7: Parallel Algorithms - Lab Guide</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 7 Workbook: MPI Distributed Parallelism</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">Domain Decomposition & Message Passing Algorithms</span>
+                </div>
+            </div>
+
+
+
+
+
+<p><strong>Subject:</strong> Operating Systems 4 (EIOPS4A) — Week 7: Parallel Algorithms &amp; Libraries (Chapters 9 &amp; 10)<br>
+<strong>Chapter Reference:</strong> Scientific libraries for Linear Algebra (BLAS, LAPACK, PETSc) and parallel I/O (HDF5, NetCDF)</p>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📋 Overview</p>
+    <p class="m-0 mt-1 text-sm">A production HPC system is more than a raw MPI compiler — it is an organised scientific ecosystem. This lab guides you through building a modular scientific software stack: optimised linear algebra libraries, parallel Fourier solvers, hierarchical scientific databases, and high-level scientific toolkits from source, organised under Lmod environment modules.</p>
 </div>
 
-<p><strong>Objective</strong>: designing a decomposition strategy for a 2D problem on paper (or whiteboard).</p>
-<hr />
-<h2>Part 1: Domain Decomposition</h2>
-<p><strong>Scenario</strong>: You have a $16 \times 16$ grid representing a metal plate. You have 4 MPI Processes.</p>
-<ol>
-<li><strong>Block Decomposition</strong>: Draw how you would split the grid if you gave each rank a $8 \times 8$ block.</li>
-<li><strong>Strip Decomposition</strong>: Draw how you would split the grid if you gave each rank $4$ full rows ($4 \times 16$).</li>
-<li><strong>Ghost Cells</strong>:<ul>
-<li>Select Rank 1.</li>
-<li>Identify which rows/columns belong to it.</li>
-<li>Draw the "Ghost Cells" it needs from its neighbors.</li>
-<li>How many integers does it send? How many does it receive?</li>
-</ul>
-</li>
-</ol>
-<h2>Part 2: Functional Decomposition</h2>
-<p><strong>Scenario</strong>: You are building a real-time video processing pipeline for a security camera.
-<strong>Stages</strong>:</p>
-<ol>
-    <li><strong>Decode</strong>: Read raw bits. (Heavy CPU)</li>
-    <li><strong>Filter</strong>: Enhance night vision. (Moderate CPU)</li>
-    <li><strong>Analyze</strong>: Face recognition AI. (Very Heavy CPU / GPU)</li>
-    <li><strong>Save</strong>: Write to disk. (I/O Bound)</li>
-</ol>
-<p><strong>Task</strong>:</p>
-<ul>
-    <li>You have 10 nodes.</li>
-    <li>How would you assign them to these 4 stages? (e.g., 2 nodes for Decode, etc.) to minimize bottlenecks?</li>
-    <li>Justify your choice. (Hint: The "Analyze" stage is the slowest).</li>
-</ul>
+<hr>
+<h2>Section 1: Software Dependency Architecture</h2>
+<table>
+    <thead><tr><th>Library</th><th>Function</th><th>Depends On</th></tr></thead>
+    <tbody>
+        <tr><td><strong>OpenBLAS</strong></td><td>Optimised Basic Linear Algebra Subprograms — vector and matrix operations tuned to processor registers</td><td>GCC, OpenMP</td></tr>
+        <tr><td><strong>FFTW3</strong></td><td>Fastest Fourier Transform in the West — discrete Fourier transforms in parallel with MPI support</td><td>Open MPI</td></tr>
+        <tr><td><strong>HDF5</strong></td><td>Hierarchical Data Format — parallel scientific database allowing concurrent multi-node file writes</td><td>Open MPI (MPI-IO)</td></tr>
+        <tr><td><strong>ScaLAPACK</strong></td><td>Distributed-memory dense linear algebra — 2D block-cyclic data distribution across MPI ranks</td><td>OpenBLAS, Open MPI</td></tr>
+        <tr><td><strong>PETSc</strong></td><td>Portable Extensible Toolkit for Scientific Computation — scalable parallel PDE solvers</td><td>ScaLAPACK, HDF5, Open MPI</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 2: Preparing the Shared NFS File Structure</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">vagrant ssh master
+
+# Create shared application and modulefile directories
+sudo mkdir -p /shared/apps /shared/modulefiles
+sudo chown -R vagrant:vagrant /shared/apps /shared/modulefiles
+
+# Verify accessibility on all compute nodes
+pdsh -R ssh -g compute "ls -ld /shared/apps /shared/modulefiles"</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 3: Exercise 1 – Compiling OpenBLAS from Source</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cd /workspace/scratch/
+wget https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26.tar.gz
+tar -xzvf OpenBLAS-0.3.26.tar.gz
+cd OpenBLAS-0.3.26
+
+# Compile with dynamic architecture support (selects fastest CPU instructions at runtime)
+make -j2 DYNAMIC_ARCH=1 USE_OPENMP=1
+
+# Install to shared directory
+make PREFIX=/shared/apps/openblas install</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 4: Exercise 2 – Compiling FFTW3 with MPI Support</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">module load mpi/openmpi-x86_64
+
+cd /workspace/scratch/
+wget http://www.fftw.org/fftw-3.3.10.tar.gz
+tar -xzvf fftw-3.3.10.tar.gz
+cd fftw-3.3.10
+
+./configure --enable-shared --enable-mpi --prefix=/shared/apps/fftw3
+
+make -j2
+make install</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 5: Exercise 3 – Compiling Parallel HDF5</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cd /workspace/scratch/
+wget https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5_1.14.3.tar.gz
+tar -xzvf hdf5_1.14.3.tar.gz
+cd hdf5-hdf5_1.14.3
+
+# CC=mpicc activates parallel compiler wrappers
+CC=mpicc ./configure --enable-parallel --enable-shared --prefix=/shared/apps/hdf5
+
+make -j2
+make install</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 6: Exercise 4 – Compiling ScaLAPACK</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cd /workspace/scratch/
+wget https://github.com/Reference-ScaLAPACK/scalapack/archive/refs/tags/v2.2.0.tar.gz
+tar -xzvf v2.2.0.tar.gz
+cd scalapack-2.2.0
+mkdir build && cd build
+
+# Link to your compiled OpenBLAS
+cmake .. \
+  -DCMAKE_INSTALL_PREFIX=/shared/apps/scalapack \
+  -DBUILD_SHARED_LIBS=ON \
+  -DLAPACK_LIBRARIES=/shared/apps/openblas/lib/libopenblas.so \
+  -DBLAS_LIBRARIES=/shared/apps/openblas/lib/libopenblas.so
+
+make -j2
+make install</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 7: Exercise 5 – Compiling PETSc</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cd /workspace/scratch/
+wget https://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-3.20.5.tar.gz
+tar -xzvf petsc-3.20.5.tar.gz
+cd petsc-3.20.5
+
+./configure --prefix=/shared/apps/petsc \
+  --with-cc=mpicc --with-cxx=mpicxx --with-fc=mpif90 \
+  --with-blaslapack-lib=/shared/apps/openblas/lib/libopenblas.so \
+  --with-scalapack-dir=/shared/apps/scalapack \
+  --with-hdf5-dir=/shared/apps/hdf5 \
+  --download-metis --download-parmetis
+
+make PETSC_DIR=/workspace/scratch/petsc-3.20.5 PETSC_ARCH=arch-linux-c-debug all
+make PETSC_DIR=/workspace/scratch/petsc-3.20.5 PETSC_ARCH=arch-linux-c-debug install</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 8: Exercise 6 – Creating Lmod Lua Modulefiles</h2>
+<p>Create modulefiles so users load libraries with <code>module load &lt;name&gt;</code>:</p>
+
+<h3>openblas modulefile — <code>/shared/modulefiles/openblas/0.3.26.lua</code></h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">local base = "/shared/apps/openblas"
+prepend_path("PATH", base .. "/bin")
+prepend_path("LD_LIBRARY_PATH", base .. "/lib")
+prepend_path("C_INCLUDE_PATH", base .. "/include")
+setenv("OPENBLAS_DIR", base)</code></pre>
+            </div>
+</div>
+
+<h3>fftw3 modulefile — <code>/shared/modulefiles/fftw3/3.3.10.lua</code></h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">local base = "/shared/apps/fftw3"
+prepend_path("PATH", base .. "/bin")
+prepend_path("LD_LIBRARY_PATH", base .. "/lib")
+prepend_path("C_INCLUDE_PATH", base .. "/include")
+setenv("FFTW_DIR", base)</code></pre>
+            </div>
+</div>
+
+<h3>hdf5 modulefile — <code>/shared/modulefiles/hdf5/1.14.3.lua</code></h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">local base = "/shared/apps/hdf5"
+prepend_path("PATH", base .. "/bin")
+prepend_path("LD_LIBRARY_PATH", base .. "/lib")
+prepend_path("C_INCLUDE_PATH", base .. "/include")
+setenv("HDF5_DIR", base)</code></pre>
+            </div>
+</div>
+
+<h3>Register the Custom Module Path</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">module use /shared/modulefiles
+module avail</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 9: Exercise 7 – Cluster-Wide Python Virtual Environment</h2>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Create shared environment on NFS (auto-propagates to all compute nodes)
+python3 -m venv /shared/apps/python-hpc-env
+source /shared/apps/python-hpc-env/bin/activate
+
+# Configure site parameters targeting OpenBLAS
+mkdir -p /shared/apps/python-hpc-env/.config
+nano /shared/apps/python-hpc-env/.config/site.cfg</code></pre>
+            </div>
+</div>
+
+<p>Add to <code>site.cfg</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">[openblas]
+libraries = openblas
+library_dirs = /shared/apps/openblas/lib
+include_dirs = /shared/apps/openblas/include
+runtime_library_dirs = /shared/apps/openblas/lib</code></pre>
+            </div>
+</div>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">module load openblas
+export DISTUTILS_DEBUG=1
+pip install --no-binary :all: numpy==1.26.4
+pip install scipy mpi4py</code></pre>
+            </div>
+</div>
+
+<h3>python-hpc Modulefile — <code>/shared/modulefiles/python-hpc/1.0.lua</code></h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">local base = "/shared/apps/python-hpc-env"
+prepend_path("PATH", base .. "/bin")
+prepend_path("LD_LIBRARY_PATH", "/shared/apps/openblas/lib")
+setenv("VIRTUAL_ENV", base)
+setenv("PYTHONPATH", base .. "/lib/python3.9/site-packages")</code></pre>
+            </div>
+</div>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Verify on a compute node
+ssh compute01
+module use /shared/modulefiles
+module load mpi/openmpi-x86_64 python-hpc
+python3 -c "import numpy; numpy.show_config()"</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 10: Verification – Parallel Monte Carlo Pi Estimation</h2>
+<p>Create <code>/shared/mpi_pi.c</code> — a parallel Monte Carlo Pi estimator using <code>MPI_Bcast</code> and <code>MPI_Reduce</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;time.h&gt;
+
+int main(int argc, char **argv) {
+    int rank, size;
+    long long total_trials = 1000000000LL;
+    long long local_trials, local_hits = 0, global_hits = 0;
+    double x, y, pi_estimate, error;
+    unsigned int seed;
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    MPI_Bcast(&total_trials, 1, MPI_LONG_LONG, 0, MPI_COMM_WORLD);
+    local_trials = total_trials / size;
+    seed = time(NULL) + rank * 1000;
+
+    for (long long i = 0; i &lt; local_trials; i++) {
+        x = (double)rand_r(&seed) / RAND_MAX;
+        y = (double)rand_r(&seed) / RAND_MAX;
+        if (x * x + y * y &lt;= 1.0) local_hits++;
+    }
+
+    MPI_Reduce(&local_hits, &global_hits, 1, MPI_LONG_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    if (rank == 0) {
+        pi_estimate = 4.0 * (double)global_hits / total_trials;
+        error = pi_estimate - 3.141592653589793;
+        printf("=== MPI Collective Pi Estimation Result ===\n");
+        printf("Ranks Coordinating : %d\n", size);
+        printf("Total Cluster Trials: %lld\n", total_trials);
+        printf("Estimated Pi Value : %.10f\n", pi_estimate);
+        printf("Calculated Error   : %.10f\n", error);
+        printf("===========================================\n");
+    }
+    MPI_Finalize();
+    return 0;
+}</code></pre>
+            </div>
+</div>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">module load mpi/openmpi-x86_64
+mpicc -O3 /shared/mpi_pi.c -o /shared/mpi_pi
+srun -N 4 --ntasks-per-node=2 /shared/mpi_pi</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 11: Review Questions</h2>
+<div class="cyber-callout cyber-callout-gold not-prose">
+    <p class="font-semibold text-amber-700 dark:text-amber-300 m-0">💡 Review Questions</p>
+    <ol class="mt-2 mb-0 text-sm space-y-2">
+        <li><strong>Q1:</strong> Explain why compiling BLAS/LAPACK with <code>DYNAMIC_ARCH=1</code> is critical when managing heterogeneous cluster hardware.</li>
+        <li><strong>Q2:</strong> Why is a shared cluster-wide Python virtual environment under <code>/shared</code> preferable over running <code>pip install --user</code> locally on each node?</li>
+        <li><strong>Q3:</strong> In the Monte Carlo Pi algorithm, what is the benefit of using <code>MPI_Bcast</code> and <code>MPI_Reduce</code> over point-to-point <code>MPI_Send</code>/<code>MPI_Recv</code> loops?</li>
+    </ol>
+</div>
+
+<hr>
+<h2>Section 12: Laboratory Verification Checklist</h2>
+<table>
+    <thead><tr><th>Milestone</th><th>Deliverable</th><th>Status</th></tr></thead>
+    <tbody>
+        <tr><td>Exercises 1–2 (Base Math)</td><td>OpenBLAS and FFTW3 compiled from source and installed in <code>/shared/apps/</code>.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercises 3–4 (Database/Algebra)</td><td>Parallel HDF5 and ScaLAPACK fully compiled and linked to OpenBLAS.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 5–6 (PETSc/Lmod)</td><td>PETSc compiled; custom Lmod Lua modulefiles available via <code>module avail</code>.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 7 (Python Env)</td><td>NumPy/SciPy compiled inside python-hpc-env showing OpenBLAS dynamic links.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Verification (MPI Collectives)</td><td>MPI Pi estimation executes on 4 nodes using MPI_Bcast and MPI_Reduce.</td><td>[ ] Assessor Sign-Off</td></tr>
+    </tbody>
+</table>
+
+
+
         </article>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>

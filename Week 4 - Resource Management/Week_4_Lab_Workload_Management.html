@@ -3,141 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 4: Resource Management - Lab Guide - OPS4 Course</title>
+    <title>Lab 4 Workbook: Slurm Workload Manager — OPS4 Course (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
-    
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
-            </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </div>
-</nav>
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
 
-    
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 4 Workbook: Slurm Workload Manager</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_4_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
+                </a>
+                <a href="Week_4_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 4</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Course Home</span>
+                </a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
     <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 4 Workbook: Slurm Workload Manager</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">Multi-Node Queue Configuration & Cgroups Enforcement</span>
+                </div>
+            </div>
+
+
             
 <div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
     <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
@@ -159,9 +135,29 @@
 <p>Ensure your Master Node is running, and you have completed the Week 3 Lab. Because this lab session might be in a new terminal window, you <strong>must load your environment variables</strong> from Week 3 before proceeding.</p>
 
 <p><strong>Explanation</strong>: The OpenHPC installation tools rely on these bash variables. We will source the <code>cluster_env.sh</code> file we created in Week 3, and then export one additional variable specifically for Warewulf containers.</p>
-<pre><code class="language-bash">source cluster_env.sh
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">source cluster_env.sh
 export CHROOT=$(sudo wwctl image show openeuler-24.03)
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>2. Install Munge (Authentication)</h2>
@@ -169,50 +165,188 @@ export CHROOT=$(sudo wwctl image show openeuler-24.03)
 
 <h3>2.1 Install Munge on Master</h3>
 <p><strong>Explanation</strong>: Installs Munge, an authentication service that Slurm uses to trust messages sent between the master and compute nodes.</p>
-<pre><code class="language-bash">sudo dnf install munge -y
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf install munge -y
 </code></pre>
+            </div>
+</div>
 
 <h3>2.2 Generate the Key</h3>
 <p><strong>Explanation</strong>: Generates a secure cryptographic key (<code>munge.key</code>) and strictly restricts its read permissions, a security requirement for Munge to start.</p>
-<pre><code class="language-bash">sudo /usr/sbin/create-munge-key
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo /usr/sbin/create-munge-key
 sudo chown munge:munge /etc/munge/munge.key
 sudo chmod 400 /etc/munge/munge.key
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>3. Install Slurm on Master Node</h2>
 
 <h3>3.1 Install OpenHPC Server Packages</h3>
 <p><strong>Explanation</strong>: Installs the OpenHPC-provided Slurm server packages that include the <code>slurmctld</code> daemon.</p>
-<pre><code class="language-bash">sudo dnf -y install ohpc-slurm-server
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf -y install ohpc-slurm-server
 </code></pre>
+            </div>
+</div>
 
 <h3>3.2 Configure <code>slurm.conf</code></h3>
 <p>We use the OpenHPC templates and automatically replace the hostname with our <code>$sms_name</code> variable.</p>
 
 <p><strong>Explanation</strong>: Copies the default OpenHPC templates into the Slurm configuration directory and automatically substitutes the master hostname into the configuration using the <code>sed</code> utility.</p>
-<pre><code class="language-bash">sudo cp /etc/slurm/slurm.conf.ohpc /etc/slurm/slurm.conf
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo cp /etc/slurm/slurm.conf.ohpc /etc/slurm/slurm.conf
 sudo cp /etc/slurm/cgroup.conf.example /etc/slurm/cgroup.conf
 sudo sed -i "s/SlurmctldHost=\S\+/SlurmctldHost=${SMS_NAME}/" /etc/slurm/slurm.conf
 </code></pre>
+            </div>
+</div>
 
 <p>Then, open <code>/etc/slurm/slurm.conf</code> and add/edit the node and partition definitions at the bottom to match your cluster:</p>
 <p><strong>Explanation</strong>: Opens the configuration file in the nano editor so you can manually define the node resources.</p>
-<pre><code class="language-bash">sudo nano /etc/slurm/slurm.conf
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo nano /etc/slurm/slurm.conf
 </code></pre>
+            </div>
+</div>
 
-<pre><code class="language-ini"># Add or modify these lines at the bottom:
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Add or modify these lines at the bottom:
 NodeName=compute-01 NodeAddr=10.0.0.101 RealMemory=1000 State=UNKNOWN
 NodeName=compute-02 NodeAddr=10.0.0.102 RealMemory=1000 State=UNKNOWN
 PartitionName=debug Nodes=compute-[01-02] Default=YES MaxTime=INFINITE State=UP
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>4. Install Slurm into the Compute Image (Warewulf)</h2>
 
 <p>We execute commands inside our container image to install the OpenHPC slurm client and NTP tools.</p>
 <p><strong>Explanation</strong>: Uses <code>wwctl image exec</code> to run an installation script inside the compute node container image, downloading the Slurm client packages and enabling the Munge and Slurmd services for the next boot.</p>
-<pre><code class="language-bash">sudo wwctl image exec --build=false openeuler-24.03 -- /bin/bash -ex &lt;&lt;- EOF
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo wwctl image exec --build=false openeuler-24.03 -- /bin/bash -ex &lt;&lt;- EOF
 # Add Slurm client support meta-package
 dnf -y install ohpc-slurm-client
 # Enable services to start on boot
@@ -224,6 +358,8 @@ dnf -y install chrony
 dnf -y install lmod-ohpc
 EOF
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>5. Import Configuration Overlays</h2>
@@ -231,7 +367,25 @@ EOF
 
 <h3>5.1 Import Basic Configs</h3>
 <p><strong>Explanation</strong>: Uses Warewulf Overlays to securely inject the host's subuid/subgid and Chrony configurations into the compute node dynamically, without baking them directly into the generic image.</p>
-<pre><code class="language-bash"># Import subuid and subgid
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Import subuid and subgid
 sudo wwctl overlay import --parents nodeconfig /etc/subuid
 sudo wwctl overlay import --parents nodeconfig /etc/subgid
 
@@ -239,10 +393,30 @@ sudo wwctl overlay import --parents nodeconfig /etc/subgid
 sudo wwctl overlay import --parents nodeconfig /opt/ohpc/pub/examples/chrony.conf.ww /etc/chrony.conf.ww
 sudo wwctl profile set --yes nodes --tagadd ntpserver="${SMS_IP}"
 </code></pre>
+            </div>
+</div>
 
 <h3>5.2 Configure Slurm Overlays</h3>
 <p><strong>Explanation</strong>: Copies the Slurm and Munge configuration files into the Warewulf nodeconfig overlay, ensuring they are identical on all compute nodes, and strictly applies the necessary file permissions required by Munge.</p>
-<pre><code class="language-bash"># Configure Slurm server in the overlay (using "configless" option)
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Configure Slurm server in the overlay (using "configless" option)
 sudo wwctl overlay import --parents nodeconfig /opt/ohpc/pub/examples/slurm/slurmd.ww /etc/sysconfig/slurmd.ww
 
 # Set the value of the slurmctld tag to the $SMS_IP
@@ -254,24 +428,66 @@ sudo wwctl overlay chown nodeconfig /etc/munge/munge.key "$(id -u munge)" "$(id 
 sudo wwctl overlay chown nodeconfig /etc/munge "$(id -u munge)" "$(id -g munge)"
 sudo wwctl overlay chmod nodeconfig /etc/munge 0700
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>6. Finalizing Provisioning</h2>
 <p>Rebuild the image to include the new packages and the overlays.</p>
 <p><strong>Explanation</strong>: Compiles the Warewulf overlays and container image to finalize all the changes we injected in the previous steps.</p>
-<pre><code class="language-bash">sudo wwctl image build openeuler-24.03
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo wwctl image build openeuler-24.03
 sudo wwctl overlay build
 sudo wwctl configure --all
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>7. Start the Cluster</h2>
 
 <h3>7.1 Start Slurm on Master</h3>
 <p><strong>Explanation</strong>: Enables and starts the Slurm controller and Munge authentication daemon on the Master node.</p>
-<pre><code class="language-bash">sudo systemctl enable --now munge
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo systemctl enable --now munge
 sudo systemctl enable --now slurmctld
 </code></pre>
+            </div>
+</div>
 
 <h3>7.2 Reboot Compute Nodes</h3>
 <p>Reboot <code>compute-01</code> and <code>compute-02</code> from the console. They will download the new image with Munge and Slurm installed.</p>
@@ -279,15 +495,53 @@ sudo systemctl enable --now slurmctld
 <h3>7.3 Check Registration</h3>
 <p>Once the node is fully booted, check if it checked in with Slurm on the Master:</p>
 <p><strong>Explanation</strong>: Queries the Slurm controller to see the state of all managed compute partitions and nodes.</p>
-<pre><code class="language-bash">sinfo
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sinfo
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>8. Run Your First Job</h2>
 
 <p>Create a test job script named <code>job.sh</code>:</p>
 <p><strong>Explanation</strong>: Creates a batch script defining resource constraints (1 node) for the Slurm Workload Manager to execute.</p>
-<pre><code class="language-bash">#!/bin/bash
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#!/bin/bash
 #SBATCH --job-name=first_job
 #SBATCH --output=result.txt
 #SBATCH --nodes=1
@@ -296,11 +550,33 @@ echo "Hello from \$(hostname)"
 sleep 10
 echo "Job Complete"
 </code></pre>
+            </div>
+</div>
 
 <p>Submit it:</p>
 <p><strong>Explanation</strong>: Submits the batch script into the Slurm queue for execution on the compute node.</p>
-<pre><code class="language-bash">sbatch job.sh
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sbatch job.sh
 </code></pre>
+            </div>
+</div>
 
 <hr />
 <h2>9. Submission</h2>
@@ -310,22 +586,15 @@ echo "Job Complete"
     <li>Screenshot of <code>squeue</code> showing your job running or pending.</li>
     <li>The content of <code>result.txt</code> proving the job ran on <code>compute-01</code> successfully.</li>
 </ol>
+        
+
         </article>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>

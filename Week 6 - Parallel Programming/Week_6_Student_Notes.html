@@ -3,976 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 6: Parallel Programming - Student Notes - OPS4 Course</title>
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <title>Week 6 Student Notes — Parallel Programming (EIOPS4A)</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <script>
         window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
+            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
     
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC &amp; Cluster Computing 2026</span>
-                </span>
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-7xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    06
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 6: Parallel Programming</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_6_Lab_OpenMP.html" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-500 hover:bg-sky-500 hover:text-white transition-all no-underline hidden sm:flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Lab 6 Guide
+                </a>
+                <a href="Week_6_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 6</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
             </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
         </div>
-    </div>
-</nav>
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    </nav>
+
+    <!-- Main Container with Split Sidebar Layout -->
+    <main class="container mx-auto px-4 max-w-7xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_6_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
+                
+                <!-- Quick Navigation Box -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-2 text-xs font-black uppercase tracking-wider text-sky-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                        <span>On This Page</span>
+                    </div>
+                    <nav class="space-y-1.5 text-xs font-medium">
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Foundations of Distributed-Memory Supercomputing</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. The Single Program, Multiple Data (SPMD) Model (Chapter 8)</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. MPI Communicators, Ranks &amp; Initialization</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Point-to-Point Communication Mechanics</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Collective Communications</a>
+                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Python MPI Programming with mpi4py</a>
+                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Hybrid Parallelism Setup (MPI + OpenMP)</a>
+                        <a href="#section-8" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">8. Summary</a>
+                    </nav>
+                </div>
+
+                <!-- Chapter Metadata Widget -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Module</span>
+                        <span class="font-bold text-sky-500">EIOPS4A</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Reading Time</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~30 Minutes</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 font-semibold">Slides Ref</span>
+                        <span class="font-bold text-amber-500">Ch. 10 & 11</span>
+                    </div>
+                    <div class="pt-2">
+                        <a href="Week_6_Lab_OpenMP.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Launch Lab 6 Guide
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Reading Column (Main Canvas) -->
+            <div class="lg:col-span-9 space-y-8">
+                
+                <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+                    
+                    <!-- Hero Header Card -->
+                    <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                        <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                                <span class="text-xl font-black text-white tracking-tight">06</span>
+                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 06</span>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center p-6">
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Parallel Programming</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">OpenMP Shared-Memory Parallelism & Thread Synchronization (Ch. 10 & 11)</span>
+                        </div>
+                    </div>
+
+                    
+
+                    
+
+                    
+
+
+
+                    <!-- SECTION 1 -->
+                    
+                        
+
+                    <!-- SECTION 1 -->
+                    <section id="section-1">
+                        <h2>1. Foundations of Distributed-Memory Supercomputing</h2>
+                        <p>While OpenMP enables shared-memory parallelism across threads inside a single compute node, scaling computational software to thousands of nodes across a supercomputer requires a <strong>Distributed-Memory Architecture</strong>. In a distributed cluster, each compute node possesses its own private RAM address space. A CPU core on Node A cannot directly dereference a physical memory address residing on Node B.</p>
+<p>To coordinate computation, nodes must explicitly exchange data packets over the high-speed network interconnect (InfiniBand / RoCE) using the **Message Passing Interface (MPI)** standard.</p>
+                    
+
+                    
+
+                    <!-- SECTION 2 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 2 -->
+                    <section id="section-2">
+                        <h2>2. The Single Program, Multiple Data (SPMD) Model (Chapter 8)</h2>
+                        <p>MPI programs execute under the <strong>SPMD (Single Program, Multiple Data)</strong> model:</p>
+
+<ul>
+    <li>A single executable binary is launched simultaneously across $N$ distinct processing ranks (instances).</li>
+    <li>Every rank executes the exact same program instructions, but branching statements (<code>if (rank == 0)</code>) allow individual ranks to operate on unique subsets of the global dataset.</li>
+    <li>Ranks are identified by an integer ID ranging from $0<strong>to</strong>N-1$.</li>
+</ul>
+                    
+
+                    
+
+                    <!-- SECTION 3 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 3 -->
+                    <section id="section-3">
+                        <h2>3. MPI Communicators, Ranks &amp; Initialization</h2>
+                        <div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 6</span>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
     </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Parallel Programming</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC &amp; Cluster Computing</span>
-    </div>
+    <pre><code class="language-c">#include &lt;mpi.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv) {
+    int rank, world_size;
+
+    // Initialize the MPI execution environment
+    MPI_Init(&amp;argc, &amp;argv);
+
+    // Get the process rank ID within the default communicator
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+
+    // Get the total number of MPI ranks launched
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;world_size);
+
+    printf("Hello from MPI Rank %d of %d\n", rank, world_size);
+
+    // Finalize the MPI environment
+    MPI_Finalize();
+    return 0;
+}</code></pre>
 </div>
-<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br /><strong>Module</strong>: EIOSY4A<br /><strong>Topic</strong>: Parallel Programming (OpenMP and MPI)<br /><strong>Reading Time</strong>: ~20 Minutes</p></div></div>
-<hr />
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
-1. <strong>Evaluate</strong> the architectural trade-offs between Shared Memory (OpenMP) and Distributed Memory (MPI) paradigms.<br />
-2. <strong>Predict and analyze</strong> the upper theoretical limits of parallel scaling using Amdahl's Law.<br />
-3. <strong>Implement</strong> OpenMP directives (parallel for, reduction, critical) to parallelize serial code blocks.<br />
-4. <strong>Design</strong> distributed memory applications using the MPI SPMD model, communicators, and point-to-point operations.<br />
-5. <strong>Diagnose and resolve</strong> complex concurrent programming flaws, including race conditions and deadlocks.</p></div></div>
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />Welcome to Week 6! We now switch roles from Systems Administrator to HPC Software Developer. This week, you learn why a cluster is useless if software runs serially, and how to unlock its power through parallel programming the foundational skill of HPC.<br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
-<hr />
-<h2>Overview</h2>
-<p>In the first four weeks, we built the physical and logical infrastructure of a cluster (nodes, network, scheduler). Now, we switch roles from <strong>Systems Administrator</strong> to <strong>HPC Software Developer</strong>.</p>
-<p>A cluster is useless if software runs serially on a single core. To unlock the power of hundreds of cores, we must rewrite applications to execute in parallel. This week introduces the theoretical foundations of parallelism and the two fundamental paradigms: <strong>Shared Memory</strong> (using OpenMP) and <strong>Distributed Memory</strong> (using MPI).</p>
-<p>This content covers <strong>Sterling Chapters 7 (Concepts), 8 (Shared Memory), and 9 (Distributed Memory)</strong>.</p>
-<hr />
-<h2>1. Foundations of Parallelism (Sterling Chapter 7)</h2>
-<p>Before writing code, we must understand the <em>physics</em> of performance.</p>
-<h3>1.1 Speedup and Efficiency</h3>
-<p>The primary goal of parallel computing is <strong>Speedup</strong>.</p>
-<ul>
-    <li><strong>Speedup ($S$)</strong>: The ratio of the time taken to solve a problem on a single processor ($T_1$) to the time taken on $p$ processors ($T_p$).</li>
-</ul>
+                    
 
-<p>$$ S_{max} = \frac{1}{f + \frac{1-f}{p}} $$</p>
-<ul>
-<li>If 10% of your code is serial ($f=0.1$), the maximum theoretical speedup is 10x, even with infinite processors.</li>
-<li><strong>Implication</strong>: You must minimize the serial bottleneck (I/O, initialization, single-threaded reductions).</li>
-</ul>
-<h3>1.3 Gustafson's Law (Weak Scaling)</h3>
-<p>Gustafson's Law is the optimistic view. It assumes that as you get more processors, you will <strong>increase the problem size</strong> rather than just trying to solve the same problem faster.</p>
-<ul>
-    <li>If we have 1000x more CPUs, we run a simulation with 1000x more particles.</li>
-    <li>The parallel part grows, diluting the serial part.</li>
-</ul>
-<hr />
-<h2>2. Shared Memory Paradigm: OpenMP (Sterling Chapter 8)</h2>
-<p>In a <strong>Shared Memory</strong> system (like a modern 64-core AMD EPYC server), all processors can read and write to the same RAM. This is the "easiest" way to parallelize because you don't need to move data.</p>
-<p><strong>OpenMP (Open Multi-Processing)</strong> is the industry standard for shared-memory programming. It uses <strong>Compiler Directives</strong> (<code>#pragma</code>) to instruct the compiler to spawn threads.</p>
-<h3>2.1 The Fork-Join Model</h3>
-<p>OpenMP programs follow a strict lifecycle:</p>
-<ol>
-    <li><strong>Master</strong>: Program starts as a single thread (Master).</li>
-    <li><strong>Fork</strong>: Master hits a parallel region (<code>#pragma omp parallel</code>) and splits into a <strong>Team</strong> of threads.</li>
-    <li><strong>Execute</strong>: Threads execute the block simultaneously.</li>
-    <li><strong>Join</strong>: Threads finish and merge back into the Master thread (Implicit Barrier).</li>
-</ol>
-<h3>2.2 Core Directives and Clauses</h3>
-<p>You control OpenMP behavior using clauses appended to the directive.</p>
-<p><strong>1. Parallelizing Loops (<code>#pragma omp parallel for</code>)</strong>
-The compiler splits the loop iterations among threads.</p>
-<pre><code class="language-c">#pragma omp parallel for schedule(static)
-for(int i=0; i&lt;1000000; i++) {
-    A[i] = B[i] + C[i];
-}
-#pragma omp parallel for schedule(static)
-for(int i=0; i&lt;1000000; i++) {
-    A[i] = B[i] + C[i];
-}
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The <code>#pragma</code> tells the compiler to divide the 1,000,000 iterations of the loop among the available threads. <code>schedule(static)</code> ensures that if there are 4 threads, each thread gets exactly 250,000 iterations, minimizing overhead.</p>
-<p><strong>2. Data Scoping (<code>shared</code> vs <code>private</code>)</strong></p>
-<ul>
-    <li><strong>Shared</strong>: All threads access the exact same memory address. (Default for variables outside the parallel block).</li>
-    <li><strong>Private</strong>: Each thread gets its own uninitialized copy of the variable.</li>
-    <li><strong>Firstprivate</strong>: Each thread gets its own copy, initialized with the master's value.</li>
-</ul>
-<p><strong>3. Reductions (<code>reduction(op:list)</code>)</strong>
-How do you sum an array in parallel without a race condition? Each thread sums its chunk into a private accumulator, and OpenMP combines them at the end.</p>
-<pre><code class="language-c">double sum = 0.0;
-#pragma omp parallel for reduction(+:sum)
-for(int i=0; i&lt;N; i++) {
-    sum += A[i];
-}
-double sum = 0.0;
-#pragma omp parallel for reduction(+:sum)
-for(int i=0; i&lt;N; i++) {
-    sum += A[i];
-}
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Without <code>reduction</code>, multiple threads would try to update <code>sum</code> simultaneously, causing a race condition. The <code>reduction(+:sum)</code> clause gives each thread a private copy of <code>sum</code> to accumulate its local total. When all threads finish, OpenMP correctly adds these private totals to the global <code>sum</code> variable.</p>
-<h3>2.3 Race Conditions and Synchronization</h3>
-<p>A <strong>Race Condition</strong> occurs when two threads try to write to the same shared variable simultaneously.</p>
-<ul>
-    <li><strong>Example</strong>: <code>count++</code> (Read, Modify, Write). If two threads read "5" at the same time, both write "6", losing one increment.</li>
-</ul>
-<p><strong>Fixes</strong>:</p>
-<ul>
-    <li><code>#pragma omp atomic</code>: Hardware-level protection for simple updates (<code>x += 1</code>). Fast.</li>
-    <li><code>#pragma omp critical</code>: Creates a "Critical Section" where only one thread can exist at a time. Slow (serializes code).</li>
-    <li><code>#pragma omp barrier</code>: All threads must wait here until the last one arrives.</li>
-</ul>
-<hr />
-<h2>3. Distributed Memory Paradigm: MPI (Sterling Chapter 9)</h2>
-<p>OpenMP is limited to a single box (Scale-Up). To use a cluster (Scale-Out), we need <strong>Distributed Memory</strong>.
-In a cluster, Node A cannot access Node B's RAM. They share nothing. To exchange data, they must send <strong>Messages</strong> over the Network.</p>
-<p><strong>MPI (Message Passing Interface)</strong> is the standard specification for this. It is a library (not part of the compiler).</p>
-<h3>3.1 The SPMD Model</h3>
-<p>MPI programs are built on the <strong>Single Program, Multiple Data (SPMD)</strong> model. In this paradigm, you write and compile a single executable program (e.g., <code>main.c</code>). When you run this program on the cluster, the MPI runtime launches $N$ identical copies of it across the available nodes. Each copy is referred to as a <strong>Process</strong>.</p>
-<p>Although every process runs the exact same code, they do not necessarily do the same thing at the same time. Their behavior diverges based on their unique identity, allowing one process to act as a manager while others act as workers, or for each process to operate on a different slice of a large dataset. This structure simplifies development because you only maintain one codebase, yet it allows for highly complex, uncoupled parallel behavior.</p>
-<h4>3.1.1 SPMD Code Example</h4>
-<p>Here is a canonical "Hello World" example demonstrating the SPMD model, as typically presented in <em>Introduction to High Performance Computing for Scientists and Engineers</em> (Hager &amp; Wellein).</p>
-<pre><code class="language-c">#include &lt;mpi.h&gt;
-#include &lt;stdio.h&gt;
+                    
 
-int main(int argc, char** argv) {
-    int rank, size;
+                    <!-- SECTION 4 -->
+                    </section>
 
-    // 1. Initialize the MPI execution environment
-    MPI_Init(&amp;argc, &amp;argv);
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
 
-    // 2. Determine the rank of the calling process in the communicator
-    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+                    <!-- SECTION 4 -->
+                    <section id="section-4">
+                        <h2>4. Point-to-Point Communication Mechanics</h2>
+                        <p>Point-to-point communication transfers data explicitly from one sender rank to one receiver rank:</p>
 
-    // 3. Determine the size of the group associated with the communicator
-    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+<h3>4.1 Synchronous / Blocking Point-to-Point (<code>MPI_Send</code> &amp; <code>MPI_Recv</code>)</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <pre><code class="language-c">// Rank 0 sends 100 doubles to Rank 1
+if (rank == 0) {
+    MPI_Send(data_buffer, 100, MPI_DOUBLE, 1, 99, MPI_COMM_WORLD);
+} else if (rank == 1) {
+    MPI_Recv(data_buffer, 100, MPI_DOUBLE, 0, 99, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+}</code></pre>
+</div>
 
-    // 4. Each process executes this code, but behavior depends on 'rank'
-    if (rank == 0) {
-        printf(&quot;Hello from the Master process (Rank %d of %d)\n&quot;, rank, size);
-    } else {
-        printf(&quot;Hello from Worker process %d of %d\n&quot;, rank, size);
-    }
+<h3>4.2 Asynchronous / Non-Blocking Point-to-Point (<code>MPI_Isend</code> &amp; <code>MPI_Irecv</code>)</h3>
+<p>Non-blocking calls initiate communication and return control immediately to the CPU, allowing computation and network transmission to overlap seamlessly:</p>
 
-    // 5. Terminate the MPI execution environment
-    MPI_Finalize();
-    return 0;
-}
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> This example illustrates the fundamental MPI boilerplate. We declare <code>rank</code> (my ID) and <code>size</code> (total processes). <code>MPI_Init</code> starts the parallel environment. <code>MPI_Comm_rank</code> and <code>MPI_Comm_size</code> fill our variables. The <code>if (rank == 0)</code> block allows the Master process to separate its logic from the Workers, even though they all run the same compiled executable.</p>
-<h3>3.2 Ranks and Communicators</h3>
-<p>To enable collaboration, every process needs to know "Who am I?" and "Who can I talk to?". This is handled by <strong>Ranks</strong> and <strong>Communicators</strong>.</p>
-<p>A <strong>Communicator</strong> is a defined group of processes that participate in a common parallel task. The default communicator, <code>MPI_COMM_WORLD</code>, includes every active process in the job. Within a communicator, every process is assigned a unique integer identifier called a <strong>Rank</strong>. Ranks act like addresses for mailing messages. They start at 0 and go up to $N-1$. Rank 0 is special by convention; it is typically designated as the "Master" or "Root" process responsible for I/O operations, distributing work, and gathering results, while Ranks 1 through $N-1$ serve as compute workers.</p>
-<h3>3.3 The Message Envelope</h3>
-<p>In a shared memory system, you share data by simply passing a pointer. In distributed memory, this is impossible because Node A cannot see Node B's RAM. Instead, data must be explicitly packed into a message and transmitted over the network. Every MPI message must be wrapped in a "Message Envelope" containing specific metadata so the receiver knows how to handle it.</p>
-<p>The envelope consists of four critical pieces of information for routing: the <strong>Source</strong> (who sent it?), the <strong>Destination</strong> (who is it for?), the <strong>Tag</strong>, and the <strong>Communicator</strong>. The <strong>Tag</strong> is an arbitrary integer label used to distinguish between different types of messages; for example, you might use Tag <code>0</code> for sending raw data and Tag <code>1</code> for sending control signals like "terminate."</p>
-<p>Inside the envelope is the payload, defined by a triplet: a <strong>Buffer</strong> (the memory pointer to the data), a <strong>Count</strong> (the number of items), and a <strong>Datatype</strong>. Because MPI needs to know the exact layout of bytes to transmit across the wire, you must explicitly state the type of data being sent using one of the predefined MPI constants shown in <strong>Table 1</strong> below.</p>
-<p><strong>Table 1: Common C to MPI Type Mappings</strong></p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <pre><code class="language-c">MPI_Request request;
+// Non-blocking send initiation
+MPI_Isend(send_buf, 100, MPI_DOUBLE, neighbor_rank, 0, MPI_COMM_WORLD, &amp;request);
+
+// Perform local computation while network transfers payload
+compute_local_interior_grid();
+
+// Wait for non-blocking communication to complete
+MPI_Wait(&amp;request, MPI_STATUS_IGNORE);</code></pre>
+</div>
+                    
+
+                    
+
+                    <!-- SECTION 5 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 5 -->
+                    <section id="section-5">
+                        <h2>5. Collective Communications</h2>
+                        <p>Collective operations involve all ranks within a communicator simultaneously:</p>
+
 <table>
-<thead>
-<tr>
-<th style="text-align: left;">C Data Type</th>
-<th style="text-align: left;">MPI Data Type</th>
-<th style="text-align: left;">Typical Size (Bytes)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>char</code></td>
-<td style="text-align: left;"><code>MPI_CHAR</code></td>
-<td style="text-align: left;">1</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>int</code></td>
-<td style="text-align: left;"><code>MPI_INT</code></td>
-<td style="text-align: left;">4</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>long</code></td>
-<td style="text-align: left;"><code>MPI_LONG</code></td>
-<td style="text-align: left;">4 or 8 (System Dependent)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>long long</code></td>
-<td style="text-align: left;"><code>MPI_LONG_LONG</code></td>
-<td style="text-align: left;">8</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>float</code></td>
-<td style="text-align: left;"><code>MPI_FLOAT</code></td>
-<td style="text-align: left;">4</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>double</code></td>
-<td style="text-align: left;"><code>MPI_DOUBLE</code></td>
-<td style="text-align: left;">8</td>
-</tr>
-</tbody>
+    <thead><tr><th>Collective Function</th><th>Data Movement Pattern</th><th>Scientific Use Case</th></tr></thead>
+    <tbody>
+        <tr><td><code>MPI_Bcast</code></td><td>One rank broadcasts a buffer to all other ranks.</td><td>Distributing global simulation configuration parameters.</td></tr>
+        <tr><td><code>MPI_Scatter</code></td><td>Splits a root array into equal chunks and distributes one chunk to each rank.</td><td>Distributing input matrix rows across worker ranks.</td></tr>
+        <tr><td><code>MPI_Gather</code></td><td>Collects equal data chunks from all ranks into a single array on the root rank.</td><td>Gathering sub-grid results for centralized disk I/O.</td></tr>
+        <tr><td><code>MPI_Reduce</code></td><td>Combines data from all ranks using a mathematical operator (<code>MPI_SUM</code>, <code>MPI_MAX</code>).</td><td>Computing global kinetic energy sums across ranks.</td></tr>
+        <tr><td><code>MPI_Allreduce</code></td><td>Combines data using an operator and distributes the final result to all ranks.</td><td>Global residual error checks in iterative solvers.</td></tr>
+        <tr><td><code>MPI_Barrier</code></td><td>Synchronizes all ranks; blocks execution until every rank enters the barrier.</td><td>Debugging phase boundaries and timing benchmarks.</td></tr>
+    </tbody>
 </table>
-<h3>3.4 Blocking vs. Non-Blocking Communication</h3>
-<p>MPI provides two distinct modes for sending and receiving messages, each with different performance implications. The default mode is <strong>Blocking Communication</strong> (e.g., <code>MPI_Send</code>). In this mode, the function call acts as a stop sign; it does not return control to the program until the message buffer is "safe" to reuse. This usually means the system has copied the data into a network buffer or successfully transmitted it. While safe and easy to reason about, blocking calls effectively pause the CPU, preventing it from doing useful work while waiting for the network card.</p>
-<p>To maximize performance, HPC developers often use <strong>Non-Blocking Communication</strong> (e.g., <code>MPI_Isend</code>). These functions return immediately—essentially initiating a "request" to send data in the background. This allows the CPU to continue performing calculations while the data is simultaneously travelling over the network, a technique known as <strong>overlapping computation and communication</strong>. However, this adds complexity: the programmer must explicitly check later (using <code>MPI_Wait</code>) to ensure the transfer finished before touching the data buffer again.</p>
-<h3>3.5 Deadlocks</h3>
-<p>A <strong>Deadlock</strong> is a catastrophic state where a parallel program hangs indefinitely because two or more processes are waiting for each other to do something, and neither can proceed. This is the parallel programming equivalent of four cars arriving at a 4-way stop sign simultaneously, with no one willing to move.</p>
-<p>Consider a scenario where Rank 0 and Rank 1 both try to receive a message from each other at the same time. Rank 0 calls <code>MPI_Recv</code> and waits for Rank 1. Simultaneously, Rank 1 calls <code>MPI_Recv</code> and waits for Rank 0. Since <code>MPI_Recv</code> is a blocking call, both sit there forever, and neither ever reaches the line of code to send the message. To fix this, developers must carefully order their operations (pair every Send with a matching Recv in the correct order) or use combined functions like <code>MPI_Sendrecv</code> to handle the exchange atomically.</p>
-<h3>3.6 Python Parallelism: <code>mpi4py</code></h3>
-<p>While C/C++ is the gold standard for performance, Python is the language of Data Science and AI. <strong><code>mpi4py</code></strong> is a Python library that provides bindings for the standard MPI standard, allowing you to write parallel Python scripts. We will see Python examples side-by-side with C examples in the following sections.</p>
-<ul>
-<li><strong>Ease of Use</strong>: It handles data serialization (pickling) automatically, so you can send complex Python objects (lists, dictionaries) between nodes.</li>
-<li><strong>Performance</strong>: For heavy computation, <code>mpi4py</code> can wrap C libraries (like NumPy), giving C-like speed with Python syntax.</li>
-</ul>
-<blockquote>
-<p><strong>Note</strong>: Detailed discussions on HPC Libraries (including further usage of Python in HPC) will be covered in <strong>Week 7</strong>.</p>
-</blockquote>
-<hr />
-<h2>4. Point-to-Point Communication</h2>
-<p>Point-to-Point communication is the most basic form of data exchange in MPI, where one specific process sends a message to another specific process. This is analogous to a direct phone call.</p>
-<h3>4.1 Standard Point-to-Point Functions</h3>
-<h4>C Syntax</h4>
-<p><strong><code>MPI_Send</code></strong></p>
-<pre><code class="language-c">int MPI_Send(void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> C function signature for sending a message in MPI. It requires specifying the buffer, count, datatype, destination rank, message tag, and the communicator context.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Argument</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>buf</strong></td>
-<td style="text-align: left;">Pointer to the data to send.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>count</strong></td>
-<td style="text-align: left;">Number of elements.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>datatype</strong></td>
-<td style="text-align: left;">MPI data type (e.g., <code>MPI_DOUBLE</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>dest</strong></td>
-<td style="text-align: left;">Rank of the destination process.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>tag</strong></td>
-<td style="text-align: left;">Integer identifier for the message class.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>comm</strong></td>
-<td style="text-align: left;">The communicator.</td>
-</tr>
-</tbody>
-</table>
-<p><strong><code>MPI_Recv</code></strong></p>
-<pre><code class="language-c">int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> C function signature for receiving a message in MPI. It blocks until a message matching the specified source rank and tag arrives.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Argument</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>buf</strong></td>
-<td style="text-align: left;">Pointer to the buffer where received data will be stored.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>count</strong></td>
-<td style="text-align: left;">Maximum number of elements to receive.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>datatype</strong></td>
-<td style="text-align: left;">MPI data type.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>source</strong></td>
-<td style="text-align: left;">Rank of the sender (or <code>MPI_ANY_SOURCE</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>tag</strong></td>
-<td style="text-align: left;">Message tag to match (or <code>MPI_ANY_TAG</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>comm</strong></td>
-<td style="text-align: left;">The communicator.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>status</strong></td>
-<td style="text-align: left;">A structure to store metadata about the actual message received (or <code>MPI_STATUS_IGNORE</code>).</td>
-</tr>
-</tbody>
-</table>
-<h4>Python Syntax</h4>
-<p><strong><code>comm.send</code></strong></p>
-<pre><code class="language-python">comm.send(obj, dest, tag=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python equivalent (mpi4py) for sending a Python object. Unlike C, it handles serialization (pickling) and datatypes automatically.</p>
-<ul>
-<li><strong>obj</strong>: Python object to send.</li>
-<li><strong>dest</strong>: Rank of receiver.</li>
-</ul>
-<p><strong><code>comm.recv</code></strong></p>
-<pre><code class="language-python">data = comm.recv(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=None)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python equivalent for receiving an object. Using `ANY_SOURCE` allows the program to accept a message from whichever rank sends it first.</p>
-<ul>
-<li><strong>Return</strong>: The received object.</li>
-</ul>
-<h3>4.2 Code Example: "Ping Pong"</h3>
-<p>This simple program demonstrates point-to-point communication.</p>
-<p><strong>C Implementation</strong>:</p>
-<pre><code class="language-c">#include &lt;mpi.h&gt;
-#include &lt;stdio.h&gt;
+                    
 
-int main(int argc, char** argv) {
-    MPI_Init(&amp;argc, &amp;argv);
+                    
 
-    int rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
-    int number;
-    int tag = 0;
+                    <!-- SECTION 6 -->
+                    </section>
 
-    if (rank == 0) {
-        number = -1;
-        MPI_Send(&amp;number, 1, MPI_INT, 1, tag, MPI_COMM_WORLD);
-        printf(&quot;Process 0 sent number %d to Process 1\n&quot;, number);
-    } else if (rank == 1) {
-        MPI_Recv(&amp;number, 1, MPI_INT, 0, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        printf(&quot;Process 1 received number %d from Process 0\n&quot;, number);
-    }
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
 
-    MPI_Finalize();
-    return 0;
-}
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Rank 0 prepares an integer (<code>-1</code>) and uses <code>MPI_Send</code> to push it to Rank 1. Rank 1 executes <code>MPI_Recv</code>, blocking until the message arrives. Once the transfer is complete, both processes print a confirmation message and exit.</p>
-<p><strong>Python Implementation</strong>:</p>
-<pre><code class="language-python">from mpi4py import MPI
+                    <!-- SECTION 6 -->
+                    <section id="section-6">
+                        <h2>6. Python MPI Programming with <code>mpi4py</code></h2>
+                        <p>High-level Python scientific software utilizes <code>mpi4py</code> to bind to native OpenMPI/MPICH C libraries:</p>
 
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
-
-if rank == 0:
-    data = {'key1': [7, 2.72], 'key2': ('abc', 'xyz')}
-    print(f&quot;Rank 0 sending data: {data}&quot;)
-    comm.send(data, dest=1, tag=11)
-elif rank == 1:
-    data = comm.recv(source=0, tag=11)
-    print(f&quot;Rank 1 received data: {data}&quot;)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Rank 0 creates a complex Python dictionary containing lists and tuples. It sends this object directly using <code>comm.send</code>. <code>mpi4py</code> automatically pickles (serializes) the object into bytes, transmits it, and unpickles it on Rank 1, where <code>comm.recv</code> reconstructs the original dictionary.
-<em>Comparison: The logic remains identical (Role check -&gt; Send/Recv). However, Python eliminates the need to specify memory buffers, counts, and datatypes, as it can serialize arbitrary objects.</em></p>
-<hr />
-<h2>5. Advanced MPI &amp; Collective Communication (Sterling Chapter 9)</h2>
-<p>While Point-to-Point communication is like a 1-on-1 phone call, parallel algorithms often require <strong>Collective Communication</strong>—where everyone talks to everyone (like a conference call).</p>
-<h3>5.1 Collectives</h3>
-<p>Collective communication refers to a set of optimized MPI functions where <strong>every process</strong> in a specific communicator participates in the operation. Unlike point-to-point communication, which involves only a sender and a receiver, a collective call implies a global coordination.</p>
-<p>Crucially, these functions often act as implicit <strong>synchronization barriers</strong>—processes that arrive early will wait until others catch up. Under the hood, MPI implementations optimize these operations using sophisticated algorithms (e.g., binary tree or hypercube topologies) to minimize network latency and bandwidth usage, far outperforming naive manual implementations.</p>
-<h4>5.1.1 Broadcast (<code>MPI_Bcast</code>)</h4>
-<p><strong><code>MPI_Bcast</code></strong> replicates data from a single "Root" process to all other processes in the communicator. Rank 0 often possesses data that every other process needs, such as global configuration parameters or initial user input.</p>
-<p>Instead of Rank 0 sending individual messages to every other node loop (which is slow and serial), <code>MPI_Bcast</code> uses a tree-based algorithm. Rank 0 sends to two nodes, who each send to two others, and so on. This logarithmic scaling $O(\log N)$ allows data to reach thousands of nodes almost instantly.</p>
-<p><strong>C Syntax</strong>:</p>
-<pre><code class="language-c">int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> C function signature for broadcasting data. The `root` argument defines which rank holds the original data that gets sent to everyone else.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Argument</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>buffer</strong></td>
-<td style="text-align: left;">Pointer to the data element(s). On Root, it's the source; on others, it's the destination.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>count</strong></td>
-<td style="text-align: left;">Number of elements in the buffer.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>datatype</strong></td>
-<td style="text-align: left;">The type of data (e.g., <code>MPI_INT</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>root</strong></td>
-<td style="text-align: left;">Rank of the broadcast root process.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>comm</strong></td>
-<td style="text-align: left;">The communicator (e.g., <code>MPI_COMM_WORLD</code>).</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Python Syntax</strong>:</p>
-<pre><code class="language-python">data = comm.bcast(data, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python syntax for a broadcast operation. The data variable on the root rank is distributed and returned on all other ranks.</p>
-<p><strong>C Example</strong>:</p>
-<pre><code class="language-c">int data;
-if (rank == 0) data = 100;
-MPI_Bcast(&amp;data, 1, MPI_INT, 0, MPI_COMM_WORLD);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Rank 0 initializes <code>data</code> to 100. The <code>MPI_Bcast</code> function then is called by <strong>all</strong> processes. Rank 0 acts as the root/sender, and every other process acts as a receiver. After this line, every process's <code>data</code> variable will contain 100.</p>
-<p><strong>Python Example</strong>:</p>
-<pre><code class="language-python">data = None
-if rank == 0:
-    data = {'key': 100}
-data = comm.bcast(data, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> In Python, <code>mpi4py</code> handles type discovery. Rank 0 creates a dictionary. The <code>bcast</code> method distributes this dictionary to all other ranks, who start with <code>data = None</code>. After the call, all ranks possess a copy of the dictionary.</p>
-<h4>5.1.2 Scatter / Gather</h4>
-<p>Data decomposition is central to parallel processing. <code>MPI_Scatter</code> takes a large array residing on the Root process, slices it into equal chunks, and deals one chunk to each process in the communicator.</p>
-<blockquote>
-<p><strong>Note</strong>: Data Decomposition (also known as Domain Decomposition) is covered in detail in <strong>Week 7</strong>.</p>
-</blockquote>
-<p><strong>C Syntax</strong>:</p>
-<pre><code class="language-c">int MPI_Scatter(void *sendbuf, int sendcount, MPI_Datatype sendtype, 
-                void *recvbuf, int recvcount, MPI_Datatype recvtype, 
-                int root, MPI_Comm comm)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> C function signature for scattering an array. It splits the `sendbuf` array from the root and distributes the chunks sequentially to all ranks.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Argument</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>sendbuf</strong></td>
-<td style="text-align: left;">Pointer to the full data array (relevant only on Root).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>sendcount</strong></td>
-<td style="text-align: left;">Number of items sent to <em>each</em> process (not total).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>sendtype</strong></td>
-<td style="text-align: left;">Data type of sent elements.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvbuf</strong></td>
-<td style="text-align: left;">Pointer to the local buffer where this process's chunk will be stored.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvcount</strong></td>
-<td style="text-align: left;">Number of elements this process receives (should match <code>sendcount</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvtype</strong></td>
-<td style="text-align: left;">Data type of received elements.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>root</strong></td>
-<td style="text-align: left;">Rank of the scattering process.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>comm</strong></td>
-<td style="text-align: left;">The communicator.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Python Syntax</strong>:</p>
-<pre><code class="language-python">local_data = comm.scatter(sendbuf, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python syntax for scattering. The root rank provides a list, and each rank receives one element from that list as `local_data`.</p>
-<p><strong>C Example</strong>:</p>
-<pre><code class="language-c">int global_data[4] = {10, 20, 30, 40};
-int local_data;
-MPI_Scatter(global_data, 1, MPI_INT, &amp;local_data, 1, MPI_INT, 0, MPI_COMM_WORLD);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The <code>global_data</code> array exists only on Rank 0. <code>MPI_Scatter</code> takes this array and sends one integer to each of the 4 processes (assuming <code>size=4</code>). Rank 0 gets <code>10</code>, Rank 1 gets <code>20</code>, and so on. The result is stored in each process's <code>local_data</code> variable.</p>
-<p><strong>Python Example</strong>:</p>
-<pre><code class="language-python">if rank == 0:
-    data = [10, 20, 30, 40]
-else:
-    data = None
-local_data = comm.scatter(data, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Rank 0 initializes a standard Python list. The <code>scatter</code> method divides the list elements among the processes. Each process receives one element of the list into <code>local_data</code>.</p>
-<p><strong><code>MPI_Gather</code></strong> is the inverse operation. It takes chunks of data from every process and reassembles them into a single large array on the Root process.</p>
-<p><strong>C Syntax</strong>:</p>
-<pre><code class="language-c">int MPI_Gather(void *sendbuf, int sendcount, MPI_Datatype sendtype,
-               void *recvbuf, int recvcount, MPI_Datatype recvtype,
-               int root, MPI_Comm comm)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> C function signature for gathering data. It performs the inverse of scatter, collecting data chunks from all ranks into a single array on the root.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Argument</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>sendbuf</strong></td>
-<td style="text-align: left;">Pointer to the local data chunk to be sent.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>sendcount</strong></td>
-<td style="text-align: left;">Number of elements this process sends.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>sendtype</strong></td>
-<td style="text-align: left;">Data type of sent elements.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvbuf</strong></td>
-<td style="text-align: left;">Pointer to the full array to reconstruct (relevant only on Root).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvcount</strong></td>
-<td style="text-align: left;">Number of elements received from <em>each</em> process (should match <code>sendcount</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvtype</strong></td>
-<td style="text-align: left;">Data type of received elements.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>root</strong></td>
-<td style="text-align: left;">Rank of the gathering process.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>comm</strong></td>
-<td style="text-align: left;">The communicator.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Python Syntax</strong>:</p>
-<pre><code class="language-python">all_data = comm.gather(local_data, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python syntax for gathering. Each rank contributes `local_data`, and rank 0 receives a complete list of all contributions.</p>
-<p><strong>C Example</strong>:</p>
-<pre><code class="language-c">int local_result = rank * 2;
-int global_results[4];
-MPI_Gather(&amp;local_result, 1, MPI_INT, global_results, 1, MPI_INT, 0, MPI_COMM_WORLD);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Each process has a <code>local_result</code> (e.g., Rank 0-&gt;0, Rank 1-&gt;2...). <code>MPI_Gather</code> collects these integers and places them into the <code>global_results</code> array on Rank 0 in rank order: <code>{0, 2, 4, 6}</code>.</p>
-<p><strong>Python Example</strong>:</p>
-<pre><code class="language-python">local_result = rank * 2
-all_data = comm.gather(local_result, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> <code>mpi4py</code> collects the <code>local_result</code> from every rank and creates a standard Python list <code>all_data</code> on Rank 0 containing <code>[0, 2, 4, 6]</code>.</p>
-<h4>5.1.3 Reduction (<code>MPI_Reduce</code>)</h4>
-<p>Often, the final answer requires combining partial results from every node, such as finding the global maximum temperature or the sum of all local errors.</p>
-<p><strong>C Syntax</strong>:</p>
-<pre><code class="language-c">int MPI_Reduce(void *sendbuf, void *recvbuf, int count, MPI_Datatype datatype, 
-               MPI_Op op, int root, MPI_Comm comm)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> C function signature for a reduction operation. It collects data from all ranks and combines them using an operation (e.g., sum, max, min) on the root.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Argument</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>sendbuf</strong></td>
-<td style="text-align: left;">Pointer to the local data to be combined.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>recvbuf</strong></td>
-<td style="text-align: left;">Pointer to the buffer where the result is stored (relevant only on Root).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>count</strong></td>
-<td style="text-align: left;">Number of elements to reduce.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>datatype</strong></td>
-<td style="text-align: left;">Data type of elements.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>op</strong></td>
-<td style="text-align: left;">Operation to perform (e.g., <code>MPI_SUM</code>, <code>MPI_MAX</code>, <code>MPI_MIN</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>root</strong></td>
-<td style="text-align: left;">Rank of the process receiving the final result.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>comm</strong></td>
-<td style="text-align: left;">The communicator.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Python Syntax</strong>:</p>
-<pre><code class="language-python">global_result = comm.reduce(local_result, op=MPI.SUM, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python syntax for reduction. It efficiently sums up the `local_result` from all ranks into a single variable on rank 0.</p>
-<p><strong>C Example</strong>:</p>
-<pre><code class="language-c">int local_sum = rank * 10;
-int global_sum;
-MPI_Reduce(&amp;local_sum, &amp;global_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Each process calculates a <code>local_sum</code> (e.g., Rank 1 has 10, Rank 2 has 20). <code>MPI_Reduce</code> collects these values, applies the <code>MPI_SUM</code> operation (10+20+...), and stores the final total in <code>global_sum</code> only on Rank 0.</p>
-<p><strong>Python Example</strong>:</p>
-<pre><code class="language-python">local_sum = rank * 10
-global_sum = comm.reduce(local_sum, op=MPI.SUM, root=0)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Python's <code>reduce</code> works similarly. Each rank computes a value, and they are summed together. The result is returned only to Rank 0's <code>global_sum</code> variable; other ranks receive <code>None</code>.</p>
-<h3>5.2 Communicators</h3>
-<p>While <code>MPI_COMM_WORLD</code> includes everyone, sometimes we want to split the cluster into subgroups (e.g., "Row Communicators" and "Column Communicators" for matrix math). <code>MPI_Comm_split</code> creates new, smaller communicators.</p>
-<h3>5.3 Practical Example: Matrix Multiplication</h3>
-<p>This example demonstrates a parallel Matrix-Vector multiplication ($y = A \times x$) using a combination of collectives.</p>
-<ul>
-    <li><strong>Goal</strong>: Multiply a $4 \times 4$ Matrix ($A$) by a Vector of size 4 ($x$). The operation is $y_i = \text{row}_i \cdot x$.</li>
-</ul>
-<p><strong>How this demonstrates Collectives</strong>:
-To calculate $y = Ax$, every row of the matrix $A$ needs to be multiplied by the <em>entire</em> vector $x$. This requires a specific pattern of data movement:</p>
-<ol>
-<li>
-<p><strong>Broadcast (<code>MPI_Bcast</code>) for Shared Data</strong>: 
-    Since every process needs to multiply its row against the <em>same</em> vector $x$, we use <code>MPI_Bcast</code>. This efficiently replicates $x$ from the Root to all other processes in $O(\log P)$ time, ensuring everyone has the data they need to compute.</p>
-</li>
-<li>
-<p><strong>Scatter (<code>MPI_Scatter</code>) for Data Decomposition</strong>: 
-    The matrix $A$ represents the primary workload. Instead of every process storing the entire matrix (which wastes memory), we use <code>MPI_Scatter</code> to break the domain into chunks. Each process receives only <strong>one row</strong> of the matrix. This is a classic example of <strong>Domain Decomposition</strong> (discussed in Week 7).</p>
-</li>
-<li>
-<p><strong>Local Computation</strong>: 
-    Each rank now possesses one row of $A$ and the full vector $x$. It performs a dot product calculation independently, producing a single scalar value (a partial result).</p>
-</li>
-<li>
-<p><strong>Gather (<code>MPI_Gather</code>) for Result Reassembly</strong>: 
-    The final answer $y$ is a vector, but currently, its components are scattered across the cluster (Rank 0 has $y_0$, Rank 1 has $y_1$, etc.). <code>MPI_Gather</code> collects these distributed scalars and reconstructs the full vector $y$ on the Root process for output.</p>
-</li>
-</ol>
-<p><strong>C Implementation</strong>:</p>
-<pre><code class="language-c">#include &lt;mpi.h&gt;
-#include &lt;stdio.h&gt;
-
-int main(int argc, char** argv) {
-    MPI_Init(&amp;argc, &amp;argv);
-
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &amp;size); // Assume size=4
-
-    // Data buffers
-    int A[4][4] = { {1, 1, 1, 1}, {2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4} };
-    int x[4] = {10, 20, 30, 40};
-    int local_A[4];     // Buffer for 1 row of A
-    int local_y = 0;    // Local result (dot product)
-    int y[4];           // Final result vector
-
-    // 1. Broadcast Vector x to everyone
-    MPI_Bcast(x, 4, MPI_INT, 0, MPI_COMM_WORLD);
-
-    // 2. Scatter Rows of Matrix A
-    // Send 4 integers (1 row) to each process
-    MPI_Scatter(A, 4, MPI_INT, local_A, 4, MPI_INT, 0, MPI_COMM_WORLD);
-
-    // 3. Local Computation: Dot Product
-    for (int i = 0; i &lt; 4; i++) {
-        local_y += local_A[i] * x[i];
-    }
-    printf(&quot;Rank %d local result: %d\n&quot;, rank, local_y);
-
-    // 4. Gather Results into Vector y
-    MPI_Gather(&amp;local_y, 1, MPI_INT, y, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-    if (rank == 0) {
-        printf(&quot;Final Result y: [%d, %d, %d, %d]\n&quot;, y[0], y[1], y[2], y[3]);
-    }
-
-    MPI_Finalize();
-    return 0;
-}
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Rank 0 holds the full matrix. <code>MPI_Bcast</code> ensures everyone has the vector <code>x</code>. <code>MPI_Scatter</code> splits the matrix so Rank 0 processes Row 0, Rank 1 processes Row 1, etc. After computing the local dot product, <code>MPI_Gather</code> reassembles the individual scalar results into the final vector <code>y</code> on Rank 0.</p>
-<p><strong>Python Implementation (with NumPy)</strong>:</p>
-<pre><code class="language-python">from mpi4py import MPI
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <pre><code class="language-python">from mpi4py import MPI
 import numpy as np
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-# Data Initialization
+# Fast NumPy direct buffer communication (capitalized API)
 if rank == 0:
-    A = np.array([[1, 1, 1, 1], 
-                  [2, 2, 2, 2], 
-                  [3, 3, 3, 3], 
-                  [4, 4, 4, 4]], dtype=int)
-    x = np.array([10, 20, 30, 40], dtype=int)
+    data = np.arange(1000000, dtype=np.float64)
 else:
-    A = None
-    x = np.empty(4, dtype=int) # Allocate space for x
+    data = np.empty(1000000, dtype=np.float64)
 
-# 1. Broadcast Vector x
-comm.Bcast(x, root=0)
-
-# 2. Scatter Rows of Matrix A
-# Allocate space for 1 row (size 4)
-local_A = np.empty(4, dtype=int)
-# comm.Scatter expects buffers of correct size/type
-comm.Scatter(A, local_A, root=0)
-
-# 3. Local Computation: Dot Product
-local_y = np.dot(local_A, x)
-print(f&quot;Rank {rank} local result: {local_y}&quot;)
-
-# 4. Gather Results
-if rank == 0:
-    y = np.empty(4, dtype=int)
-else:
-    y = None
-
-# Gather scalar results (using Gather for arrays or gather for objects)
-# Since local_y is a scalar from numpy, we can use the object-based gather just for simplicity,
-# but for high performance we would use comm.Gather with a buffer.
-# Here we use comm.Gather with a 1-element buffer for strict parity with C.
-local_y_buf = np.array([local_y], dtype=int)
-comm.Gather(local_y_buf, y, root=0)
-
-if rank == 0:
-    print(f&quot;Final Result y: {y}&quot;)
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Logic mimics the C version. We use <strong>uppercase</strong> methods (<code>comm.Bcast</code>, <code>comm.Scatter</code>) which are optimized for <code>numpy</code> arrays and buffer-like objects, rather than the lowercase pickle-based methods (<code>comm.bcast</code>). This is the standard "High Performance" way to use Python for numeric work. Note how we must pre-allocate <code>x</code> and <code>local_A</code> buffers on the receiving nodes.</p>
-<hr />
-<h2>6. Parallel Strategy &amp; Libraries</h2>
-<h3>6.1 Loading Libraries (Environment Modules)</h3>
-<p>On a personal laptop, you might install software with <code>apt</code>, <code>yum</code>, or <code>pip</code>. However, on an HPC cluster, you rarely have <code>sudo</code> access. Instead of installing software yourself, you use <strong>Environment Modules</strong> to load pre-installed, optimized software stacks. This allows multiple versions of the same software (e.g., Python 3.8 and Python 3.11) to coexist without conflict.</p>
-<p>Managing the environment involves a few key commands. You can view all available software on the cluster using <code>module avail</code>, which lists the specific versions installed. To add a piece of software to your active environment, use <code>module load &lt;name&gt;</code>, which updates your <code>$PATH</code> and <code>$LD_LIBRARY_PATH</code>. You can check what is currently loaded with <code>module list</code> or clear your environment completely with <code>module purge</code>.</p>
-<p><strong>Example: Setting up for MPI</strong>:</p>
-<pre><code class="language-bash">$ module load openmpi5
-$ module load python/3.10
-$ module load numpy/1.24
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Environment setup commands showing how to load the required software modules (MPI and Python) before running a parallel job.</p>
-<p><em>After running these, <code>mpicc</code> and <code>python</code> will be available in your terminal.</em></p>
-<h3>6.2 The HPC Software Stack (Sterling Chapter 10)</h3>
-<p><strong>Rule #1 of HPC</strong>: Don't rewrite what experts have already optimized. HPC applications rely on a rich ecosystem of middleware and libraries. Using these standard libraries ensures your code runs as fast as possible (high performance) and can move between different clusters easily (portability).</p>
-<h4>6.2.1 Numerical Linear Algebra</h4>
-<p>Linear algebra forms the backbone of scientific computing, and efficiency here is critical. The <strong>Basic Linear Algebra Subprograms (BLAS)</strong> provide the <em>de facto</em> standard interface for vector and matrix operations. BLAS is categorized into three levels based on computational intensity: Level 1 handles vector-vector operations like dot products, Level 2 handles matrix-vector operations, and Level 3 handles matrix-matrix operations. Level 3 is particularly crucial for high performance because its $O(N^3)$ computational work allows for excellent cache reuse compared to the $O(N^2)$ data movement.</p>
-<p><strong>Example: Matrix Multiplication with CBLAS (Level 3)</strong>
-Instead of writing three nested loops, you call <code>cblas_dgemm</code>:</p>
-<pre><code class="language-c">// C = alpha*A*B + beta*C
-cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-            M, N, K, alpha, A, K, B, N, beta, C, N);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> An example of a highly optimized BLAS library call for matrix multiplication, which is orders of magnitude faster than a manual nested loop.</p>
-<p>Building on top of BLAS, <strong>LAPACK</strong> provides higher-level solvers for complex mathematical tasks such as solving systems of linear equations ($Ax=b$) and Eigenvalue problems. While LAPACK is designed for shared-memory (single node) systems, <strong>ScaLAPACK</strong> extends these capabilities to distributed memory systems using MPI.</p>
-<h4>6.2.2 Parallel I/O</h4>
-<p>Reading and writing data can become a major bottleneck at scale. Writing ASCII text files (like CSVs) from thousands of cores is incredibly slow and inefficient in terms of storage. To address this, libraries like <strong>HDF5 (Hierarchical Data Format v5)</strong> and <strong>NetCDF</strong> provide self-describing binary formats for storing large, complex, heterogeneous data. Crucially, they support <strong>Parallel I/O</strong>, allowing thousands of MPI ranks to write to a single file simultaneously without data corruption.</p>
-<p><strong>Example: Parallel Write with HDF5</strong></p>
-<pre><code class="language-c">// Each MPI rank defines its chunk of the dataset (hyperslab)
-H5Sselect_hyperslab(filespace, H5S_SELECT_SET, start, NULL, count, NULL);
-// Parallel write using MPI-IO driver
-H5Dwrite(dset_id, H5T_NATIVE_INT, memspace, filespace, plist_id, data);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Demonstrates parallel I/O using HDF5 hyperslabs, where multiple MPI ranks write concurrently to different regions of the same file without conflict.</p>
-<h4>6.2.3 Fast Fourier Transforms (FFT)</h4>
-<p>For applications in signal processing and partial differential equations, Fast Fourier Transforms are essential. <strong>FFTW (Fastest Fourier Transform in the West)</strong> is the gold standard library for this purpose. It is an adaptive library that effectively "learns" the fastest way to compute an FFT on your specific hardware architecture at runtime (creating a "plan"), optimizing itself for the cache and processor characteristics of the machine.</p>
-<p><strong>Example: Planning an FFT</strong></p>
-<pre><code class="language-c">// Create a plan (FFTW measures the system speed)
-fftw_plan p = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
-// Execute the transform
-fftw_execute(p);
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Demonstrates FFTW's plan creation, an optimization technique where the library measures system hardware characteristics to choose the fastest algorithmic execution path.</p>
-<h4>6.2.4 Benefits of Libraries</h4>
-<p>The primary benefits of using these libraries are performance and portability. Hardware vendors (Intel, AMD, NVIDIA) provide highly optimized implementations of standards like BLAS (e.g., <strong>Intel MKL</strong>, <strong>OpenBLAS</strong>, <strong>cuBLAS</strong>). A naive matrix multiplication loop written by hand might achieve only 5% of the processor's peak performance, whereas a library like Intel MKL can achieve over 90%. Furthermore, because the API is standardized, you can easily swap the backend library without changing a single line of your source code.</p>
-<hr />
-<h2>7. Summary and Next Steps</h2>
-<p>This week, we transitioned from building the cluster to programming it. We established the physics of performance (<strong>Amdahl’s Law</strong>), learned to utilize all cores in a single box with <strong>OpenMP</strong>, and broke the single-node barrier using <strong>MPI</strong>. You now possess the syntax to send messages, but syntax alone does not solve problems.</p>
-<h3>Preparing for Week 7</h3>
-<p>Next week, we move from <em>Syntax</em> to <em>Strategy</em>. We will explore <strong>Parallel Algorithms</strong>—standard design motifs like <strong>Domain Decomposition</strong>, <strong>Manager-Worker</strong>, and <strong>Halo Exchange</strong>—that dictate <em>how</em> we organize our computation and communication to solve real scientific problems efficiently.</p>
-<p><strong>Checklist:</strong></p>
-<ul>
-    <li>Can you calculate the maximum theoretical speedup of a code that is 5% serial?</li>
-    <li>What is the difference between a <strong>Blocking</strong> (<code>MPI_Send</code>) and <strong>Non-Blocking</strong> (<code>MPI_Isend</code>) call?</li>
-    <li>Why does <code>MPI_Bcast</code> scale better than a loop of <code>MPI_Send</code> calls?</li>
-    <li>When would you use <strong>OpenMP</strong> instead of MPI, and vice versa?</li>
-</ul>
-<h3>Resources</h3>
-<ul>
-<li><strong>Hager, G. &amp; Wellein, G. (2010)</strong>. <em>Introduction to High Performance Computing for Scientists and Engineers</em>. CRC Press.</li>
-<li><strong>Sterling Text</strong>: Chapters 7, 8, 9.</li>
-<li><strong>LLNL HPC Tutorial</strong>: <a href="https://hpc.llnl.gov/training/tutorials">https://hpc.llnl.gov/training/tutorials</a></li>
-<li><strong>OpenMP Cheat Sheet</strong>: <a href="https://www.openmp.org/wp-content/uploads/OpenMP-4.5-1115-CPP-web.pdf">https://www.openmp.org/wp-content/uploads/OpenMP-4.5-1115-CPP-web.pdf</a></li>
-</ul>
-
-
-<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
-    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
-    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
-    <a href="Week_6_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
-        Start Quiz
-    </a>
+# Broadcast NumPy array directly via RDMA
+comm.Bcast(data, root=0)
+print(f"Rank {rank} received array sum: {np.sum(data)}")</code></pre>
 </div>
-        </article>
-    </main>
+                    
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
-    </footer>
+                    
 
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    
-                        <a href="../Week%205%20-%20Benchmarking%20and%20Tuning/Week_5_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 5</span>
-                        </a>
-                        
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <!-- SECTION 7 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 7 -->
+                    <section id="section-7">
+                        <h2>7. Hybrid Parallelism Setup (MPI + OpenMP)</h2>
+                        <p>At modern supercomputer scale, pure MPI places an independent process on every single core, resulting in excessive MPI communicator overhead and memory footprint duplicated across cores on the same node. The standard enterprise pattern is <strong>Hybrid MPI+OpenMP Parallelism</strong>:</p>
+
+<ul>
+    <li><strong>MPI Layer</strong>: Spawns **1 MPI Rank per NUMA Socket** (e.g., 2 ranks per node) to manage inter-node network communication over InfiniBand.</li>
+    <li><strong>OpenMP Layer</strong>: Each MPI rank spawns an **OpenMP Thread Team** (e.g., 8–16 threads) to exploit intra-socket shared RAM without network copying.</li>
+</ul>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
         </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-    
-                        <a href="../Week%207%20-%20Parallel%20Algorithms/Week_7_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 7</span>
-                        </a>
-                        
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <pre><code class="language-c">#include &lt;mpi.h&gt;
+#include &lt;omp.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc, char **argv) {
+    int provided_thread_support;
+    // Request MPI thread support level for hybrid execution
+    MPI_Init_thread(&amp;argc, &amp;argv, MPI_THREAD_FUNNELED, &amp;provided_thread_support);
+
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+
+    #pragma omp parallel
+    {
+        int thread_id = omp_get_thread_num();
+        printf("MPI Rank %d | OpenMP Thread %d executing in hybrid mode\n", rank, thread_id);
+    }
+
+    MPI_Finalize();
+    return 0;
+}</code></pre>
 </div>
+                    
+
+                    
+
+                    <!-- SECTION 8 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 8 -->
+                    <section id="section-8">
+                        <h2>8. Summary</h2>
+                        <p>MPI enables infinite horizontal scaling across distributed supercomputing clusters. Next week, in Week 7, we study **Parallel Algorithms and Numerical Libraries**.</p>
+
+
+                    </section>
+
+                    <!-- Quiz Link Widget -->
+                    
+    
+                    </section>
+
+                    <!-- Quiz Link Widget -->
+                    <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span>Knowledge Check</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
+                        <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 6 concepts? Take the interactive quiz to reinforce key ideas.</p>
+                        <a href="Week_6_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Take Week 6 Quiz Now
+                        </a>
+                    </div>
+                </div>
+</div>
+                </article>
+</main>
+
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
+    </footer>
 
 </body>
 </html>

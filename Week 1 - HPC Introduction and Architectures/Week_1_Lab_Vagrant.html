@@ -3,297 +3,957 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 1: Local Infrastructure with Vagrant - Lab Guide - OPS4 Course</title>
+    <title>Lab 1 Workbook: Vagrant & Cluster Setup — OPS4 Course (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
-    
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
+
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 1 Workbook: Vagrant & Cluster Setup</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_1_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
+                </a>
+                <a href="Week_1_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 1</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Course Home</span>
+                </a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
             </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    
+    <!-- Main Content Container -->
     <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_1_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-        </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 1</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 1: Local Infrastructure with Vagrant - Lab Guide</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
-</div>
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
 
-<p><strong>Objective</strong>: Deploy a local testing environment using Infrastructure as Code (IaC).
-<strong>Goal</strong>: Install VirtualBox and Vagrant, and write a <code>Vagrantfile</code> that provisions 3 openEuler VMs (a Master Node and two Compute Nodes) with the correct network interfaces.</p>
-<hr />
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 1 Workbook: Vagrant & Cluster Setup</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">Practical Infrastructure Setup & Virtualization</span>
+                </div>
+            </div>
 
-<h2>1. Introduction to the Tools</h2>
-<p>Before we can build an HPC cluster on the university's servers, we need a safe, local environment to experiment. We will use two tools:</p>
-<ul>
-    <li><strong>VirtualBox</strong>: A Type-2 Hypervisor that runs virtual machines on your personal laptop.</li>
-    <li><strong>Vagrant</strong>: A command-line utility for managing virtual machines. Instead of clicking through a GUI to create a VM, you write a configuration file (a <code>Vagrantfile</code>) and Vagrant automates the deployment. This is the foundation of <em>Infrastructure as Code</em>.</li>
-</ul>
 
-<hr />
-<h2>2. Installation</h2>
 
-<h3>2.1 Download and Install VirtualBox</h3>
-<p>Navigate to the <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">VirtualBox Downloads Page</a> and download the installer for your operating system (Windows, macOS, or Linux). Run the installer and follow the default prompts.</p>
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 1: HPC Cluster Infrastructure Setup</h1>
+                </div>
+            </div>
 
-<h3>2.2 Download and Install Vagrant</h3>
-<p>Navigate to the <a href="https://developer.hashicorp.com/vagrant/downloads" target="_blank">Vagrant Downloads Page</a> and download the installer for your operating system. Run the installer and follow the default prompts.</p>
-<p>Once installed, open a Terminal (or PowerShell on Windows) and verify the installation:</p>
-<pre><code class="language-bash">vagrant --version</code></pre>
+            <!-- Subject Info Banner -->
+            <div class="p-4 mb-8 rounded-2xl border border-sky-500/30 bg-sky-500/10 text-slate-700 dark:text-slate-300 text-sm">
+                <p class="m-0"><strong>Module Code:</strong> Operating Systems 4 (EIOPS4A) — High Performance Computing 2026<br>
+                <strong>Practical Workbook:</strong> Automated 5-Node Infrastructure Setup (IaC) &amp; OS Preparation<br>
+                <strong>Estimated Completion Time:</strong> 90–120 Minutes</p>
+            </div>
 
-<hr />
-<h2>3. Creating the Vagrantfile</h2>
-<p>We are going to deploy an <strong>openEuler</strong> virtual machine that will act as our "Master Node".</p>
+            <p class="lead">Before configuring an HPC cluster scheduler and distributing parallel jobs, you must establish the physical or virtual infrastructure that acts as the cluster canvas. Creating cluster nodes manually using virtualization software is highly error-prone and inefficient. This practical workbook guides you through creating a five-node infrastructure using Vagrant (Infrastructure as Code) matching industry-standard enterprise practices.</p>
 
-<p><strong>Explanation:</strong> A <code>Vagrantfile</code> is written in Ruby syntax. It tells Vagrant which OS image (called a "box") to download, how much RAM to allocate, and how to configure the network interfaces.</p>
+            <!-- Table of Contents Container -->
+            <div class="p-6 my-6 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-sm">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white m-0 mb-3 flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                    Workbook Table of Contents
+                </h3>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 m-0 pl-4 font-medium text-slate-600 dark:text-slate-300">
+                    <li><a href="#section-1" class="no-underline hover:text-sky-500">Section 1: Creating HPC Infrastructure (Vagrant)</a></li>
+                    <li><a href="#section-2" class="no-underline hover:text-sky-500">Section 2: Preparing Node OS Infrastructure</a></li>
+                    <li><a href="#sec-2.6" class="no-underline hover:text-sky-500">2.6 Restrictive Multi-Host NFS Shares</a></li>
+                    <li><a href="#sec-2.8" class="no-underline hover:text-sky-500">2.8 Munge Cryptographic Validation Keys</a></li>
+                    <li><a href="#sec-2.9" class="no-underline hover:text-sky-500">2.9 Parallel Shells with pdsh and pdcp</a></li>
+                    <li><a href="#section-3" class="no-underline hover:text-sky-500">Section 3: Verification Checklist</a></li>
+                    <li><a href="#appendix-a" class="no-underline hover:text-sky-500">Appendix A: Troubleshooting Reference Guide</a></li>
+                </ul>
+            </div>
 
-<p>1. Open your terminal/PowerShell and create a new directory for your HPC labs, then navigate into it:</p>
-<pre><code class="language-bash">mkdir hpc-labs
-cd hpc-labs</code></pre>
+            <!-- SECTION 1 -->
+            <section id="section-1">
+                <h2>Section 1: Creating the HPC Infrastructure Using Vagrant</h2>
 
-<p>2. Create a file named exactly <code>Vagrantfile</code> (no extension) using a text editor. Paste the following configuration into it:</p>
+                <h3>1.1 Learning Outcomes &amp; Required Resources</h3>
+                <p>By completing this laboratory section, students will achieve the following practical outcomes:</p>
+                <ol>
+                    <li><strong>Install and configure</strong> a Vagrant environment successfully on the host machine.</li>
+                    <li><strong>Understand and analyze</strong> the structured syntax of a multi-node Vagrantfile specification.</li>
+                    <li><strong>Explain</strong> the core concepts of Infrastructure as Code (IaC) and declarative environments.</li>
+                    <li><strong>Deploy five Rocky Linux 9.6 virtual systems</strong> connected via an isolated private virtual network.</li>
+                    <li><strong>Apply VirtualBox performance optimizations</strong> specifically tailored for parallelized cluster simulations.</li>
+                </ol>
 
-<pre><code class="language-ruby">Vagrant.configure("2") do |config|
-  # We use a generic openEuler box
-  config.vm.box = "generic/openeuler22" 
+                <p>To successfully perform this lab, ensure access to the following hardware and software resources:</p>
+                <ul>
+                    <li><strong>Host System</strong>: Ubuntu 24.04 / 26.04 LTS or Windows 11 / 10 Workstation.</li>
+                    <li><strong>Hypervisor</strong>: Oracle VM VirtualBox 7.x installed on the host system.</li>
+                    <li><strong>Orchestrator</strong>: HashiCorp Vagrant package installer and CLI binaries.</li>
+                    <li><strong>Base Image</strong>: Certified Bento Rocky Linux 9.6 Base Box (v202510.26.0).</li>
+                </ul>
 
-  # Master Node (Control)
+                <h3>1.2 Step 1 – Creating the Project Directory</h3>
+                <p>Establish a clean, dedicated workspace directory on your host machine to store configuration files and VirtualBox metadata:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Terminal — Workspace Setup</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">mkdir HPC-Lab01
+cd HPC-Lab01</code></pre>
+            </div>
+                </div>
+
+                <h3>1.3 Step 2 – Initializing the Vagrant Environment</h3>
+                <p>Initialize the Vagrant configuration parameters to fetch and map the certified Rocky Linux image certified by the Bento project:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Terminal — Vagrant Init</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">vagrant init bento/rockylinux-9.6 --box-version 202510.26.0</code></pre>
+            </div>
+                </div>
+
+                <h3>1.4 Step 3 – Structure of the Cluster Vagrantfile</h3>
+                <p>Replace the default generated text inside your <code>Vagrantfile</code> with the complete cluster deployment script below. This defines <strong>1 master control node (4GB RAM, 2 CPUs)</strong> and <strong>4 dedicated compute worker nodes (2GB RAM, 2 CPUs each)</strong> connected over private subnet <code>192.168.56.0/24</code>:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Vagrantfile — Ruby Cluster Specification</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # Base Box Specification
+  config.vm.box = "bento/rockylinux-9.6"
+  config.vm.box_version = "202510.26.0"
+  config.ssh.insert_key = false
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # Global VirtualBox Performance Settings
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
+    vb.customize ["modifyvm", :id, "--nestedpaging", "on"]
+    vb.customize ["modifyvm", :id, "--largepages", "on"]
+    vb.customize ["modifyvm", :id, "--paravirtprovider", "kvm"]
+    vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+    vb.customize ["modifyvm", :id, "--audio-enabled", "off"]
+    vb.customize ["modifyvm", :id, "--usb", "off"]
+    vb.customize ["modifyvm", :id, "--clipboard-mode", "disabled"]
+    vb.customize ["modifyvm", :id, "--draganddrop", "disabled"]
+    vb.customize ["modifyvm", :id, "--rtcuseutc", "on"]
+  end
+
+  # Master Control Node (4096MB Memory, 2 CPUs)
   config.vm.define "master" do |master|
-    master.vm.hostname = "master"
-    
-    # NIC 1 is NAT (Internet) by default in Vagrant.
-    # We define NIC 2 here as our internal cluster network.
-    master.vm.network "private_network", ip: "10.0.0.1", netmask: "255.255.255.0"
-
+    master.vm.network "private_network", ip: "192.168.56.10"
     master.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048" # 2 GB of RAM
+      vb.name = "HPC-Master"
+      vb.memory = 4096
       vb.cpus = 2
-      vb.name = "hpc-master-node"
     end
   end
 
-  # Compute Node 01
-  config.vm.define "compute-01" do |node|
-    node.vm.hostname = "compute-01"
-    node.vm.network "private_network", ip: "10.0.0.101", netmask: "255.255.255.0"
-    node.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024" # 1 GB of RAM
-      vb.cpus = 1
-      vb.name = "hpc-compute-01"
-    end
-  end
-
-  # Compute Node 02
-  config.vm.define "compute-02" do |node|
-    node.vm.hostname = "compute-02"
-    node.vm.network "private_network", ip: "10.0.0.102", netmask: "255.255.255.0"
-    node.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024" # 1 GB of RAM
-      vb.cpus = 1
-      vb.name = "hpc-compute-02"
+  # Compute Worker Nodes (2048MB Memory, 2 CPUs each)
+  (1..4).each do |i|
+    config.vm.define "compute0#{i}" do |node|
+      node.vm.network "private_network", ip: "192.168.56.1#{i}"
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = "HPC-Compute0#{i}"
+        vb.memory = 2048
+        vb.cpus = 2
+      end
     end
   end
 end</code></pre>
+            </div>
+                </div>
 
-<hr />
-<h2>4. Deploying the Infrastructure</h2>
+                <h3>1.5 Step 4 – VirtualBox Performance Optimizations for HPC Workloads</h3>
+                <p>To maximize parallel cluster simulation capabilities on resource-constrained host machines, specific advanced hypervisor acceleration parameters are declared in the provider block:</p>
 
-<p>Now that our infrastructure is defined in code, we will deploy it.</p>
+                <table>
+                    <thead>
+                        <tr><th>VirtualBox Parameter</th><th>HPC System Performance Impact</th><th>Importance</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>vb.gui = false</code></td><td>Launches VMs in background headless mode to free host RAM and GPU resources.</td><td><span class="cyber-badge cyber-badge-sky">Essential</span></td></tr>
+                        <tr><td><code>--hwvirtex / --nestedpaging on</code></td><td>Enables hardware-assisted CPU/memory translations for native-speed execution.</td><td><span class="cyber-badge cyber-badge-sky">Essential</span></td></tr>
+                        <tr><td><code>--largepages on</code></td><td>Uses larger page allocations to prevent translation lookaside buffer (TLB) cache misses during load.</td><td><span class="cyber-badge cyber-badge-gold">Recommended</span></td></tr>
+                        <tr><td><code>--paravirtprovider kvm</code></td><td>Attaches a KVM acceleration module to streamline guest OS virtualization routines.</td><td><span class="cyber-badge cyber-badge-sky">Essential</span></td></tr>
+                        <tr><td><code>--nictype1/2 virtio</code></td><td>Attaches paravirtualized network adapters instead of heavier emulated hardware drivers.</td><td><span class="cyber-badge cyber-badge-sky">Essential</span></td></tr>
+                    </tbody>
+                </table>
 
-<p><strong>Explanation:</strong> The <code>vagrant up</code> command reads the Vagrantfile, downloads the OS box from the internet (this might take a few minutes the first time), creates all 3 VMs in VirtualBox in sequence, sets up the networking, and boots them.</p>
-<pre><code class="language-bash">vagrant up</code></pre>
+                <h3>1.6 Step 5 – Deploying and Verifying the Cluster Nodes</h3>
+                <p>Deploy all five virtual environments concurrently. Vagrant handles network binding and VM creation automatically:</p>
 
-<p>Once the command completes, you have a fully functional miniature cluster running in the background!</p>
-
-<hr />
-<h2>5. Accessing and Managing the Node</h2>
-
-<p>You do not need to open the VirtualBox GUI to log in. Vagrant manages the SSH keys automatically.</p>
-
-<h3>5.1 Logging In</h3>
-<p><strong>Explanation:</strong> The <code>vagrant ssh</code> command automatically uses the private key Vagrant generated to log you securely into the virtual machine without needing a password.</p>
-<pre><code class="language-bash">vagrant ssh master</code></pre>
-
-<p>Verify your IP addresses inside the Master VM:</p>
-<pre><code class="language-bash">ip addr show</code></pre>
-<p><em>You should see `eth0` (NAT/Internet) and `eth1` (10.0.0.1 - Your cluster network).</em></p>
-
-<h3>5.2 Network Testing</h3>
-<p>Because Vagrant deployed the VMs onto the same Private Network, they can communicate with each other. From the Master node, verify you can reach the compute nodes:</p>
-<pre><code class="language-bash">ping -c 4 10.0.0.101
-ping -c 4 10.0.0.102</code></pre>
-
-<p>Type <code>exit</code> to log out of the VM and return to your host terminal.</p>
-
-<h3>5.3 Managing the VM State</h3>
-<p>When you are done with your lab session, you should power off the VMs to save resources on your laptop.</p>
-
-<pre><code class="language-bash"># To gracefully shut down the VM:
-vagrant halt
-
-# To turn it back on later:
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Terminal — Cluster Deployment</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Launch all 5 nodes concurrently
 vagrant up
 
-# To completely delete the VM and its hard drive:
-vagrant destroy</code></pre>
+# Verify lifecycle states
+vagrant status</code></pre>
+            </div>
+                </div>
 
-<hr />
-<h2>6. Submission</h2>
-<p>Take a screenshot showing your terminal window with:</p>
-<ol>
-    <li>The output of <code>vagrant status</code> showing all 3 nodes running.</li>
-    <li>An active <code>vagrant ssh master</code> session where you ran the <code>ping -c 4 10.0.0.101</code> command showing successful replies from the compute node.</li>
-</ol>
-<p>Save this screenshot as <code>Week1_Lab_Surname.png</code>.</p>
+                <!-- Reflection Questions Box -->
+                <div class="my-6 p-6 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-slate-700 dark:text-slate-300">
+                    <h4 class="text-base font-bold text-sky-500 m-0 mb-2">Laboratory Reflection Questions (Section 1)</h4>
+                    <p class="text-sm m-0"><strong>Q1:</strong> What does 'Infrastructure as Code (IaC)' mean, and why is it preferred over GUI manual provisioning for clustered setups?<br>
+                    <strong>Q2:</strong> Compare the resource allocations (4GB RAM vs 2GB RAM) of the master node against the compute nodes. Explain this design rationale in an HPC system.</p>
+                </div>
+            </section>
+
+            <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+            <!-- SECTION 2 -->
+            <section id="section-2">
+                <h2>Section 2: Preparing the Infrastructure for an HPC Cluster</h2>
+                <p>Once your virtual cluster environments have been provisioned by Vagrant, they must undergo extensive standard Linux system-level preparation before installing Slurm workload orchestrators. This section guides you through setting up hostnames, Chrony time sync, restrictive NFS shares, passwordless SSH keys, Munge keys, and pdsh/pdcp parallel tools.</p>
+
+                <h3>2.1 Learning Outcomes</h3>
+                <ul>
+                    <li><strong>Formulate</strong> secure private hostnames across Rocky Linux cluster nodes.</li>
+                    <li><strong>Implement</strong> precise local name resolution lists bypassing public DNS latency.</li>
+                    <li><strong>Synchronize</strong> internal system timers across distributed compute units via Chrony.</li>
+                    <li><strong>Export and mount</strong> secure multi-host private NFS networks protected with restrictive firewalls.</li>
+                    <li><strong>Setup passwordless SSH keys</strong> to streamline remote task distribution and scheduler control.</li>
+                    <li><strong>Install and test Munge</strong> cryptographic validation routines for secure job payload routing.</li>
+                    <li><strong>Administer</strong> parallel administrative tool chains using <code>pdsh</code> and <code>pdcp</code>.</li>
+                </ul>
+
+                <h3>2.2 Establish Secure Connections and Unique Hostnames</h3>
+                <p>Connect to the Master Node and assign a distinct, fully qualified hostname:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Master Node Hostname Setup</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">vagrant ssh master
+sudo hostnamectl set-hostname master
+hostnamectl</code></pre>
+            </div>
+                </div>
+
+                <p>Repeat hostnames configuration across all compute worker VMs sequentially:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Compute Nodes Hostname Setup</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">exit
+vagrant ssh compute01
+sudo hostnamectl set-hostname compute01
+
+# Repeat for compute02, compute03, and compute04</code></pre>
+            </div>
+                </div>
+
+                <h3>2.3 Routing Tables &amp; Package Upgrades</h3>
+                <p>Inspect network routes and execute system repository updates on all nodes:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Network &amp; Package Update</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">ip addr
+ip route
+sudo dnf update -y</code></pre>
+            </div>
+                </div>
+
+                <h3>2.4 Package Provisioning &amp; Hostname Resolution Maps</h3>
+                <p>Install the foundational CLI utility suite on all hosts:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Utility Package Installation</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf install -y vim nano wget curl git bash-completion net-tools bind-utils chrony tar unzip rsync tree lsof tcpdump</code></pre>
+            </div>
+                </div>
+
+                <p>To guarantee high-speed local communications without relying on external DNS latency, edit <code>/etc/hosts</code> on every node:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">/etc/hosts Entry Mappings</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">192.168.56.10 master
+192.168.56.11 compute01
+192.168.56.12 compute02
+192.168.56.13 compute03
+192.168.56.14 compute04</code></pre>
+            </div>
+                </div>
+
+                <h3>2.5 Time Synchronization with Chrony</h3>
+                <p>Enable and configure Chrony to synchronize cluster time across all instances:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Chrony Time Sync Setup</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo systemctl enable --now chronyd
+systemctl status chronyd
+chronyc tracking</code></pre>
+            </div>
+                </div>
+
+                <!-- SECTION 2.6 NFS -->
+                <section id="sec-2.6">
+                    <h3>2.6 Formulating Restrictive Multi-Host NFS Shares</h3>
+                    <p>An NFS share enables nodes to share binaries, configurations, and cluster logs. Configure firewalld rich rules restricting NFS traffic strictly to subnet <code>192.168.56.0/24</code>.</p>
+
+                    <h4>Step 1: NFS Server Deployment (Master Node)</h4>
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">NFS Master Server Configuration</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf install -y nfs-utils
+sudo mkdir /shared
+sudo chmod 777 /shared
+
+# Append export rule in /etc/exports
+echo "/shared 192.168.56.0/24(rw,sync,no_root_squash)" | sudo tee -a /etc/exports</code></pre>
+            </div>
+                    </div>
+
+                    <h4>Step 2: Enable Services &amp; Firewalld Rich Rules</h4>
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Firewalld Rich Rules Setup</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo systemctl enable --now nfs-server
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.56.0/24" service name="nfs" accept'
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.56.0/24" service name="mountd" accept'
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.56.0/24" service name="rpc-bind" accept'
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-rich-rules
+sudo exportfs -rav</code></pre>
+            </div>
+                    </div>
+
+                    <h4>Step 3: Mount and Verify (All Compute Nodes)</h4>
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">NFS Client Mount</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf install -y nfs-utils
+sudo mkdir /shared
+sudo mount master:/shared /shared
+df -h | grep /shared</code></pre>
+            </div>
+                    </div>
+                </section>
+
+                <h3>2.7 Set Up Passwordless SSH Authentication</h3>
+                <p>Generate ED25519 key pairs on the master node and distribute to all compute workers:</p>
+
+                <div class="cyber-code-block">
+                    <div class="cyber-code-header">
+                        <div class="cyber-code-dots">
+                            <span class="cyber-dot dot-red"></span>
+                            <span class="cyber-dot dot-yellow"></span>
+                            <span class="cyber-dot dot-green"></span>
+                        </div>
+                        <span class="text-xs font-mono text-slate-400">Passwordless SSH Key Setup</span>
+                    </div>
+                    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Generate key pair without passphrase
+ssh-keygen -t ed25519 -N ""
+
+# Authorize keys across nodes
+ssh-copy-id compute01
+ssh-copy-id compute02
+ssh-copy-id compute03
+ssh-copy-id compute04
+
+# Verify passwordless access
+ssh compute01 hostname
+ssh compute04 hostname</code></pre>
+            </div>
+                </div>
+
+                <!-- SECTION 2.8 MUNGE -->
+                <section id="sec-2.8">
+                    <h3>2.8 Installing and Activating Munge Cryptographic Keys</h3>
+                    <p>Munge provides secure authentication payload signing across distributed cluster nodes. Deploy EPEL, generate the secret key, and execute the automated loop script across worker nodes:</p>
+
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Master Munge Key Generation</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf install -y epel-release
+sudo dnf install -y munge munge-libs
+sudo create-munge-key</code></pre>
+            </div>
+                    </div>
+
+                    <p>Distribute and enforce strict <code>mode 400</code> key permissions across worker nodes using the following deployment script loop:</p>
+
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Automated Munge Distribution Loop</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">for node in compute01 compute02 compute03 compute04
+do
+  echo "Configuring Munge key on ${node}..."
+  sudo cp /etc/munge/munge.key /tmp/
+  sudo chmod 644 /tmp/munge.key
+  scp /tmp/munge.key ${node}:/tmp/
+  ssh ${node} &lt;&lt;'EOF'
+    sudo mv /tmp/munge.key /etc/munge/munge.key
+    sudo chown munge:munge /etc/munge/munge.key
+    sudo chmod 400 /etc/munge/munge.key
+    sudo systemctl enable --now munge
+EOF
+done</code></pre>
+            </div>
+                    </div>
+
+                    <p>Verify Munge cryptographic authentication on master:</p>
+
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Munge Verification Test</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo systemctl enable --now munge
+munge -n | unmunge</code></pre>
+            </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2.9 PDSH -->
+                <section id="sec-2.9">
+                    <h3>2.9 Cluster Administration and Parallel File Copying with pdsh and pdcp</h3>
+                    <p>Parallel Distributed Shell (pdsh) spawns parallel SSH connections to target compute hosts concurrently, cutting cluster task execution time from minutes to seconds.</p>
+
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Installing pdsh Modules</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo dnf install -y pdsh-rcmd-ssh pdsh-mod-dshgroup pdsh-mod-genders
+
+# Set SSH as default transport type in bash profile
+export PDSH_RCMD_TYPE=ssh
+echo 'export PDSH_RCMD_TYPE=ssh' &gt;&gt; ~/.bashrc
+source ~/.bashrc</code></pre>
+            </div>
+                    </div>
+
+                    <h4>Creating DSH Groups &amp; Executing Concurrently</h4>
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Configuring /etc/dsh/group/compute</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo mkdir -p /etc/dsh/group
+sudo tee /etc/dsh/group/compute &lt;&lt;EOF
+compute01
+compute02
+compute03
+compute04
+EOF
+
+# Execute parallel health diagnostics across all compute nodes
+pdsh -g compute hostname
+pdsh -g compute uptime
+pdsh -g compute free -h
+pdsh -g compute df -h</code></pre>
+            </div>
+                    </div>
+
+                    <h4>Parallel File Transfers with <code>pdcp</code></h4>
+                    <p>Create default machine list <code>/etc/pdsh/machines</code> and copy files concurrently:</p>
+
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">pdcp Machine List &amp; File Transfer</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sudo mkdir -p /etc/pdsh
+sudo tee /etc/pdsh/machines &lt;&lt;EOF
+compute01
+compute02
+compute03
+compute04
+EOF
+
+# Distribute file in parallel to all machines (-a)
+pdcp -a /tmp/munge.key /tmp/
+pdsh -a "ls -l /tmp/munge.key"</code></pre>
+            </div>
+                    </div>
+
+                    <h4>Firewall Configuration for Slurm Scheduler (Port 6818)</h4>
+                    <div class="cyber-code-block">
+                        <div class="cyber-code-header">
+                            <div class="cyber-code-dots">
+                                <span class="cyber-dot dot-red"></span>
+                                <span class="cyber-dot dot-yellow"></span>
+                                <span class="cyber-dot dot-green"></span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-400">Port 6818 Firewall Rules via pdsh</span>
+                        </div>
+                        <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">pdsh -R ssh -g compute "sudo firewall-cmd --permanent --add-rich-rule='rule family=\"ipv4\" source address=\"192.168.56.0/24\" port protocol=\"tcp\" port=\"6818\" accept'"
+pdsh -R ssh -g compute "sudo firewall-cmd --reload"
+nc -zv compute01 6818</code></pre>
+            </div>
+                    </div>
+                </section>
+            </section>
+
+            <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+            <!-- SECTION 3 -->
+            <section id="section-3">
+                <h2>Section 3: Laboratory Verification Checklist</h2>
+                <p>Ensure all of the following core systems have been successfully provisioned and verified before completing this workbook:</p>
+
+                <table>
+                    <thead>
+                        <tr><th>Target Curriculum System</th><th>Validation Check Command</th><th>Completed State</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Vagrant Infrastructure Deploy</td><td><code>vagrant status</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Operational (5 Nodes)</span></td></tr>
+                        <tr><td>Hostname Configurations</td><td><code>hostnamectl</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Hostnames Set</span></td></tr>
+                        <tr><td>Subnet 192.168.56.0/24 IP Check</td><td><code>ip addr</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Subnet Active</span></td></tr>
+                        <tr><td>Local Name Resolution Map</td><td><code>ping compute04</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] /etc/hosts Verified</span></td></tr>
+                        <tr><td>Clock Time Synchronization</td><td><code>chronyc tracking</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Chronyd Active</span></td></tr>
+                        <tr><td>NFS Share Creation (Master)</td><td><code>exportfs -v</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] /shared Exported</span></td></tr>
+                        <tr><td>Firewall Protection Rules</td><td><code>firewall-cmd --list-rich-rules</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Firewalld Active</span></td></tr>
+                        <tr><td>NFS Mount Association (Compute)</td><td><code>df -h | grep /shared</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Linked to /shared</span></td></tr>
+                        <tr><td>Passwordless SSH Access</td><td><code>ssh compute04 hostname</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Key Authorized</span></td></tr>
+                        <tr><td>Munge Crypto Verification</td><td><code>munge -n | unmunge</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Credentials Verified</span></td></tr>
+                        <tr><td>Parallel Distributed Shell</td><td><code>pdsh -a hostname</code></td><td><span class="cyber-badge cyber-badge-sky">[✓] Commands Executing</span></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+            <!-- APPENDIX A -->
+            <section id="appendix-a">
+                <h2>Appendix A: System Troubleshooting Reference Guide</h2>
+                <p>Review diagnostic procedures for standard system errors encountered during this lab setup:</p>
+
+                <table>
+                    <thead>
+                        <tr><th>Error Symptom</th><th>Likely Core Cause</th><th>Resolution Step Action</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NFS Mount operation hangs or timeouts</td>
+                            <td>Master firewall blocking NFS/RPC services.</td>
+                            <td>Ensure <code>nfs</code>, <code>mountd</code>, and <code>rpc-bind</code> rich rules are loaded inside firewalld, then reload.</td>
+                        </tr>
+                        <tr>
+                            <td>SSH requests standard password</td>
+                            <td>Public keys were not appended to <code>authorized_keys</code>.</td>
+                            <td>Re-run <code>ssh-copy-id &lt;node&gt;</code> from the master node to register your ED25519 key.</td>
+                        </tr>
+                        <tr>
+                            <td>Munge credential validation fails</td>
+                            <td>Different key files or incorrect file permissions.</td>
+                            <td>Ensure <code>munge.key</code> ownership is <code>munge:munge</code> and mode is set strictly to <code>400</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>Host network name unresolved</td>
+                            <td>Incorrect <code>/etc/hosts</code> listings.</td>
+                            <td>Re-examine <code>/etc/hosts</code> on every VM and insert correct IP address bindings.</td>
+                        </tr>
+                        <tr>
+                            <td>Cluster timers out of sync</td>
+                            <td>Chrony service disabled or blocked.</td>
+                            <td>Execute <code>sudo systemctl enable --now chronyd</code> and check with <code>chronyc tracking</code>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        
+
         </article>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>

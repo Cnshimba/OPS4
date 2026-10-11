@@ -3,278 +3,580 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 2: Cluster Preparation with Proxmox - Lab Guide - OPS4 Course</title>
+    <title>Lab 2 Workbook: Cluster Infrastructure Services — OPS4 Course (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
-    
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
-            </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </div>
-</nav>
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_2_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 2 Workbook: Cluster Infrastructure Services</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_2_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
+                </a>
+                <a href="Week_2_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 2</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Course Home</span>
+                </a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 2</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 2: Cluster Preparation with Proxmox - Lab Guide</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 2 Workbook: Cluster Infrastructure Services</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">Chrony, NFS Export & Passwordless SSH Setup</span>
+                </div>
+            </div>
+
+
+
+
+
+<p><strong>Subject:</strong> Operating Systems 4 (EIOPS4A) — Week 2: Commodity Clusters &amp; Benchmarking<br>
+<strong>Chapter Reference:</strong> Chapters 3 &amp; 4 — The Beowulf Cluster Model &amp; Performance Evaluation</p>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📋 Overview</p>
+    <p class="m-0 mt-1 text-sm">An essential responsibility of an HPC systems administrator is evaluating the raw processing capacity and computational efficiency of a cluster. This laboratory guides you through building, tuning, and executing the standard HPC benchmarking suite, <strong>High-Performance Linpack (HPL)</strong> — the benchmark that structures the international Top 500 list of supercomputers.</p>
 </div>
 
-<p><strong>Objective</strong>: Build your HPC environment from scratch on the VUT Proxmox Cluster infrastructure.<br>
-<strong>Goal</strong>: Access Proxmox, create and configure your Master Node (including networking, SSH keys, and environment variables), and then create empty Compute Node VMs to prepare for network provisioning in Week 3.</p>
+<hr>
 
-<hr />
+<h2>Section 1: Lab Overview and Benchmarking Fundamentals</h2>
 
-<h2>1. Accessing Proxmox & Uploading ISO</h2>
-<p>Proxmox VE is an enterprise-grade virtualization management platform. You will build your cluster VMs here.</p>
-<ol>
-    <li>Log into the Proxmox Web Interface (URL and credentials provided by the instructor).</li>
-    <li>Download the <a href="https://www.openeuler.org/en/download/" target="_blank">openEuler ISO</a>.</li>
-    <li>In the left pane of Proxmox, select your designated storage (e.g., <strong>local</strong>).</li>
-    <li>Click <strong>ISO Images</strong> &gt; <strong>Upload</strong> and upload the openEuler ISO.</li>
-</ol>
+<p>To evaluate cluster scaling, students must analyse the critical difference between theoretical peak performance and actual sustained performance:</p>
 
-<hr />
+<table>
+    <thead><tr><th>Metric</th><th>Definition</th><th>Significance</th></tr></thead>
+    <tbody>
+        <tr><td><strong>R<sub>peak</sub></strong> (Theoretical Peak)</td><td>The mathematical maximum performance a system can achieve based on its CPU cores, clock speed, and execution instructions per cycle.</td><td>Upper bound — never achievable in practice</td></tr>
+        <tr><td><strong>R<sub>max</sub></strong> (Sustained Performance)</td><td>The actual measured performance (GFLOPS) achieved by the benchmarking code when solving a massive system of linear equations.</td><td>Real-world performance metric</td></tr>
+        <tr><td><strong>Cluster Efficiency (E)</strong></td><td>E = R<sub>max</sub> / R<sub>peak</sub></td><td>Identifies bottlenecks, memory limitations, and compiler tuning discrepancies</td></tr>
+    </tbody>
+</table>
 
-<h2>2. Creating the Master Node</h2>
-<ol>
-    <li>Click <strong>Create VM</strong>. Set the Name to <code>hpc-master-node</code>.</li>
-    <li><strong>OS:</strong> Select the uploaded openEuler ISO.</li>
-    <li><strong>Disks:</strong> Allocate at least 20 GB.</li>
-    <li><strong>CPU & Memory:</strong> Allocate 2 Cores and 2048 MB (2 GB) RAM.</li>
-    <li><strong>Network:</strong> Leave default (e.g., <code>vmbr0</code> for internet). Finish VM creation.</li>
-    <li>Select <code>hpc-master-node</code>, go to <strong>Hardware</strong> &gt; <strong>Add Network Device</strong>. Select the internal cluster bridge (e.g., <code>vmbr1</code>). <strong>Repeat this step</strong> so the master node has two internal network devices (these will become <code>eth1</code> and <code>eth2</code>).</li>
-    <li>Start the VM, open <strong>Console</strong>, and install openEuler (setup root password, create user).</li>
-</ol>
+<h3>1.1 Amdahl's Law and Scaling</h3>
+<p>Amdahl's Law models the theoretical speedup limit of an application as a function of its sequential (non-parallel) fractions:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">Speedup = 1 / (S + (1 - S) / N)
 
-<hr />
+Where:
+  S = serial execution fraction
+  N = number of parallel processing ranks</code></pre>
+            </div>
+</div>
+<p>Benchmarking with HPL exposes how memory latency, network throughput (InfiniBand or Ethernet), and MPI messaging overhead affect the parallel scaling curve of distributed systems.</p>
 
-<h2>3. Master Node Configuration</h2>
-<p>Log into your newly installed openEuler Master Node.</p>
+<hr>
 
-<h3>3.1 Hostname and Static IP</h3>
-<p>We are setting the system hostname to "master" and creating a bonded network interface (<code>bond0</code>) using both internal NICs (<code>eth1</code> and <code>eth2</code>) for maximum throughput and redundancy. We assign it the static IP <code>10.0.0.1</code>.</p>
-<pre><code class="language-bash">hostnamectl set-hostname master
-# Create the bond interface
-nmcli connection add type bond con-name bond0 ifname bond0 bond.options "mode=balance-rr,miimon=100" ipv4.addresses 10.0.0.1/24 ipv4.method manual
-# Attach the physical interfaces (eth1, eth2) as slaves to the bond
-nmcli connection add type ethernet slave-type bond con-name bond0-port1 ifname eth1 master bond0
-nmcli connection add type ethernet slave-type bond con-name bond0-port2 ifname eth2 master bond0
-# Activate the bond
-nmcli connection up bond0</code></pre>
+<h2>Section 2: Compiling HPL from Source</h2>
+<p>To obtain optimal benchmarking numbers, compile HPL natively from source. You will link HPL against your custom-compiled, highly optimised OpenBLAS library and system-wide Open MPI layer.</p>
 
-<h3>3.2 SSH Keys & Passwordless Login</h3>
-<p>Generate SSH keys and immediately authorize them. Because we are doing this <em>before</em> cloning, any clones of this VM will inherently trust the Master, enabling instant passwordless SSH across the cluster!</p>
-<pre><code class="language-bash">ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
-cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys</code></pre>
+<h3>Step 1 – Download HPL Source Code</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cd /workspace/scratch/
+wget https://www.netlib.org/benchmark/hpl/hpl-2.3.tar.gz
+tar -xzvf hpl-2.3.tar.gz
+cd hpl-2.3</code></pre>
+            </div>
+</div>
 
-<h3>3.3 Cluster Environment Variables</h3>
-<p>Consistency is critical. We define our network settings in a single file called <code>cluster_env.sh</code> so we can easily source it in future labs.</p>
-<pre><code class="language-bash">cat &lt;&lt; 'EOF' &gt; cluster_env.sh
-#!/bin/bash
-export SMS_NAME="master"
-export SMS_IP="10.0.0.1"
-export SMS_ETH_INTERNAL="bond0"
-export COMPUTE_ETH_INTERNAL="eth1"
-export INTERNAL_NETMASK="255.255.255.0"
-export INTERNAL_NETWORK="10.0.0.0"
-export IPV4_GATEWAY="10.0.0.1"
-export DNS_SERVERS="8.8.8.8"
-export NTP_SERVER="pool.ntp.org"
-export C_IP[0]="10.0.0.101"
-export C_MAC[0]="52:54:00:11:22:33"
-export C_NAME[0]="compute-01"
-export C_IP[1]="10.0.0.102"
-export C_MAC[1]="52:54:00:44:55:66"
-export C_NAME[1]="compute-02"
-echo "Cluster environment loaded."
-EOF
-source cluster_env.sh</code></pre>
+<h3>Step 2 – Configure the HPL Architecture Make-profile</h3>
+<p>Copy an existing makefile template to create a custom compiler configuration <code>Make.Rocky</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cp setup/Make.Linux_PII_FBLAS Make.Rocky
+nano Make.Rocky</code></pre>
+            </div>
+</div>
+<p>Modify <code>Make.Rocky</code> to point directly to your cluster OpenBLAS dynamic link pathways and Open MPI wrappers:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">ARCH         = Rocky
+LAdir        = /shared/apps/openblas
+LAinc        = -I$(LAdir)/include
+LAlib        = $(LAdir)/lib/libopenblas.so
+MPdir        = /usr/lib64/openmpi
+MPinc        = -I$(MPdir)/include
+MPlib        = -L$(MPdir)/lib -lmpi
+CC           = mpicc
+LINKER       = mpicc
+CCFLAGS      = $(HPL_DEFS) -O3 -fopenmp</code></pre>
+            </div>
+</div>
 
-<hr />
+<h3>Step 3 – Compile HPL xhpl Binary</h3>
+<p>Run the compilation. Upon completion, the HPL executable <code>xhpl</code> and configuration file <code>HPL.dat</code> will be generated in <code>bin/Rocky/</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">make arch=Rocky
+ls -l bin/Rocky/</code></pre>
+            </div>
+</div>
 
-<h2>4. Preparing Empty Compute Nodes</h2>
-<p>Unlike standard virtual machines, our compute nodes will be provisioned dynamically over the network (PXE) by the master node using Warewulf in Week 3. We <strong>do not</strong> install an OS on them!</p>
-<ol>
-    <li>Click <strong>Create VM</strong> in Proxmox. Set the Name to <code>compute-01</code>.</li>
-    <li><strong>OS:</strong> Select <strong>Do not use any media</strong>.</li>
-    <li><strong>System &amp; Disks:</strong> Leave defaults (allocating 20 GB).</li>
-    <li><strong>CPU &amp; Memory:</strong> Allocate 1 Core and 1024 MB (1 GB) RAM.</li>
-    <li><strong>Network:</strong> Select the internal cluster bridge (e.g., <code>vmbr1</code>) instead of the internet bridge. Finish creation.</li>
-    <li>Repeat the process to create <code>compute-02</code>.</li>
-</ol>
+<h3>Step 4 – Propagate xhpl to Shared Storage</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">mkdir -p /shared/benchmarks/hpl
+cp bin/Rocky/xhpl bin/Rocky/HPL.dat /shared/benchmarks/hpl/</code></pre>
+            </div>
+</div>
 
-<hr />
+<hr>
 
-<h2>5. Retrieving MAC Addresses</h2>
-<p>To provision these nodes later, the Master Node needs to know their exact MAC addresses.</p>
-<ol>
-    <li>Select <code>compute-01</code> in Proxmox and go to <strong>Hardware</strong>.</li>
-    <li>Double-click the <strong>Network Device</strong> to view its details.</li>
-    <li>Copy the MAC address.</li>
-    <li>Log into your <code>master</code> node and edit your <code>cluster_env.sh</code> file. Replace the placeholder <code>C_MAC[0]</code> with this real MAC address.</li>
-    <li>Repeat for <code>compute-02</code> and update <code>C_MAC[1]</code>.</li>
-    <li>Run <code>source cluster_env.sh</code> again to update the variables in memory.</li>
-</ol>
+<h2>Section 3: Tuning the HPL.dat Configuration File</h2>
+<p>The performance of HPL depends directly on the configuration parameters in <code>/shared/benchmarks/hpl/HPL.dat</code>. You must size the problem matrix properly to fit the memory constraints of your VMs.</p>
 
-<hr />
+<h3>Step 1 – Understanding the Tuning Parameters</h3>
+<table>
+    <thead><tr><th>Parameter</th><th>Description</th><th>Guidance</th></tr></thead>
+    <tbody>
+        <tr><td><strong>N</strong> (Problem Size)</td><td>Dimension of the linear system matrix.</td><td>Size to consume ~80% of total cluster RAM for maximum GFLOPS.</td></tr>
+        <tr><td><strong>NB</strong> (Block Size)</td><td>Block-cyclic data distribution size.</td><td>Typically set between 128 and 256 for modern CPU caches.</td></tr>
+        <tr><td><strong>P × Q</strong> (Process Grid)</td><td>MPI process grid where P × Q = total MPI ranks.</td><td>For 4 nodes × 2 CPUs = 8 ranks: e.g., P=2, Q=4.</td></tr>
+    </tbody>
+</table>
 
-<h2>6. Submission</h2>
-<p>We are now fully prepared for Week 3.</p>
-<p>Submit a screenshot showing:</p>
-<ol>
-    <li>Your Proxmox GUI with the <code>master</code>, <code>compute-01</code>, and <code>compute-02</code> VMs created.</li>
-    <li>The terminal of your Master Node showing the output of <code>cat cluster_env.sh</code> with the real MAC addresses updated.</li>
-</ol>
-<p>Save this screenshot as <code>Week2_Lab_Surname.png</code>.</p>
+<h3>Step 2 – Calculating Memory Constraints and Sizing N</h3>
+<p>Each compute node has 2048 MB of RAM. Sizing HPL to consume 80% of local memory prevents the kernel from swapping data to disk. We calculate N using:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">Memory (GB) = (N² × 8 bytes/double) / 1024³
+
+For 80% of ~6 GB total active RAM across 4 nodes:
+N = sqrt( (6.0 × 1024³ × 0.80) / 8 )
+N ≈ 25000</code></pre>
+            </div>
+</div>
+
+<h3>Step 3 – Edit HPL.dat Parameters</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+25000        Ns
+1            # of NBs
+128          NBs
+1            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+2            Ps
+4            Qs
+16.0         threshold</code></pre>
+            </div>
+</div>
+
+<hr>
+
+<h2>Section 4: Benchmarking Execution via Slurm</h2>
+
+<h3>Step 1 – Create the HPL Slurm Submission Script</h3>
+<p>Write <code>/shared/benchmarks/hpl/submit_hpl.sh</code>:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">#!/bin/bash
+#SBATCH --job-name=HPL_Benchmark
+#SBATCH --output=hpl_result_%j.out
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=2
+
+module load mpi/openmpi-x86_64 openblas
+cd /shared/benchmarks/hpl
+srun ./xhpl</code></pre>
+            </div>
+</div>
+
+<h3>Step 2 – Submit to the Scheduler</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">sbatch /shared/benchmarks/hpl/submit_hpl.sh
+squeue</code></pre>
+            </div>
+</div>
+
+<h3>Step 3 – Parse and Extract Benchmark Results</h3>
+<p>Once the job concludes, extract the GFLOPS rating from the results table:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">cat hpl_result_*.out | grep -A 5 "T/V"</code></pre>
+            </div>
+</div>
+<p>Expected output format:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">================================================================================
+T/V                N    NB     P     Q               Time             Gflops
+--------------------------------------------------------------------------------
+WR11C2R4       25000   128     2     4             112.54             1.163e+01
+================================================================================</code></pre>
+            </div>
+</div>
+
+<hr>
+
+<h2>Section 5: Calculating Cluster Efficiency</h2>
+<p>To evaluate cluster scaling, calculate the theoretical peak performance (R<sub>peak</sub>) of your cluster and compare it to the measured R<sub>max</sub> GFLOPS:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">Rpeak = Nodes × (CPUs per Node) × (Clock Speed GHz) × (FLOPs per Cycle)
+
+Example: 4 nodes × 2 CPUs × 2.4 GHz × 4 FLOPs/cycle = 76.8 GFLOPS
+
+Cluster Efficiency (E) = (Rmax / Rpeak) × 100%
+Example: (11.63 / 76.8) × 100% = 15.14%</code></pre>
+            </div>
+</div>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📌 Top 500 Context</p>
+    <p class="m-0 mt-1 text-sm">HPL is the exact benchmark used by the <a href="https://www.top500.org" target="_blank" class="text-blue-600 dark:text-sky-400">Top 500 Supercomputer List</a>. The world's fastest supercomputers achieve efficiencies of 80–95%. A commodity cluster typically achieves 10–30%, limited by Ethernet latency versus InfiniBand, and shared-memory access patterns.</p>
+</div>
+
+<hr>
+
+<h2>Section 6: Troubleshooting Benchmarking Outages</h2>
+<table>
+    <thead><tr><th>Symptom / Error</th><th>Possible Cause</th><th>Diagnostic &amp; Resolution</th></tr></thead>
+    <tbody>
+        <tr><td>HPL job crashes with OOM-kill</td><td>Matrix size N is too high, exceeding local node memory.</td><td>Decrease N in HPL.dat (e.g., to 15000) or check memory with <code>pdsh -a free -h</code>.</td></tr>
+        <tr><td>Measured GFLOPS drop by 90%</td><td>HPL parameters triggered disk swapping.</td><td>Decrease N to ensure data arrays fit entirely within physical RAM boundaries.</td></tr>
+        <tr><td>Error: Grid P × Q mismatch</td><td>Process grid in HPL.dat doesn't match allocated MPI tasks.</td><td>Ensure P × Q (e.g., 2 × 4 = 8) matches nodes × tasks-per-node = 8.</td></tr>
+        <tr><td>Compilation fails: libopenblas not found</td><td>LAdir path in Make.Rocky points to wrong OpenBLAS location.</td><td>Verify <code>ls /shared/apps/openblas/lib/libopenblas.so</code> exists.</td></tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>Section 7: Comprehension Reflection Questions</h2>
+<div class="cyber-callout cyber-callout-gold not-prose">
+    <p class="font-semibold text-amber-800 dark:text-amber-300 m-0">💡 Review Questions</p>
+    <ol class="mt-2 mb-0 text-sm space-y-2">
+        <li><strong>Q1:</strong> Explain the technical difference between theoretical peak performance (R<sub>peak</sub>) and measured sustained performance (R<sub>max</sub>).</li>
+        <li><strong>Q2:</strong> Detail why sizing the HPL problem size N is critical to avoiding disk swapping and maximising GFLOPS ratings.</li>
+        <li><strong>Q3:</strong> How does Amdahl's Law model the limits of performance scaling on your commodity cluster?</li>
+    </ol>
+</div>
+
+<hr>
+
+<h2>Section 8: Laboratory Verification Checklist</h2>
+<table>
+    <thead><tr><th>Milestone</th><th>Target Deliverable</th><th>Status</th></tr></thead>
+    <tbody>
+        <tr><td>Exercise 1 – Source Compilation</td><td>HPL compiles successfully, creating the xhpl binary linked to OpenBLAS.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 2 – Grid Alignment</td><td>HPL.dat process grid P × Q matches Slurm parallel task allocations.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 3 – RAM Optimisation</td><td>N is configured correctly to consume 80% of RAM without triggering swap.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 4 – Benchmark Run</td><td>HPL runs across 4 compute nodes via Slurm, completing with no crashes.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 5 – Metrics Calculation</td><td>Calculated theoretical R<sub>peak</sub>, sustained R<sub>max</sub>, and cluster efficiency.</td><td>[ ] Assessor Sign-Off</td></tr>
+    </tbody>
+</table>
+
+    
+
         </article>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>

@@ -3,649 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 4: Resource Management with Slurm - Student Notes - OPS4 Course</title>
+    <title>Week 4 Student Notes — Resource Management (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <script>
         window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
+            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
     
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC &amp; Cluster Computing 2026</span>
-                </span>
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-7xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    04
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 4: Resource Management</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_4_Lab_Workload_Management.html" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-500 hover:bg-sky-500 hover:text-white transition-all no-underline hidden sm:flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Lab 4 Guide
+                </a>
+                <a href="Week_4_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 4</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
             </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <!-- Main Container with Split Sidebar Layout -->
+    <main class="container mx-auto px-4 max-w-7xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_4_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
+                
+                <!-- Quick Navigation Box -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-2 text-xs font-black uppercase tracking-wider text-sky-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                        <span>On This Page</span>
+                    </div>
+                    <nav class="space-y-1.5 text-xs font-medium">
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Foundations of Symmetric Multiprocessing (SMP)</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Component Architecture of Modern Microprocessors (Chapter 6)</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. UMA vs. NUMA Memory Architectures</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Cache Coherence Protocols: MESI &amp; MOESI</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. The False Sharing Performance Trap</a>
+                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Hardware Topology Discovery &amp; Thread Pinning</a>
+                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Summary</a>
+                    </nav>
+                </div>
+
+                <!-- Chapter Metadata Widget -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Module</span>
+                        <span class="font-bold text-sky-500">EIOPS4A</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Reading Time</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~25 Minutes</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 font-semibold">Slides Ref</span>
+                        <span class="font-bold text-amber-500">Ch. 6 & 7</span>
+                    </div>
+                    <div class="pt-2">
+                        <a href="Week_4_Lab_Workload_Management.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Launch Lab 4 Guide
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Reading Column (Main Canvas) -->
+            <div class="lg:col-span-9 space-y-8">
+                
+                <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+                    
+                    <!-- Hero Header Card -->
+                    <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                        <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                                <span class="text-xl font-black text-white tracking-tight">04</span>
+                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 04</span>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center p-6">
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Resource Management</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">Slurm Scheduler Architecture, Workload Queues & Cgroups (Ch. 6 & 7)</span>
+                        </div>
+                    </div>
+
+                    
+
+                    
+
+                    
+
+
+
+                    <!-- SECTION 1 -->
+                    
+                        
+
+                    <!-- SECTION 1 -->
+                    <section id="section-1">
+                        <h2>1. Foundations of Symmetric Multiprocessing (SMP)</h2>
+                        <p>Before scaling computational workloads across multi-node network clusters, HPC engineers must optimize shared-memory parallelism on single multi-socket server nodes. A <strong>Symmetric Multiprocessor (SMP)</strong> system consists of two or more identical physical processor sockets connected to a common, shared main memory (RAM) space and governed by a single operating system kernel.</p>
+                    
+
+                    
+
+                    <!-- SECTION 2 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 2 -->
+                    <section id="section-2">
+                        <h2>2. Component Architecture of Modern Microprocessors (Chapter 6)</h2>
+                        <p>Modern server microprocessors (e.g., AMD EPYC 9004/9005 series, Intel Xeon Scalable Granite Rapids) pack up to 128 physical cores onto a single silicon substrate using chiplet designs. Below is the hardware layer hierarchy:</p>
+
+<table>
+    <thead><tr><th>Hardware Component</th><th>Location &amp; Scope</th><th>Access Latency &amp; Bandwidth Profile</th></tr></thead>
+    <tbody>
+        <tr><td><strong>Execution Units (ALU/FMA)</strong></td><td>Inside physical core. Performs 512-bit SIMD vector ops.</td><td>Sub-nanosecond latency (&lt; 1 cycle).</td></tr>
+        <tr><td><strong>L1 Instruction &amp; Data Caches</strong></td><td>Private per core (typically 32KB - 64KB).</td><td>~1.0 - 1.5 ns (4 clock cycles). Extremely high bandwidth.</td></tr>
+        <tr><td><strong>L2 Cache</strong></td><td>Private per core (typically 1MB per core).</td><td>~3.0 - 4.5 ns (12–14 clock cycles).</td></tr>
+        <tr><td><strong>L3 Last-Level Cache (LLC)</strong></td><td>Shared across a core complex (CCX) or chiplet die (32MB - 256MB).</td><td>~10 - 15 ns (40–50 clock cycles). Shared by up to 8 cores.</td></tr>
+        <tr><td><strong>Integrated Memory Controller (IMC)</strong></td><td>On-chip die interface controlling DDR5 channels.</td><td>Coordinates physical memory access across 8–12 channels per socket.</td></tr>
+        <tr><td><strong>Inter-Socket Interconnect</strong></td><td>AMD Infinity Fabric / Intel UPI bridges.</td><td>Connects foreign CPU sockets over high-speed differential links.</td></tr>
+    </tbody>
+</table>
+                    
+
+                    
+
+                    <!-- SECTION 3 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 3 -->
+                    <section id="section-3">
+                        <h2>3. UMA vs. NUMA Memory Architectures</h2>
+                        <h3>3.1 Uniform Memory Access (UMA)</h3>
+<p>In legacy UMA architectures, all CPU cores connect to a single centralized memory controller over a shared system bus. Memory access latency is identical regardless of which core executes the read or write instruction. However, as core counts scaled beyond 8 cores, bus contention created severe latency bottlenecks.</p>
+
+<h3>3.2 Non-Uniform Memory Access (NUMA)</h3>
+<p>Modern enterprise servers split system memory into discrete **NUMA Nodes**, where each CPU socket or core complex directly controls its local bank of RAM DIMMs:</p>
+
+$$ \text{NUMA Distance Ratio} = \frac{\text{Latency}_{\text{Remote Node}}}{\text{Latency}_{\text{Local Node}}} \approx 1.5\text{x to } 2.5\text{x} $$
+
+<ul>
+    <li><strong>Local Memory Read</strong>: Cores fetching data from local RAM experience low latency (~60 ns) and full bus bandwidth (~300 GB/s per socket).</li>
+    <li><strong>Remote Memory Read</strong>: Cores fetching data from RAM attached to a foreign socket must traverse inter-socket interconnects (AMD Infinity Fabric, Intel UPI), suffering up to 2.5x higher latency (~140 ns) and reduced available bandwidth.</li>
+</ul>
+                    
+
+                    
+
+                    <!-- SECTION 4 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 4 -->
+                    <section id="section-4">
+                        <h2>4. Cache Coherence Protocols: MESI &amp; MOESI</h2>
+                        <p>Because multiple CPU cores maintain private L1/L2 caches of shared main memory locations, hardware must enforce **Cache Coherence** so no core reads stale data.</p>
+
+<h3>4.1 The MESI Protocol (4 States)</h3>
+<table>
+    <thead><tr><th>State Name</th><th>Meaning &amp; Ownership Property</th><th>Is RAM Up to Date?</th></tr></thead>
+    <tbody>
+        <tr><td><strong>M (Modified)</strong></td><td>Cache line is present only in the current core's cache and has been written to (dirty). The core must write back to RAM before eviction.</td><td>No (RAM contains stale data).</td></tr>
+        <tr><td><strong>E (Exclusive)</strong></td><td>Cache line is present only in the current core's cache and has not been written to (clean).</td><td>Yes (Matches RAM).</td></tr>
+        <tr><td><strong>S (Shared)</strong></td><td>Cache line is present in multiple cores' private caches in clean read-only state.</td><td>Yes (Matches RAM).</td></tr>
+        <tr><td><strong>I (Invalid)</strong></td><td>Cache line contains invalid/stale data and cannot be read.</td><td>N/A</td></tr>
+    </tbody>
+</table>
+
+<h3>4.2 The MOESI Extension</h3>
+<p>The MOESI protocol adds an <strong>O (Owner)</strong> state. The Owner state allows a core to hold a dirty cache line while sharing read access with other cores without writing the line back to main RAM, preserving precious memory bus bandwidth.</p>
+                    
+
+                    
+
+                    <!-- SECTION 5 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 5 -->
+                    <section id="section-5">
+                        <h2>5. The False Sharing Performance Trap</h2>
+                        <p><strong>False Sharing</strong> occurs when two independent threads executing on separate CPU cores modify independent variables that happen to reside within the same 64-byte cache line. Even though the software logic is independent, the hardware MESI protocol repeatedly invalidates the cache line across both cores ("cache line bouncing"), causing up to a 90% drop in computational throughput.</p>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 4</span>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
     </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Resource Management with Slurm</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC &amp; Cluster Computing</span>
+    <pre><code class="language-cpp">// Problem: False sharing (both variables reside in the same 64-byte cache line)
+struct BadThreadData {
+    uint64_t counter_thread0; // 8 bytes
+    uint64_t counter_thread1; // 8 bytes (Resides in same 64-byte line!)
+};
+
+// Solution: C++17 Explicit Cache Line Alignment (64 Bytes)
+struct alignas(64) GoodThreadData {
+    uint64_t counter_thread0;
+    uint8_t  padding[56]; // Pad out to full 64-byte boundary
+};
+
+struct alignas(64) GoodThreadData2 {
+    uint64_t counter_thread1;
+    uint8_t  padding[56];
+};</code></pre>
+</div>
+                    
+
+                    
+
+                    <!-- SECTION 6 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 6 -->
+                    <section id="section-6">
+                        <h2>6. Hardware Topology Discovery &amp; Thread Pinning</h2>
+                        <p>To prevent the Linux kernel OS scheduler from migrating threads across NUMA domains during execution, HPC developers enforce thread binding and CPU affinity:</p>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
     </div>
+    <pre><code class="language-bash"># Inspect NUMA hardware topology, node distance matrices, and core mapping
+numactl --hardware
+
+# Display graphical topology diagram of sockets, NUMA nodes, and caches
+lstopo --output-format png > topology.png
+
+# Launch process bound to NUMA node 0 cores and local RAM
+numactl --cpunodebind=0 --membind=0 ./my_multithreaded_app
+
+# Enforce core binding via Slurm
+srun --cpu-bind=cores ./my_app</code></pre>
 </div>
-<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base [&>p]:!m-0"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br />
-<strong>Module</strong>: EIOSY4A<br />
-<strong>Topic</strong>: Resource Management with Slurm<br />
-<strong>Reading Time</strong>: ~15 Minutes</p></div></div>
-<hr />
-<h2>Overview</h2>
-<p>In Week 3, we provisioned the cluster nodes using Warewulf, creating a pool of compute nodes ready to run scientific workloads. But a critical question now emerges: <strong>how do we fairly and efficiently share this powerful hardware among multiple users and competing jobs?</strong> Without a management system, every user would simply SSH into a node and run their code, causing resource conflicts, system crashes, and an overall chaotic environment.</p>
-<p>This week introduces <strong>Slurm (Simple Linux Utility for Resource Management)</strong>, the dominant workload manager in the HPC world. Slurm acts as the traffic controller of the cluster, accepting job requests, queuing them, and intelligently allocating compute resources to ensure fair access and maximum utilization.</p>
-<blockquote>
-<p><strong>Note</strong>: Slurm is used by the majority of the Top500 supercomputers. Understanding it is an essential skill for anyone entering the HPC field.</p>
-</blockquote>
-<hr />
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
-1. <strong>Justify</strong> the necessity of advanced workload managers in multi-tenant, shared HPC environments.<br />
-2. <strong>Analyze</strong> the architectural components and daemon interactions within Slurm.<br />
-3. <strong>Manage</strong> job lifecycles by submitting, monitoring, and debugging complex batch scripts.<br />
-4. <strong>Formulate</strong> optimized <code>sbatch</code> scripts with precise resource allocation directives.<br />
-5. <strong>Evaluate</strong> how Slurm partitions, Quality of Service (QOS), and priority algorithms influence job scheduling fairness.</p></div></div>
+                    
 
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />
-Welcome to Week 4! Your cluster is now alive and provisioned. This week, we transform it from a pool of raw hardware into a <em>managed scientific computing service</em>. We install and configure Slurm — the invisible hand that orchestrates millions of compute hours daily at institutions worldwide. By the end of this week, you will submit your first real HPC job.</p><br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
-<hr />
-<h2>1. The Resource Management Problem</h2>
-<p>Imagine a cluster with 100 compute nodes (4,000 CPU cores). On a Monday morning, 50 researchers simultaneously SSH in and launch their simulations. Without coordination:</p>
-<ul>
-    <li>Two researchers might use the same node, starving each other of CPU and RAM.</li>
-    <li>A memory-intensive job could crash a node, killing everyone else's work.</li>
-    <li>A single greedy user could monopolize the entire cluster for days.</li>
-    <li>There is no fair way to prioritize critical deadline-driven jobs over routine analyses.</li>
-</ul>
-<p>A <strong>Workload Manager (WLM)</strong> — also called a <strong>Job Scheduler</strong> — solves all of these problems. It provides a centralized service where users submit their computational requirements (cores, memory, time), and the scheduler decides <em>when</em> and <em>where</em> to run each job based on defined policies.</p>
-<h3>1.1 The Scheduling Challenge</h3>
-<p>Effective scheduling is a notoriously difficult optimization problem. The scheduler must balance competing objectives:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Objective</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>High Utilization</strong></td>
-<td style="text-align: left;">Keep as many nodes busy as possible to maximize return on investment.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Low Wait Time</strong></td>
-<td style="text-align: left;">Minimize the time users spend waiting in the queue.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Fairness</strong></td>
-<td style="text-align: left;">Prevent monopolization; give all users equitable access over time.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Priority</strong></td>
-<td style="text-align: left;">Allow high-priority or deadline-sensitive jobs to run before low-priority ones.</td>
-</tr>
-</tbody>
-</table>
-<p>Slurm addresses these competing objectives through a sophisticated priority calculation system and configurable policies.</p>
-<hr />
-<h2>2. Slurm Architecture</h2>
-<p>Slurm follows a classic <strong>master-agent</strong> architecture. The Controller node runs the central brain, while lightweight agents run on every compute node.</p>
-<figure class="my-8 flex flex-col items-center">
-    <img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" src="../images/slurm_architecture.png" alt="Slurm Architecture Diagram">
-    <figcaption class="mt-3 text-sm text-center text-slate-500 dark:text-slate-400 italic">Figure 1: The Slurm master-agent architecture showing the central controller and compute node daemons.</figcaption>
-</figure>
-<h3>2.1 Core Daemons</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Daemon</th>
-<th style="text-align: left;">Runs On</th>
-<th style="text-align: left;">Role</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>slurmctld</code></td>
-<td style="text-align: left;">Controller (SMS) Node</td>
-<td style="text-align: left;">The central scheduler. Manages the job queue, node state, and makes all allocation decisions. It is the authoritative source of truth for the cluster's state.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>slurmd</code></td>
-<td style="text-align: left;">Every Compute Node</td>
-<td style="text-align: left;">The local job launcher. Receives instructions from <code>slurmctld</code>, launches job steps on behalf of users, and reports node health back to the controller.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>slurmdbd</code></td>
-<td style="text-align: left;">Controller or dedicated host</td>
-<td style="text-align: left;">The database daemon. Records all job accounting data (start/end times, resources used, costs) to a MySQL/MariaDB database for billing and reporting.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>munged</code></td>
-<td style="text-align: left;">All Nodes</td>
-<td style="text-align: left;">Authentication daemon. Provides shared-secret authentication between Slurm daemons to prevent unauthorized job submission or control.</td>
-</tr>
-</tbody>
-</table>
-<h3>2.2 The Munge Security Layer</h3>
-<p>Slurm uses <strong>Munge</strong> for intra-cluster authentication. A single cryptographic key (<code>/etc/munge/munge.key</code>) must be identical on all nodes. When a user submits a job, <code>slurmctld</code> uses Munge to verify the request is genuine. If the key is absent or mismatched on a compute node, <code>slurmd</code> will refuse to accept jobs from the controller — a common source of errors in new installations.</p>
-<pre><code class="language-bash"># Distribute the Munge key to all nodes via Warewulf overlay
-# On the SMS (after Slurm is installed):
-sudo wwctl overlay import --parents nodeconfig /etc/munge/munge.key
-sudo wwctl overlay chown nodeconfig /etc/munge/munge.key \
-    "$(id -u munge)" "$(id -g munge)"
-sudo wwctl overlay chown nodeconfig /etc/munge "$(id -u munge)" "$(id -g munge)"
-sudo wwctl overlay chmod nodeconfig /etc/munge 0700
-sudo wwctl overlay build
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The commands above import the generated Munge key into the Warewulf <code>nodeconfig</code> overlay, ensure proper ownership (<code>munge:munge</code>) and permissions (<code>0700</code>), and rebuild the overlay so compute nodes receive the exact same key during provisioning.</p>
-<hr />
-<h2>3. The Slurm Configuration File (slurm.conf)</h2>
-<p>The entire cluster topology and scheduling policy is defined in a single configuration file: <code>/etc/slurm/slurm.conf</code>. This file must be identical on all nodes (again, typically distributed via a Warewulf overlay).</p>
-<h3>3.1 Key Configuration Sections</h3>
-<p><strong>Global Settings</strong>:</p>
-<pre><code class="language-ini">ClusterName=hpc-vut
-ControlMachine=sms.cluster.local
-AuthType=auth/munge
-SlurmUser=slurm
-StateSaveLocation=/var/spool/slurmctld
-SlurmdSpoolDir=/var/spool/slurmd
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> This block sets the fundamental cluster identity (<code>ClusterName</code>), identifies the controller node (<code>ControlMachine</code>), specifies Munge for authentication, and defines where state and spool data are stored.</p>
-<p><strong>Resource Tracking</strong>:</p>
-<pre><code class="language-ini"># Track CPU, memory, and GPU resources
-SelectType=select/cons_tres
-SelectTypeParameters=CR_Core_Memory
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> These settings configure Slurm to track consumable resources (TRES) like CPUs, memory, and GPUs, allowing it to schedule jobs based on available cores and RAM (<code>CR_Core_Memory</code>) rather than just whole nodes.</p>
-<p><strong>Node Definitions</strong>:</p>
-<pre><code class="language-ini"># Define compute nodes with their hardware specs
-NodeName=compute-[01-10] CPUs=32 RealMemory=128000 State=UNKNOWN
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> This line registers nodes <code>compute-01</code> through <code>compute-10</code>, informing the controller that each node has 32 CPUs and ~128GB of RAM. The <code>State=UNKNOWN</code> tells Slurm to wait for the node to check in and report its actual state.</p>
-<p><strong>Partition Definitions</strong>:</p>
-<pre><code class="language-ini"># Create a default partition for all nodes
-PartitionName=debug Nodes=compute-[01-10] Default=YES MaxTime=01:00:00 State=UP
-PartitionName=standard Nodes=compute-[01-10] MaxTime=7-00:00:00 State=UP
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> These lines define two queues (partitions). The <code>debug</code> partition is the default and limits jobs to 1 hour. The <code>standard</code> partition allows jobs to run for up to 7 days. Both partitions share the same set of compute nodes.</p>
-<hr />
-<h2>4. Partitions, Accounts, and QOS</h2>
-<p>Slurm uses a hierarchical model to control resource access.</p>
-<h3>4.1 Partitions</h3>
-<p>A <strong>Partition</strong> is a logical grouping of nodes with a defined set of limits. Think of it as a named queue. Multiple partitions can share the same physical nodes.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Property</th>
-<th style="text-align: left;">Example</th>
-<th style="text-align: left;">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>MaxTime</strong></td>
-<td style="text-align: left;"><code>7-00:00:00</code> (7 days)</td>
-<td style="text-align: left;">Maximum wall-clock time a job may run.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>MaxNodes</strong></td>
-<td style="text-align: left;"><code>4</code></td>
-<td style="text-align: left;">Maximum number of nodes a single job may use.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>AllowGroups</strong></td>
-<td style="text-align: left;"><code>phd_students</code></td>
-<td style="text-align: left;">Restricts which Linux groups can use this partition.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Priority</strong></td>
-<td style="text-align: left;"><code>100</code></td>
-<td style="text-align: left;">Higher-priority partitions preempt lower ones.</td>
-</tr>
-</tbody>
-</table>
-<h3>4.2 Accounts and QOS</h3>
-<p><strong>Accounts</strong> track resource usage by research group or project for billing purposes. <strong>QOS (Quality of Service)</strong> is overlaid on top of accounts to enforce additional limits or grant special privileges:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">QOS Feature</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>MaxWall</strong></td>
-<td style="text-align: left;">Override partition wall time limits for premium users.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>MaxTRESPerUser</strong></td>
-<td style="text-align: left;">Limit the total CPU-hours a user can consume concurrently.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Priority Boost</strong></td>
-<td style="text-align: left;">Grant higher scheduling priority to certain projects.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Preemption</strong></td>
-<td style="text-align: left;">Allow high-QOS jobs to pause or cancel lower-QOS jobs.</td>
-</tr>
-</tbody>
-</table>
-<pre><code class="language-bash"># Create an account for a research group
-sacctmgr add account physics_dept Description="Physics Department"
-# Add a user to that account
-sacctmgr add user jdoe Account=physics_dept
-# Create a high-priority QOS
-sacctmgr add qos high_priority Priority=100 MaxWall=14-00:00:00
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Using the <code>sacctmgr</code> command, this block first creates an accounting group (<code>physics_dept</code>), adds user <code>jdoe</code> to it, and then creates a Quality of Service (QOS) profile named <code>high_priority</code> that grants a priority boost and a 14-day wall time limit.</p>
-<hr />
-<h2>5. Submitting and Managing Jobs</h2>
-<p>Users interact with Slurm using a set of command-line tools. There are two modes for running jobs.</p>
-<h3>5.1 Interactive Jobs (srun)</h3>
-<p><code>srun</code> launches a job step in real-time. Your terminal is blocked until the job finishes. This is useful for testing and debugging.</p>
-<pre><code class="language-bash"># Request 1 node, 4 CPUs, for 10 minutes, and run bash interactively
-srun --nodes=1 --ntasks=4 --time=00:10:00 --pty bash -i
+                    
 
-# Run a single MPI executable across 2 nodes (8 tasks total)
-srun --nodes=2 --ntasks-per-node=4 ./my_mpi_program
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The first <code>srun</code> command allocates resources and opens an interactive terminal (<code>--pty bash -i</code>) on a compute node. The second submits a parallel MPI job requesting 2 nodes with 4 tasks each, executing <code>my_mpi_program</code> without an interactive shell.</p>
-<h3>5.2 Batch Jobs (sbatch)</h3>
-<p><code>sbatch</code> submits a script to the queue and returns immediately, giving your terminal back. The job runs in the background when resources become available. This is the standard method for production workloads.</p>
-<p><strong>Example sbatch Script (<code>my_job.sh</code>)</strong>:</p>
-<pre><code class="language-bash">#!/bin/bash
-#SBATCH --job-name=matrix_multiply    # Human-readable name
-#SBATCH --output=logs/job_%j.out      # Stdout log (%j = JobID)
-#SBATCH --error=logs/job_%j.err       # Stderr log
-#SBATCH --nodes=2                     # Number of compute nodes
-#SBATCH --ntasks-per-node=16          # MPI ranks per node
-#SBATCH --cpus-per-task=1             # Threads per rank (for hybrid MPI+OMP)
-#SBATCH --mem=64G                     # Total RAM per node
-#SBATCH --time=02:00:00               # Wall-clock time limit (HH:MM:SS)
-#SBATCH --partition=standard          # Target partition
+                    <!-- SECTION 7 -->
+                    </section>
 
-# Load required software modules
-module load openmpi5
-module load python/3.11
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
 
-# Run the parallel application
-prun python3 simulation.py
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> This is a standard Slurm batch script. The <code>#SBATCH</code> directives at the top specify resource requests (nodes, tasks, memory, time, partition) and logging configuration. The script then loads necessary software modules and launches the parallel application using <code>prun</code> (or <code>srun</code>/<code>mpirun</code>).</p>
-<pre><code class="language-bash"># Submit the script
-sbatch my_job.sh
-# Returns: Submitted batch job 12345
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> The <code>sbatch</code> command is used to submit the batch script to the Slurm queue. It returns a unique Job ID (e.g., 12345) which is used to monitor or manage the job.</p>
-<blockquote>
-<p><strong>Key Variable</strong>: <code>$SLURM_NTASKS</code> is automatically set by Slurm to equal the total number of MPI ranks requested (<code>--nodes</code> × <code>--ntasks-per-node</code>). Always use this variable in your scripts rather than hardcoding a number.</p>
-</blockquote>
-<hr />
-<h2>6. Monitoring and Managing Jobs</h2>
-<p>Once a job is submitted, administrators and users use these commands to track and control it.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Command</th>
-<th style="text-align: left;">Purpose</th>
-<th style="text-align: left;">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>squeue</code></td>
-<td style="text-align: left;">View the job queue. Shows job state (PD=pending, R=running, CG=completing).</td>
-<td style="text-align: left;"><code>squeue -u jdoe</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>sinfo</code></td>
-<td style="text-align: left;">View partition and node status. Shows idle, allocated, mixed, and down nodes.</td>
-<td style="text-align: left;"><code>sinfo -N -l</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>scancel</code></td>
-<td style="text-align: left;">Cancel a pending or running job.</td>
-<td style="text-align: left;"><code>scancel 12345</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>scontrol</code></td>
-<td style="text-align: left;">Administrative control of Slurm objects. Drain/resume nodes, hold/release jobs.</td>
-<td style="text-align: left;"><code>scontrol show job 12345</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>sacct</code></td>
-<td style="text-align: left;">View detailed accounting records for completed jobs (CPU used, memory used, exit code).</td>
-<td style="text-align: left;"><code>sacct -j 12345 --format=JobID,Elapsed,MaxRSS</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>sprio</code></td>
-<td style="text-align: left;">Display the calculated priority of pending jobs and its components.</td>
-<td style="text-align: left;"><code>sprio -j 12345</code></td>
-</tr>
-</tbody>
-</table>
-<h3>6.1 Node States</h3>
-<p>Administrators must understand node states to diagnose cluster health:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">State</th>
-<th style="text-align: left;">Meaning</th>
-<th style="text-align: left;">Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>idle</strong></td>
-<td style="text-align: left;">Node is available and fully free.</td>
-<td style="text-align: left;">None needed.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>allocated</strong></td>
-<td style="text-align: left;">All resources are in use by a job.</td>
-<td style="text-align: left;">Normal state during a run.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>mixed</strong></td>
-<td style="text-align: left;">Some CPUs are in use; remaining are available.</td>
-<td style="text-align: left;">Normal state for partial allocation.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>drain</strong></td>
-<td style="text-align: left;">Running jobs will finish, but no new jobs will start. Usually set by admin for maintenance.</td>
-<td style="text-align: left;"><code>scontrol update NodeName=node01 State=drain Reason="maintenance"</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>down</strong></td>
-<td style="text-align: left;">Node has failed health checks or was manually taken down.</td>
-<td style="text-align: left;">Investigate and <code>scontrol update NodeName=node01 State=resume</code></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>7. Job Priority and Backfill Scheduling</h2>
-<p>Slurm does not simply run jobs in first-in, first-out order. It uses a multifactor priority system to determine which pending job runs next.</p>
-<h3>7.1 Priority Factors</h3>
-<p>The job priority score is a weighted sum of several factors:</p>
-<p>$$ P_{job} = w_{age} \cdot F_{age} + w_{fair} \cdot F_{fairshare} + w_{size} \cdot F_{size} + w_{qos} \cdot F_{qos} $$</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Factor</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Age</strong></td>
-<td style="text-align: left;">Jobs that have been waiting longer get higher priority. Prevents starvation.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Fairshare</strong></td>
-<td style="text-align: left;">Users who have recently consumed many resources get lower priority. Enforces fairness across accounts.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Size</strong></td>
-<td style="text-align: left;">Can be configured to favor large jobs (high utilization) or small jobs (fast throughput).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>QOS</strong></td>
-<td style="text-align: left;">A direct priority boost assigned by the administrator to specific QOS levels.</td>
-</tr>
-</tbody>
-</table>
-<h3>7.2 Backfill Scheduling</h3>
-<p>Slurm uses <strong>Backfill Scheduling</strong> to improve utilization. Without backfill, if Job A needs 100 nodes but only 90 are free, nothing runs. With backfill, Slurm checks if a smaller Job B (needing only 10 nodes) can start and finish <em>before</em> the remaining 10 nodes would be freed for Job A. If so, it runs Job B now, using resources that would otherwise be idle.</p>
-<figure class="my-8 flex flex-col items-center">
-    <img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" src="../images/backfill_scheduling.png" alt="Backfill Scheduling Diagram">
-    <figcaption class="mt-3 text-sm text-center text-slate-500 dark:text-slate-400 italic">Figure 2: Backfill scheduling algorithm packing smaller jobs into idle resources to improve cluster utilization.</figcaption>
-</figure>
-<blockquote>
-<p><strong>Implication for Users</strong>: Adding accurate time estimates to your job scripts (<code>--time</code>) helps the backfill algorithm and can significantly reduce your wait time.</p>
-</blockquote>
-<hr />
-<h2>8. Troubleshooting Common Issues</h2>
-<h3>8.1 Job Stuck in PENDING (PD)</h3>
-<p>Use <code>scontrol show job &lt;jobid&gt;</code> and check the <code>Reason</code> field:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Reason Code</th>
-<th style="text-align: left;">Meaning</th>
-<th style="text-align: left;">Fix</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Resources</strong></td>
-<td style="text-align: left;">Waiting for enough free nodes. Normal state.</td>
-<td style="text-align: left;">Wait. Check <code>sinfo</code> for node status.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Priority</strong></td>
-<td style="text-align: left;">Another job has higher priority.</td>
-<td style="text-align: left;">Wait. Use <code>sprio</code> to compare priorities.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>QOSMaxCpuPerUserLimit</strong></td>
-<td style="text-align: left;">User has exceeded their concurrent CPU limit defined in QOS.</td>
-<td style="text-align: left;">Cancel other jobs or contact admin to adjust QOS.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>InvalidAccount</strong></td>
-<td style="text-align: left;">Job submitted to an account the user is not a member of.</td>
-<td style="text-align: left;"><code>sacctmgr show assoc user=jdoe</code> to check membership.</td>
-</tr>
-</tbody>
-</table>
-<h3>8.2 Node Showing as DOWN</h3>
-<pre><code class="language-bash"># Check why a node is down
-scontrol show node compute-01
+                    <!-- SECTION 7 -->
+                    <section id="section-7">
+                        <h2>7. Summary</h2>
+                        <p>Understanding single-node multi-core SMP and NUMA mechanics is essential before writing multithreaded code. In Week 5, we apply these hardware principles using <strong>OpenMP</strong>.</p>
 
-# Common causes and fixes:
-# 1. slurmd not running on the node
-ssh compute-01 "sudo systemctl status slurmd"
-ssh compute-01 "sudo systemctl start slurmd"
 
-# 2. Time is out of sync (Munge fails if clocks differ by > 5 minutes)
-ssh compute-01 "timedatectl show"
-# Fix: Ensure chrony/NTP is running on all nodes
+                    </section>
 
-# 3. After fixing, manually resume the node
-scontrol update NodeName=compute-01 State=resume
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> This series of commands is for troubleshooting a <code>DOWN</code> node. It starts by inspecting the node's state with <code>scontrol</code>. Then, it shows how to verify the <code>slurmd</code> service, check the system clock (crucial for Munge authentication), and finally bring the node back online using <code>State=resume</code> once the issue is resolved.</p>
-<hr />
-<h2>9. Summary and Next Steps</h2>
-<p>This week, we transformed our provisioned cluster into a <strong>managed computing service</strong>. We deployed <strong>Slurm</strong>, the industry-standard workload manager, understanding its daemon architecture (<code>slurmctld</code>, <code>slurmd</code>, <code>munged</code>), its configuration model (<code>slurm.conf</code>, partitions, QOS), and the essential user commands for submitting and monitoring jobs. We also explored how the multifactor priority system and backfill scheduling maximize utilization while maintaining fairness.</p>
-<h3>Preparing for Week 5</h3>
-<p>Next week, we ask the critical question: <strong>How do we know our cluster is actually fast?</strong> We will move from building infrastructure to <strong>measuring and optimizing its performance</strong>. We will use industry-standard benchmarks like <strong>HPL</strong> (the Top500 metric) and <strong>STREAM</strong> (memory bandwidth) to quantify our system's capabilities and learn the fundamentals of HPC performance tuning.</p>
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Checklist for Next Week</strong><br />
-&#9744; Can you explain the difference between <code>srun</code> (interactive) and <code>sbatch</code> (batch) job submission?<br />
-&#9744; Do you understand why Munge key synchronization is critical for Slurm authentication?<br />
-&#9744; What does a job in the <strong>PENDING</strong> state with reason <code>Resources</code> mean?<br />
-&#9744; Can you write a basic <code>sbatch</code> script that requests 2 nodes and 8 cores per node?</p></div></div>
+                    <!-- Quiz Link Widget -->
+                    
+    
+                    </section>
 
-<h3>Resources</h3>
-<ul>
-<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann. Chapter 6.</li>
-<li><strong>SchedMD LLC</strong>. (2024). <em>Slurm Workload Manager Documentation</em>. Available at: <a href="https://slurm.schedmd.com/documentation.html">https://slurm.schedmd.com/documentation.html</a> (Accessed: 22 December 2025).</li>
-<li><strong>OpenHPC</strong>. (2024). <em>OpenHPC v3 Install Guide (Rocky Linux 9)</em>. Available at: <a href="https://openhpc.community/downloads/">https://openhpc.community/downloads/</a> (Accessed: 22 December 2025).</li>
-</ul>
-
-<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
-    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
-    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
-    <a href="Week_4_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
-        Start Quiz
-    </a>
+                    <!-- Quiz Link Widget -->
+                    <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span>Knowledge Check</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
+                        <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 4 concepts? Take the interactive quiz to reinforce key ideas.</p>
+                        <a href="Week_4_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Take Week 4 Quiz Now
+                        </a>
+                    </div>
+                </div>
 </div>
-        </article>
-    </main>
+                </article>
+</main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    
-                        <a href="../Week%203%20-%20Node%20Provisioning/Week_3_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 3</span>
-                        </a>
-                        
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-    
-                        <a href="../Week%205%20-%20Benchmarking%20and%20Tuning/Week_5_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 5</span>
-                        </a>
-                        
-</div>
 
 </body>
 </html>

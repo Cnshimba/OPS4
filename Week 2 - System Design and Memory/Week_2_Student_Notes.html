@@ -3,322 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 2: System Design and Memory - Student Notes - OPS4 Course</title>
+    <title>Week 2 Student Notes — System Design and Memory (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <script>
         window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
+            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
     
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
-            </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </div>
-</nav>
-
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            <div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-                <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-                    <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-                        <img src="../images/week_2_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-                    </div>
-                    <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 2</span>
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-7xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    02
                 </div>
-                <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                    <h1 class="text-3xl font-bold text-secondary m-0">System Design and Networking</h1>
-                    <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 2: System Design &amp; Memory</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
-            </div>
-
-            <div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base [&>p]:!m-0"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br />
-            <strong>Module</strong>: EIOSY4A<br />
-            <strong>Topic</strong>: System Design and Networking<br />
-            <strong>Reading Time</strong>: ~15 Minutes</p></div></div>
-            <hr />
-            <div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
-1. <strong>Analyze</strong> the "Beowulf" approach to cluster design and its economic viability.<br />
-2. <strong>Evaluate and compare</strong> high-performance network topologies (Fat Tree vs. Torus) for specific computational workloads.<br />
-3. <strong>Critique</strong> the OpenHPC Reference Architecture for modern data center deployments.<br />
-4. <strong>Design</strong> the integration of core cluster services required for diskless operations.</p></div></div>
-            <!-- break -->
-
-            <div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />
-            In Week 1, we zoomed in on the microprocessor and saw the fundamental limits of a single node. This week, we're zooming out. We are moving from <strong>Micro-Architecture</strong> to <strong>Macro-Architecture</strong>. We're going to learn how to wire together standard, off-the-shelf servers to build a supercomputer. This is exactly the kind of architecture powering 90% of the Top500 list!</p><br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
-            <hr />
-
-            <h2>1. Cluster Organization</h2>
-            <h3>1.1 The Beowulf Revolution</h3>
-            <p>There was a time when supercomputers were exotic, multimillion-dollar beasts built from the ground up by companies like Cray or IBM. But in 1994, two researchers at NASA, Thomas Sterling and Donald Becker, flipped the script. They took 16 standard desktop PCs, connected them with basic Ethernet cables, installed Linux, and called it "Beowulf." They proved that you could get supercomputer-level performance simply by tying together cheap, mass-market parts. We call this the <strong>COTS</strong> (Commercial Off-The-Shelf) architecture, and it totally revolutionised the industry.</p>
-
-            <h3>1.2 Anatomy of a Beowulf Cluster</h3>
-            <p>So, how do we actually organize these computers? We use a specific, tiered layout that keeps administrative tasks from getting in the way of high-speed computation.</p>
-
-            <p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="Beowulf Cluster Architecture" src="../images/beowulf_architecture_vut.png" /><br/>
-            <em>Figure 1: The Standard Beowulf Architecture. Notice how the public internet is strictly separated from the private, high-speed inner workings.</em></p>
-
-            <p>Every node has a job:</p>
-            <ul>
-                <li><strong>Login Node (Head/Master)</strong>: This is the front door. It's where you, the user, log in via SSH to write code and submit jobs. But you <em>never</em> run heavy calculations here!</li>
-                <li><strong>Compute Nodes</strong>: The workhorses. These servers sit in racks, often without monitors or even hard drives (diskless), just crunching numbers all day.</li>
-                <li><strong>Interconnect</strong>: The nervous system. This is a dedicated, ultra-fast network (like InfiniBand) that lets the compute nodes talk to each other without any outside interference.</li>
-                <li><strong>Storage Node</strong>: The giant shared hard drive. It makes sure that no matter which compute node your job lands on, it can see your files.</li>
-            </ul>
-
-            <h3>1.3 Symmetric Multi-Processing (SMP) and NUMA</h3>
-            <p>While the cluster is a team of machines, each individual machine is usually an <strong>SMP (Symmetric Multi-Processing)</strong> system — meaning it has multiple CPUs sharing the same memory pool. But here's the catch: they don't share it equally. Because of <strong>NUMA (Non-Uniform Memory Access)</strong>, CPU 1 can grab data from its local memory stick much faster than it can reach across the motherboard to CPU 2's memory stick. If you write code that ignores NUMA, you'll accidentally slow your programs down just by moving data the long way around.</p>
-
-            <hr />
-            <h2>2. Interconnect Topologies</h2>
-            <p>Plugging five computers together is easy. Plugging 5,000 together without creating massive digital traffic jams requires some serious mathematical design. We call these designs "Topologies."</p>
-
-            <h3>2.1 Latency vs Bandwidth</h3>
-            <p>We measure our networks in two ways:</p>
-            <ul>
-                <li><strong>Bandwidth</strong> is the width of the highway. How much data can we push through per second? (e.g., 200 Gbps). If you're moving huge files, you need high bandwidth.</li>
-                <li><strong>Latency</strong> is the speed limit. How long does it take for a single, tiny message to get from Node A to Node B? (e.g., 1 microsecond). If your nodes are constantly sending small "Are you done yet?" messages to each other, you need low latency.</li>
-            </ul>
-
-            <h3>2.2 Common Topologies</h3>
-            <p>When architects design a cluster, they have to balance cost against performance.</p>
-
-            <p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="Network Topologies: Fat Tree vs Torus" src="../images/network_topologies_vut.png" /><br/>
-            <em>Figure 2: Common HPC Topologies. On the left, the hierarchical Fat Tree. On the right, the neighbor-to-neighbor Torus grid.</em></p>
-
-            <ul>
-                <li><strong>Fat Tree</strong>: This is the most common design. It looks like a tree where the "branches" (cables) get thicker (more bandwidth) as you get closer to the core switch. It ensures that any node can talk to any other node at full speed, but buying all those massive core switches gets incredibly expensive.</li>
-                <li><strong>Torus (3D/5D)</strong>: Imagine connecting every server directly to its neighbors in a grid, wrapping around at the edges like a donut. There is no central switch, which saves money. It's brilliant for physics simulations where a point in space only needs to talk to the points right next to it.</li>
-            </ul>
-
-            <h3>2.3 The Communication Cost Model</h3>
-            <p>If you want to estimate how long a message will take to send, you can use a simple formula called the <strong>Hockney Model</strong>:</p>
-            <p>$$ T = \alpha + \beta n $$</p>
-            <p>Here, $\alpha$ is the latency overhead just to get the message started, and $\beta$ is the time it takes to send each byte ($n$). The lesson here? Sending 1,000 tiny messages means paying the $\alpha$ "startup tax" 1,000 times. Good HPC programmers pack their data into one big message to pay that tax only once!</p>
-
-            <hr />
-            <h2>3. The HPC Software Stack (OpenHPC Implementation)</h2>
-            <p>Hardware is useless without software. To turn a pile of servers into a cohesive supercomputer, we need a complex stack of services. Instead of reinventing the wheel, the global community created <strong>OpenHPC</strong>, a standard reference architecture that we use to build professional clusters.</p>
-
-            <h3>3.1 The OpenHPC Reference Architecture</h3>
-            <p>Let's look at how OpenHPC expects us to wire up and configure our services.</p>
-
-            <p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="OpenHPC Reference Architecture" src="../images/openhpc_architecture_vut.png" /><br/>
-            <em>Figure 3: The OpenHPC Reference Architecture. Notice the strict separation of networks for security and performance.</em></p>
-
-            <h4>3.1.1 The System Management Server (SMS)</h4>
-            <p>In OpenHPC, the head node is called the <strong>SMS (System Management Server)</strong>. Think of it as the brain of the operation. It handles user logins, distributes software, and manages the queue of jobs waiting to run.</p>
-
-            <h4>3.1.2 Network Segmentation Strategy</h4>
-            <p>OpenHPC is very strict about security and traffic management, splitting connections into three separate networks:</p>
-            <ul>
-                <li><strong>Public Network (External)</strong>: The front door. This connects the SMS to the university network or the internet. It's heavily firewalled.</li>
-                <li><strong>Private Network (Internal)</strong>: The high-speed highway. This connects the SMS to the compute nodes. It is completely isolated from the internet. All the heavy data lifting happens here.</li>
-                <li><strong>BMC Network (Out-of-Band)</strong>: The safety net. This is a dedicated, slow network connecting to a special chip on each server's motherboard. If a server completely crashes, we can use this network to remotely push the power button.</li>
-            </ul>
-
-            <h4>3.1.3 Critical Infrastructure Services</h4>
-            <p>The SMS has to run a few absolutely vital services:</p>
-            <ul>
-                <li><strong>DNS and DHCP</strong>: Every time a node boots, it needs an IP address and a name (like <code>node01</code>). Without this, the nodes literally can't find each other.</li>
-                <li><strong>Time Synchronization (NTP)</strong>: If the clocks on two servers drift apart by even a few seconds, the job scheduler gets confused, logs become impossible to read, and parallel tasks crash. Time must be perfectly synced.</li>
-            </ul>
-
-            <h3>3.2 The Provisioning Layer, Middleware, and User Environment</h3>
-            <p>Installing an OS on 1,000 computers by hand is a nightmare. Instead, we use a <strong>Provisioning Layer (like Warewulf)</strong>. The SMS holds one "Golden Image" of the operating system. When the compute nodes turn on, they boot directly from the network, downloading the OS into their RAM. If a node breaks, we just reboot it, and it downloads a fresh, perfect copy.</p>
-            <p>To stop users from crashing the system by running too many programs at once, we use <strong>Middleware (Slurm)</strong>. Slurm is the traffic cop that puts your jobs in a queue and only lets them run when there are enough free CPUs.</p>
-            <p>Finally, we manage software with <strong>Lmod (Environment Modules)</strong>. Instead of installing every version of every compiler globally, we use Lmod so users can simply type <code>module load gcc</code> to get exactly the environment they need without breaking things for anyone else.</p>
-
-            <hr />
-            <h2>4. Summary and Next Steps</h2>
-            <p>This week, we took the leap from theory to physical design. We learned that a cluster is a carefully engineered system of <strong>Login</strong>, <strong>Management</strong>, <strong>Compute</strong>, and <strong>Storage</strong> nodes. We looked at how high-speed topologies like <strong>Fat Trees</strong> keep data flowing, and we demystified the <strong>OpenHPC</strong> software stack that glues it all together.</p>
-
-            <h3>Preparing for Week 3</h3>
-            <p>Next week is where the fun begins. We're going to get our hands dirty with <strong>Node Provisioning</strong>. We will tackle the challenge of installing an operating system on dozens of computers simultaneously over the network using <strong>Warewulf</strong>.</p>
-
-            <div class="flex items-start p-4 my-4 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-slate-700 dark:text-slate-300">
-                <div class="flex-1 text-sm md:text-base">
-                    <strong>Checklist: Test Your Knowledge</strong>
-                    <ul class="mt-2 mb-0">
-                        <li>Can you draw the three major network zones in a cluster (Public, Private, BMC)?</li>
-                        <li>Do you understand why the <strong>Login Node</strong> is the only machine touching the internet?</li>
-                        <li>Why do we prefer "Stateless" diskless booting for our compute nodes?</li>
-                        <li>Why does OpenHPC insist on a separate "BMC Network" for management?</li>
-                    </ul>
-                </div>
-            </div>
-
-            <h3>Resources</h3>
-            <ul>
-            <li><strong>CHPC</strong>. (2024). <em>South African National Integrated Cyber Infrastructure System</em>. Available at: <a href="https://www.nicis.ac.za">https://www.nicis.ac.za</a> (Accessed: 20 December 2025).</li>
-            <li><strong>OpenHPC</strong>. (2024). <em>OpenHPC 4.1 Install Guide</em>. Available at: <a href="https://openhpc.community/downloads/">https://openhpc.community/downloads/</a> (Accessed: 22 December 2025).</li>
-            <li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann.</li>
-            </ul>
-
-            <div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
-                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
-                <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
-                <a href="Week_2_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
-                    Start Quiz
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_2_Lab_Cluster_Services.html" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-500 hover:bg-sky-500 hover:text-white transition-all no-underline hidden sm:flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Lab 2 Guide
                 </a>
+                <a href="Week_2_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 2</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
             </div>
-        </article>
+        </div>
+    </nav>
+
+    <!-- Main Container with Split Sidebar Layout -->
+    <main class="container mx-auto px-4 max-w-7xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
+                
+                <!-- Quick Navigation Box -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-2 text-xs font-black uppercase tracking-wider text-sky-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                        <span>On This Page</span>
+                    </div>
+                    <nav class="space-y-1.5 text-xs font-medium">
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Cluster Organization</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Interconnect Topologies</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. OpenHPC Software Stack</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Summary &amp; Next Steps</a>
+                    </nav>
+                </div>
+
+                <!-- Chapter Metadata Widget -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Module</span>
+                        <span class="font-bold text-sky-500">EIOPS4A</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Reading Time</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~25 Minutes</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 font-semibold">Slides Ref</span>
+                        <span class="font-bold text-amber-500">Ch. 3</span>
+                    </div>
+                    <div class="pt-2">
+                        <a href="Week_2_Lab_Cluster_Services.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Launch Lab 2 Guide
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Reading Column (Main Canvas) -->
+            <div class="lg:col-span-9 space-y-8">
+                
+                <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+                    
+                    <!-- Hero Header Card -->
+                    <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                        <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                                <span class="text-xl font-black text-white tracking-tight">02</span>
+                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 02</span>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center p-6">
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Commodity Clusters &amp; System Design</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">Beowulf Architecture, NUMA Memory &amp; Interconnect Topologies (Ch. 3)</span>
+                        </div>
+                    </div>
+
+                    <!-- Learning Outcomes Card -->
+                    <div class="p-6 mb-8 rounded-2xl border border-sky-500/30 bg-sky-500/5 dark:bg-sky-500/10 text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center space-x-2 text-sky-500 font-bold text-sm mb-3 uppercase tracking-wider">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg>
+                            <span>Learning Outcomes (NQF Level 7)</span>
+                        </div>
+                        <ol class="space-y-1.5 text-sm m-0 pl-4">
+                            <li><strong>Evaluate</strong> the architectural principles of Beowulf commodity clusters versus monolithic supercomputers.</li>
+                            <li><strong>Analyze</strong> node role separation (Head/Login Node, Compute Nodes, Storage Node, Management SMS).</li>
+                            <li><strong>Differentiate</strong> Symmetric Multi-Processing (SMP) from Non-Uniform Memory Access (NUMA) systems.</li>
+                            <li><strong>Compare</strong> network latency and bandwidth across Bus, Ring, Mesh, Torus, and Fat Tree topologies.</li>
+                            <li><strong>Assess</strong> the OpenHPC software stack components (Warewulf, Slurm, Lmod, Spack).</li>
+                        </ol>
+                    </div>
+
+                    <!-- SECTION 1 -->
+                    <section id="section-1">
+                        <h2>1. Cluster Organization</h2>
+                        
+                        <h3>1.1 The Beowulf Revolution</h3>
+                        <p>Supercomputing was historically dominated by exotic, multimillion-dollar proprietary mainframes built by Cray or IBM. In 1994, NASA researchers Thomas Sterling and Donald Becker transformed parallel computing by constructing <strong>Beowulf</strong> — a 16-node cluster built entirely from mass-market, commodity off-the-shelf (COTS) PCs connected over standard Ethernet using Linux.</p>
+
+                        <h3>1.2 Anatomy of a Beowulf Cluster</h3>
+                        <p>Modern enterprise HPC clusters use a strictly tiered node layout to isolate high-throughput compute traffic from external administrative networks.</p>
+
+                        <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                            <img class="max-w-full h-auto max-h-[400px] mx-auto rounded-xl shadow-md" alt="Beowulf Cluster Architecture" src="../images/beowulf_architecture_vut.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 1: Standard Beowulf Architecture — separating public access from private compute interconnects.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-sky-500 text-sm m-0 mb-1">🖥️ Login Node (Master/Head)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">The front entry point. Users log in via SSH to edit code and submit Slurm job scripts. Heavy computational tasks are strictly forbidden on the login node.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-indigo-500 text-sm m-0 mb-1">⚡ Compute Nodes</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">High-density workhorse servers sitting in server racks, executing parallel MPI and OpenMP tasks in isolated environments without direct public internet exposure.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-amber-500 text-sm m-0 mb-1">🌐 High-Speed Interconnect</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Dedicated low-latency fabric (InfiniBand or 100GbE RoCE) enabling low-overhead inter-node message passing between compute processes.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-emerald-500 text-sm m-0 mb-1">💾 Storage Node</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Enterprise shared storage exporting NFS or parallel filesystems (Lustre/BeeGFS) so all compute nodes access a unified home directory.</p>
+                            </div>
+                        </div>
+
+                        <h3>1.3 Symmetric Multi-Processing (SMP) vs NUMA</h3>
+                        <p>Individual multi-socket compute nodes operate as <strong>Symmetric Multi-Processing (SMP)</strong> machines where multiple CPU sockets share a common physical RAM space. However, due to memory bus limitations, modern multi-socket servers use a <strong>Non-Uniform Memory Access (NUMA)</strong> architecture.</p>
+
+                        <div class="cyber-callout cyber-callout-info">
+                            <p class="m-0 font-bold text-sky-500">💡 NUMA Performance Implication</p>
+                            <p class="m-0 text-xs mt-1">In a NUMA system, a CPU accesses memory attached to its local memory controller significantly faster than memory attached to a remote CPU socket. Unaligned threads incur cross-socket interconnect penalties.</p>
+                        </div>
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 2 -->
+                    <section id="section-2">
+                        <h2>2. Interconnect Topologies</h2>
+                        
+                        <h3>2.1 Latency vs Bandwidth</h3>
+                        <p>Cluster interconnect networks are evaluated along two primary performance dimensions:</p>
+                        <ul>
+                            <li><strong>Bandwidth</strong>: The data transfer capacity across the channel (e.g., 200 Gbps HDR InfiniBand). Crucial for bulk data transfers and checkpointing.</li>
+                            <li><strong>Latency</strong>: The round-trip time required to transmit a minimal packet from sender to receiver (e.g., 0.6 microseconds). Critical for fine-grained MPI message synchronization.</li>
+                        </ul>
+
+                        <h3>2.2 Network Topologies</h3>
+                        <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                            <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl shadow-md" alt="Network Topologies Comparison" src="../images/network_topologies_hpc.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 2: Common HPC Network Topologies — from simple Mesh to non-blocking Fat Tree switches.</p>
+                        </div>
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 3 -->
+                    <section id="section-3">
+                        <h2>3. The OpenHPC Software Stack</h2>
+                        <p>Deploying a production HPC cluster requires a cohesive software ecosystem. <strong>OpenHPC</strong> provides a standardized, community-driven repository of pre-packaged HPC components.</p>
+
+                        <div class="space-y-4 my-6">
+                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-sky-500 text-sm m-0">1. Provisioning Layer: Warewulf</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mt-1">Warewulf manages stateless node images (VNFS). Compute nodes boot directly over the network via PXE/iPXE, loading OS images into RAM.</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-indigo-500 text-sm m-0">2. Resource Manager: Slurm</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mt-1">Slurm orchestrates workload queues, allocates compute nodes to jobs, and enforces resource isolation using Linux cgroups.</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-amber-500 text-sm m-0">3. User Environment: Lmod Modules</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mt-1">Lmod environment modules allow users to load dynamic toolchains (e.g. <code>module load gcc/12.2 openmpi/4.1.4</code>) without breaking default environment paths.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 4 -->
+                    <section id="section-4">
+                        <h2>4. Summary &amp; Next Steps</h2>
+                        <p>This week covered the transition from single-node microarchitecture to multi-node cluster design. We evaluated Beowulf node roles, low-latency interconnect topologies like Fat Trees, and the OpenHPC deployment stack.</p>
+
+                        <div class="p-5 my-6 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs leading-relaxed">
+                            <strong class="text-sky-500 text-sm block mb-2">Checklist: Test Your Knowledge</strong>
+                            <ul class="space-y-1 m-0 pl-4">
+                                <li>Can you draw the three major network zones in a cluster (Public, Private, BMC)?</li>
+                                <li>Do you understand why the <strong>Login Node</strong> is the only machine touching the internet?</li>
+                                <li>Why do we prefer "Stateless" diskless booting for compute nodes?</li>
+                                <li>Why does OpenHPC insist on a separate "BMC Network" for management?</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Quiz Link Widget -->
+                    <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span>Knowledge Check</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
+                        <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 2 concepts? Take the interactive quiz to reinforce key ideas.</p>
+                        <a href="Week_2_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Take Week 2 Quiz Now
+                        </a>
+                    </div>
+
+                </article>
+            </div>
+
+        </div>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    
-                        <a href="../Week%201%20-%20HPC%20Introduction%20and%20Architectures/Week_1_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 1</span>
-                        </a>
-                        
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-    
-                        <a href="../Week%203%20-%20Node%20Provisioning/Week_3_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 3</span>
-                        </a>
-                        
-</div>
 
 </body>
 </html>

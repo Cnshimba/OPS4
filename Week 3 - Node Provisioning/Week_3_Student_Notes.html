@@ -3,743 +3,476 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 3: Node Provisioning - Student Notes - OPS4 Course</title>
+    <title>Week 3 Student Notes — Node Provisioning (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
     <script>
         window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
+            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
     
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-7xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    03
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 3: Node Provisioning</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_3_Lab_Warewulf_Install.html" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-500 hover:bg-sky-500 hover:text-white transition-all no-underline hidden sm:flex items-center">
+                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Lab 3 Guide
+                </a>
+                <a href="Week_3_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 3</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
             </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <!-- Main Container with Split Sidebar Layout -->
+    <main class="container mx-auto px-4 max-w-7xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_3_provisioning_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
+                
+                <!-- Quick Navigation Box -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-2 text-xs font-black uppercase tracking-wider text-sky-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                        <span>On This Page</span>
+                    </div>
+                    <nav class="space-y-1.5 text-xs font-medium">
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Introduction &amp; Operational Rationale</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Taxonomy of Managed HPC Resources (Chapter 5)</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. Slurm Architecture &amp; Daemon Hierarchy</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Priority Calculation &amp; Fair-Share Scheduling Mathematics</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Detailed Slurm Configuration Anatomy (slurm.conf)</a>
+                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Linux Control Groups (cgroups v2) &amp; Memory Isolation</a>
+                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Comprehensive Slurm Command Quick Reference</a>
+                        <a href="#section-8" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">8. Annotated Production Batch Scripts</a>
+                        <a href="#section-9" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">9. Summary</a>
+                    </nav>
+                </div>
+
+                <!-- Chapter Metadata Widget -->
+                <div class="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Module</span>
+                        <span class="font-bold text-sky-500">EIOPS4A</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Reading Time</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~20 Minutes</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400 font-semibold">Slides Ref</span>
+                        <span class="font-bold text-amber-500">Ch. 4 & 5</span>
+                    </div>
+                    <div class="pt-2">
+                        <a href="Week_3_Lab_Warewulf_Install.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Launch Lab 3 Guide
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Reading Column (Main Canvas) -->
+            <div class="lg:col-span-9 space-y-8">
+                
+                <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+                    
+                    <!-- Hero Header Card -->
+                    <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                        <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                                <span class="text-xl font-black text-white tracking-tight">03</span>
+                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 03</span>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center p-6">
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Node Provisioning</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">Warewulf 4, Stateless Provisioning & Network Booting (Ch. 4 & 5)</span>
+                        </div>
+                    </div>
+
+                    
+
+                    
+
+                    
+
+
+
+                    <!-- SECTION 1 -->
+                    
+                        
+
+                    <!-- SECTION 1 -->
+                    <section id="section-1">
+                        <h2>1. Introduction &amp; Operational Rationale</h2>
+                        <p>High-Performance Computing (HPC) clusters represent shared multi-tenant infrastructure costing millions of dollars. Compute nodes host tens of thousands of processing cores, terabytes of system memory, and high-speed network switches. Without automated workload management, multi-user cluster environments would instantly descend into operational chaos: processes from different research groups would collide on the same physical CPU cores, compete for system memory, overflow available RAM, and trigger non-deterministic Linux Out-Of-Memory (OOM) kernel panics.</p>
+<p>A <strong>Resource Manager and Job Scheduler</strong> acts as the central operating system kernel of an HPC cluster. It abstracts physical compute hardware into consumable resource pools, tracks node health status, prioritizes pending execution queues according to institutional policies, enforces strict memory and process isolation boundaries, and logs historical resource utilization metrics for auditing and capacity planning.</p>
+                    
+
+                    
+
+                    <!-- SECTION 2 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 2 -->
+                    <section id="section-2">
+                        <h2>2. Taxonomy of Managed HPC Resources (Chapter 5)</h2>
+                        <p>Slurm (Simple Linux Utility for Resource Management) manages resources across a multi-dimensional matrix:</p>
+
+<table>
+    <thead><tr><th>Resource Domain</th><th>Physical Entity</th><th>Slurm Management Mechanics</th></tr></thead>
+    <tbody>
+        <tr><td><strong>Nodes</strong></td><td>Individual server blades / chassis in compute racks.</td><td>Grouped into logical partitions (queues). Tracked in real-time states (e.g., <code>IDLE</code>, <code>ALLOCATED</code>, <code>DRAIN</code>, <code>DOWN</code>).</td></tr>
+        <tr><td><strong>Sockets &amp; Cores</strong></td><td>Physical CPU sockets and hardware cores.</td><td>Allocated via Consumable Resources plugin (<code>select/cons_tres</code>). Bound to processes via cgroups to prevent core contention.</td></tr>
+        <tr><td><strong>System Memory</strong></td><td>RAM DIMMs on compute node mainboards.</td><td>Enforced as strict memory limits per node (<code>--mem</code>) or per CPU core (<code>--mem-per-cpu</code>). Oversubscription triggers cgroup OOM termination.</td></tr>
+        <tr><td><strong>Accelerators / GPUs</strong></td><td>NVIDIA H100/A100 GPUs, AMD Instinct accelerators.</td><td>Managed as Generic Resources (GRES). Tracks GPU device indices, memory utilization, and PCIe topology affinity.</td></tr>
+        <tr><td><strong>Interconnect &amp; Topology</strong></td><td>InfiniBand switches and optical fabric links.</td><td>Slurm's topology plugin (<code>topology/tree</code>) schedules multi-node jobs onto nodes attached to the same leaf switch to minimize network hops.</td></tr>
+    </tbody>
+</table>
+                    
+
+                    
+
+                    <!-- SECTION 3 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 3 -->
+                    <section id="section-3">
+                        <h2>3. Slurm Architecture &amp; Daemon Hierarchy</h2>
+                        <p>Slurm uses a resilient, distributed daemon model comprising master control controllers, accounting daemons, node execution agents, and cryptographic authentication protocols:</p>
+
+<table>
+    <thead><tr><th>Daemon Process</th><th>Host Location</th><th>Core System Responsibilities</th></tr></thead>
+    <tbody>
+        <tr><td><code>slurmctld</code></td><td>Master Controller Node</td><td>The central brain of the cluster. Manages queue states, evaluates fair-share algorithm math, allocates compute nodes to jobs, and monitors node heartbeats. Supports active/backup failover pairs.</td></tr>
+        <tr><td><code>slurmd</code></td><td>Every Compute Node</td><td>The compute node execution agent. Listens for step launch requests from <code>slurmctld</code>, spawns user tasks, creates cgroup containers, attaches CPU masks, and reports local node health.</td></tr>
+        <tr><td><code>slurmdbd</code></td><td>Database Host Server</td><td>The Slurm Database Daemon. Provides a secure gateway between <code>slurmctld</code> and a relational MariaDB database for historical accounting, user bank allocations, and job metrics.</td></tr>
+        <tr><td><code>munged</code></td><td>All Cluster Nodes</td><td>MUNGE (Munge Uid 'N' Gid Environment) service. Generates cryptographic SAML-like payload tokens to authenticate RPC messages between nodes without password prompts.</td></tr>
+    </tbody>
+</table>
+                    
+
+                    
+
+                    <!-- SECTION 4 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 4 -->
+                    <section id="section-4">
+                        <h2>4. Priority Calculation &amp; Fair-Share Scheduling Mathematics</h2>
+                        <p>When multiple users submit jobs simultaneously, Slurm computes a dynamic <strong>Job Priority Score</strong> for every pending job in the queue using the Multifactor Priority Plugin:</p>
+
+$$ \text{Priority} = (W_{age} \times A) + (W_{fairshare} \times F) + (W_{jobsize} \times S) + (W_{partition} \times P) + (W_{qos} \times Q) $$
+
+<ul>
+    <li><strong>Age Factor (<strong>A</strong>)</strong>: Increases linearly the longer a job remains pending in the queue, preventing job starvation.</li>
+    <li><strong>Fair-Share Factor (<strong>F</strong>)</strong>: Measures an account's historical resource consumption relative to its allocated share. Accounts that have under-utilized their quota receive higher fair-share scores; heavy users receive lower priority.</li>
+    <li><strong>Job Size Factor ($S$)</strong>: Rewards jobs requesting larger node counts to maximize cluster parallel efficiency and throughput.</li>
+    <li><strong>Partition Priority ($P$)</strong>: Baseline weight assigned to specific queues (e.g., high-priority interactive queues vs. low-priority preemptible queues).</li>
+</ul>
+                    
+
+                    
+
+                    <!-- SECTION 5 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 5 -->
+                    <section id="section-5">
+                        <h2>5. Detailed Slurm Configuration Anatomy (<code>slurm.conf</code>)</h2>
+                        <p>The global configuration file located at <code>/etc/slurm/slurm.conf</code> must be identical across all master and compute nodes. Below is a comprehensive annotated configuration snippet:</p>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 3</span>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
     </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Node Provisioning with Warewulf 4</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+    <pre><code class="language-ini"># ============================================================
+# Core Identity & Master Controller Node Configuration
+# ============================================================
+ClusterName=vut_hpc_cluster
+ControlMachine=master-node
+ControlAddr=10.10.10.1
+SlurmUser=slurm
+SlurmctldPort=6817
+SlurmdPort=6818
+
+# ============================================================
+# Authentication & Resource Isolation Plugins
+# ============================================================
+AuthType=auth/munge
+CryptoType=crypto/munge
+ProctrackType=proctrack/cgroup
+TaskPlugin=task/cgroup,task/affinity
+TaskPluginParam=Cpusets
+
+# ============================================================
+# Scheduling & Consumable Resource Selection
+# ============================================================
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core_Memory
+
+# ============================================================
+# Node Definitions (Hardware Topology Specs)
+# ============================================================
+NodeName=node[01-04] RealMemory=15500 Sockets=2 CoresPerSocket=4 ThreadsPerCore=1 State=UNKNOWN Gres=gpu:2
+
+# ============================================================
+# Partition (Queue) Definitions
+# ============================================================
+PartitionName=batch Nodes=node[01-04] Default=YES MaxTime=2-00:00:00 State=UP DefMemPerCPU=2000 MaxMemPerCPU=4000 PriorityTier=1
+PartitionName=gpu   Nodes=node[01-04] Default=NO  MaxTime=1-00:00:00 State=UP PriorityTier=2 GRES=gpu:2</code></pre>
+</div>
+                    
+
+                    
+
+                    <!-- SECTION 6 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 6 -->
+                    <section id="section-6">
+                        <h2>6. Linux Control Groups (cgroups v2) &amp; Memory Isolation</h2>
+                        <p>Slurm uses <strong>cgroups (Control Groups)</strong> to construct isolated kernel containers for every job step. This prevents a single misbehaving process from affecting neighbor tasks on shared nodes:</p>
+
+<ul>
+    <li><code>cpu.cfs_quota_us</code>: Hard-limits CPU cycle bandwidth to the exact core count requested by the job script.</li>
+    <li><code>cpuset.cpus</code>: Binds thread execution strictly to designated physical core IDs, eliminating cross-socket cache bouncing.</li>
+    <li><code>memory.max</code>: Enforces hard RAM limits. If a process exceeds its requested limit (<code>--mem</code>), the cgroup subsystem terminates the job cleanly with an <code>OUT_OF_MEMORY</code> error.</li>
+</ul>
+                    
+
+                    
+
+                    <!-- SECTION 7 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 7 -->
+                    <section id="section-7">
+                        <h2>7. Comprehensive Slurm Command Quick Reference</h2>
+                        <table>
+    <thead><tr><th>Command</th><th>Syntax Example</th><th>Description</th></tr></thead>
+    <tbody>
+        <tr><td><code>sbatch</code></td><td><code>sbatch submit_job.sh</code></td><td>Submits a non-interactive batch script to the scheduler queue. Returns a unique Job ID.</td></tr>
+        <tr><td><code>srun</code></td><td><code>srun -N 2 -n 8 --pty bash</code></td><td>Launches parallel job steps or requests an interactive pseudo-terminal allocation shell.</td></tr>
+        <tr><td><code>salloc</code></td><td><code>salloc -N 1 -c 4 --time=01:00:00</code></td><td>Allocates resources interactively, spawning a local shell with Slurm environment variables set.</td></tr>
+        <tr><td><code>squeue</code></td><td><code>squeue -u $USER -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R"</code></td><td>Displays current job status, queue positions, allocated nodes, and execution times.</td></tr>
+        <tr><td><code>sinfo</code></td><td><code>sinfo -N -l</code></td><td>Displays node states (e.g., <code>idle</code>, <code>alloc</code>, <code>drain</code>, <code>down</code>, <code>maint</code>).</td></tr>
+        <tr><td><code>scancel</code></td><td><code>scancel 12345</code> (or <code>scancel -u $USER</code>)</td><td>Cancels pending or running jobs cleanly by sending SIGTERM/SIGKILL signals.</td></tr>
+        <tr><td><code>scontrol</code></td><td><code>scontrol show job 12345</code></td><td>Displays exhaustive diagnostic metadata for specific jobs, nodes, or partitions.</td></tr>
+        <tr><td><code>sacct</code></td><td><code>sacct -j 12345 --format=JobID,JobName,AllocCPUS,Elapsed,State,MaxRSS</code></td><td>Queries historical database accounting logs for completed or failed jobs.</td></tr>
+    </tbody>
+</table>
+                    
+
+                    
+
+                    <!-- SECTION 8 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 8 -->
+                    <section id="section-8">
+                        <h2>8. Annotated Production Batch Scripts</h2>
+                        <h3>8.1 Multi-Node MPI Job Script</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
     </div>
+    <pre><code class="language-bash">#!/bin/bash
+#SBATCH --job-name=mpi_fluid_sim
+#SBATCH --output=logs/mpi_%j.out
+#SBATCH --error=logs/mpi_%j.err
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=4
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=8000M
+#SBATCH --time=02:00:00
+#SBATCH --partition=batch
+
+# Environment configuration
+module purge
+module load gcc/12.2.0 mpi/openmpi-x86_64
+
+# Execute parallel application across 8 total MPI tasks (2 nodes x 4 tasks/node)
+srun /shared/apps/fluid_simulation --grid-size=2048</code></pre>
 </div>
-<div class="flex items-start p-4 mb-8 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base [&>p]:!m-0"><p><strong>Course</strong>: Operating Systems 4 (HPC)<br />
-<strong>Module</strong>: EIOSY4A<br />
-<strong>Topic</strong>: Node Provisioning with Warewulf 4<br />
-<strong>Reading Time</strong>: ~15 Minutes</p></div></div>
-<hr />
-<h2>Overview</h2>
-<p>In Week 2, we manually configured the essential services (DHCP, TFTP) required to boot a single machine over the network. While educational, manual configuration does not scale to clusters with hundreds or thousands of nodes. This week, we introduce <strong>Warewulf 4</strong>, a modern cluster provisioning system that automates the deployment and management of operating systems across large-scale infrastructure.</p>
-<p>Unlike traditional management tools that rely on installing an OS into a hard drive (Stateful), Warewulf specializes in <strong>Stateless Provisioning</strong>, where nodes boot a lightweight, pre-configured operating system directly into RAM. Warewulf 4 represents a significant architectural shift from its predecessors by adopting the <strong>OCI (Open Container Initiative)</strong> standard, allowing administrators to manage compute node images using standard tools like Docker or Podman.</p>
-<blockquote>
-<p><strong>Note</strong>: This module focuses on applied provisioning of on-premise HPC clusters typical of institutional and enterprise environments, rather than hyperscale or exascale systems.</p>
-</blockquote>
-<hr />
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Learning Outcomes</strong><br />By the end of this week, you should be able to:<br />
-1. <strong>Evaluate</strong> the benefits and architectural implications of stateless provisioning in enterprise HPC clusters.<br />
-2. <strong>Analyze</strong> Warewulf 4's architecture and its integration with OCI-standard containers.<br />
-3. <strong>Deploy and configure</strong> complex nodes, profiles, and overlays using the wwctl command-line tool.<br />
-4. <strong>Design</strong> dynamic, per-node customizations of generic container images using system overlays.</p></div></div>
 
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#002F6E]/10 dark:bg-[#002F6E]/20 border-[#002F6E] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#002F6E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Week Goal</strong><br />
-Welcome to Week 3! Up to this point, we've looked at concepts and manually tinkered with DHCP. This week, things get real. We're introducing Warewulf 4, the industry standard tool for taking a single OS image and firing it across a network to hundreds of compute nodes simultaneously. Get ready to build a true cluster!</p><br /><br /><strong>Assessment Alignment:</strong> The weekly quiz and practical assignments for this module specifically evaluate the Learning Outcomes listed below, verifying your ability to operate at an NQF Level 7 standard of analysis and synthesis.</div></div>
-<hr />
-<h2>1. The Provisioning Problem (Sterling Chapter 5 Extension)</h2>
-<p>Managing a high-performance cluster presents a unique system administration challenge: <strong>Scale</strong>. Installing an operating system on one server is a trivial task; installing, patching, and maintaining consistent configurations across 500 servers is a massive logistical burden. If a cluster administrator had to physically insert a USB drive or manually run an installer on every node, the cluster would never be operational.</p>
-<p>Furthermore, consistency is paramount. In an HPC cluster, every Compute Node must be mathematically identical. If Node 01 has <code>libmath-v1.2</code> and Node 02 has <code>libmath-v1.3</code>, a parallel simulation running across both might produce nondeterministic or erroneous results. We require a mechanism that ensures every node runs the exact same software stack, bit-for-bit, every time it boots.</p>
-<h3>1.1 Power Management (IPMI)</h3>
-<p>Before a node can be provisioned, it must be powered on. In a data center, sending a technician to physically press a power button on 1,000 servers is impractical. To address this, enterprise servers are equipped with a <strong>Baseboard Management Controller (BMC)</strong>—a specialized service processor that runs independently of the main CPU and OS. This controller implements the <strong>Intelligent Platform Management Interface (IPMI)</strong> protocol, allowing administrators to remotely control power states (On, Off, Cycle) and view serial consoles over the network. Warewulf integrates with IPMI to automate this process, allowing a single command (<code>wwctl power on node[01-99]</code>) to boot the entire cluster simultaneously.</p>
-<h3>1.2 Stateless Clustering</h3>
-<p>To solve the scale and consistency problems, HPC clusters typically adopt a <strong>Stateless</strong> architecture. In this model, the Compute Nodes do not have persistent operating systems installed on their local hard drives. Instead, the OS exists as a compressed image on the Controller Node. When a Compute Node powers on, it downloads this image into its Main Memory (RAM) and runs from there.</p>
-<p>This approach offers three critical advantages. First, <strong>Speed</strong>: Running the OS from RAM is significantly faster than reading from a mechanical hard drive or even an SSD. Second, <strong>Immutability</strong>: A reboot wipes the slate clean. If a user crashes the node or corrupts a system file, a simple reboot restores the node to its pristine "Golden State." Third, <strong>Manageability</strong>: To update the entire cluster, the administrator simply updates the single Golden Image on the Controller Node, rebuilds the container, and reboots the cluster. There is no need to run <code>dnf update</code> on 1,000 separate machines.</p>
-<hr />
-<h2>2. Warewulf 4 Design and Architecture</h2>
-<p>Warewulf is the standard open-source provisioning tool for HPC. Version 4 is a complete rewrite in the Go programming language, designed to leverage the modern ecosystem of Containers.</p>
-<h3>2.1 Design Tenets</h3>
-<p>Warewulf 4 is built on several core tenets (<a href="https://warewulf.org/">Warewulf.org</a>):</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Tenet</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Lightweight</strong></td>
-<td style="text-align: left;">Provisions stateless images and leaves no running agents consuming resources.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Agnostic</strong></td>
-<td style="text-align: left;">Supports any Linux distribution (openEuler, Rocky, Alma, Ubuntu, SUSE) on any hardware (x86, ARM).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Stateless</strong></td>
-<td style="text-align: left;">Default mode runs entirely in RAM, ensuring nodes always return to a known-good state on reboot.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Secure</strong></td>
-<td style="text-align: left;">Supports SELinux out-of-the-box.</td>
-</tr>
-</tbody>
-</table>
-<h3>2.2 The Move to OCI Containers</h3>
-<p>Previous versions of Warewulf used a custom format called a Virtual Node File System (VNFS), which was difficult to create and maintain. Warewulf 4 adopts the industry-standard <strong>OCI (Open Container Initiative)</strong> format. This means the operating system image that boots your compute nodes is effectively a standard container, identical to those used in Docker or Kubernetes.</p>
-<blockquote>
-<p><strong>Note</strong>: Although Warewulf uses OCI containers, these are full operating system images (including systemd, kernels, and shells), not minimal application containers like those used to deploy microservices.</p>
-</blockquote>
-<p>Administrators can pull a base image (e.g., <code>docker://ghcr.io/warewulf/warewulf-openeuler:24.03</code>) from a public registry, install HPC libraries into it using standard tools, and then <strong>distribute</strong> that container out to the nodes as a bootable OS.</p>
-<h4>2.2.1 Image Creation Workflow</h4>
-<p>The process of preparing a Node Image follows a standard "Import → Customize → Build" lifecycle:</p>
-<ol>
-<li><strong>Import</strong>: The administrator pulls a generic "Base Image" (like openEuler 24.03) from a registry. This image is pristine and contains no cluster-specific configurations.<ul>
-<li><em>Command</em>: <code>sudo wwctl image import docker://ghcr.io/warewulf/warewulf-openeuler:24.03 openeuler-24.03 --syncuser</code></li>
-</ul>
-</li>
-<li><strong>Customize</strong>: The administrator enters the container (using a chroot shell) to install necessary packages such as the Slurm client, InfiniBand drivers, and compilers.<ul>
-<li><em>Command</em>: <code>sudo wwctl image shell openeuler-24.03</code></li>
-</ul>
-</li>
-<li><strong>Build</strong>: Once the container is ready, it is "built" (compressed) into a deployable artifact that the Controller can serve via HTTP. This step prepares the image for network booting.<ul>
-<li><em>Command</em>: <code>sudo wwctl image build openeuler-24.03</code></li>
-</ul>
-</li>
-</ol>
-<hr />
-<h3>2.3 OpenHPC Provisioning Alternatives</h3>
-<p>OpenHPC 4.1 officially supports three provisioning systems. While this course focuses on Warewulf 4, it is important to understand the alternatives available in the ecosystem.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">System</th>
-<th style="text-align: left;"><strong>Warewulf 4</strong></th>
-<th style="text-align: left;"><strong>Confluent</strong></th>
-<th style="text-align: left;"><strong>OpenCHAMI</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Origin</strong></td>
-<td style="text-align: left;">Simple, community-driven Beowulf standard.</td>
-<td style="text-align: left;">Developed by Lenovo (Successor to xCAT).</td>
-<td style="text-align: left;">Cloud-Native microservices architecture.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Philosophy</strong></td>
-<td style="text-align: left;"><strong>Container-Based</strong>: Boot OCI images. Simple "Golden Image" model.</td>
-<td style="text-align: left;"><strong>Hierarchical</strong>: Designed for massive scale and complex hardware discovery.</td>
-<td style="text-align: left;"><strong>Composable</strong>: "Infrastructure as Code" using microservices and APIs.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Primary Use</strong></td>
-<td style="text-align: left;">Standard HPC clusters (hundreds of nodes).</td>
-<td style="text-align: left;">Enterprise/Vendor-specific clusters (thousands of nodes).</td>
-<td style="text-align: left;">Modern, heterogeneous, cloud-like environments.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Key Feature</strong></td>
-<td style="text-align: left;">Stateless RAM boot; Easy to learn.</td>
-<td style="text-align: left;">Diskless or Disk-full; Heavy hardware control.</td>
-<td style="text-align: left;">HTTP boot; Zero-trust security model.</td>
-</tr>
-</tbody>
-</table>
-<p>We choose <strong>Warewulf 4</strong> for this module because strictly adhering to the OCI container standard provides the best learning path for students entering a cloud-hybrid world.</p>
-<h3>2.4 The Daemon Configuration (warewulf.conf)</h3>
-<p>The behavior of the Warewulf controller is governed by the global configuration file located at <code>/etc/warewulf/warewulf.conf</code>. This YAML file is the "Single Source of Truth" for how <code>warewulfd</code> interacts with the network and services.</p>
-<p>This file is divided into several specific sections. Below is a detailed breakdown of the critical parameters you will encounter.</p>
-<h4>2.4.1 General &amp; Network Settings (<code>warewulf</code> and top-level)</h4>
-<p>These settings define the Controller node's identity on the private cluster network. Since the Controller acts as the default gateway, DNS server, and boot server for all compute nodes, it is critical that this IP address is static and reachable by the nodes during the PXE boot process. Warewulf uses this specific interface to listen for DHCP requests and serve the operating system images.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Section</th>
-<th style="text-align: left;">Parameter</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Network</strong></td>
-<td style="text-align: left;"><code>ipaddr</code></td>
-<td style="text-align: left;">The IPv4 address of the Controller node's cluster interface (e.g., <code>10.0.0.1</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>netmask</code></td>
-<td style="text-align: left;">The subnet mask (e.g., <code>255.255.255.0</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Warewulf</strong></td>
-<td style="text-align: left;"><code>port</code></td>
-<td style="text-align: left;">The TCP port for file transfers and API calls (Default: <code>9873</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>secure</code></td>
-<td style="text-align: left;">If <code>true</code>, restricts downloads to privileged ports (security hardening).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>update interval</code></td>
-<td style="text-align: left;">How often nodes check for overlay updates (Default: 60s).</td>
-</tr>
-</tbody>
-</table>
-<h4>2.4.2 Service Management (<code>dhcp</code>, <code>tftp</code>, <code>nfs</code>)</h4>
-<p>One of Warewulf's most powerful features is its ability to orchestrate standard Linux services. Instead of manually editing <code>/etc/dhcp/dhcpd.conf</code> or <code>/etc/exports</code>, you define the desired state in <code>warewulf.conf</code>. When you run <code>wwctl configure -a</code>, Warewulf reads its internal database of nodes and rewrites the configuration files for these services, ensuring they are perfectly synchronized with your cluster inventory.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Section</th>
-<th style="text-align: left;">Parameter</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>DHCP</strong></td>
-<td style="text-align: left;"><code>enabled</code></td>
-<td style="text-align: left;"><code>true</code> uses systemd service (e.g. <code>isc-dhcp-server</code>). <strong>Set to <code>false</code> if using <code>dnsmasq</code>.</strong></td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>range start</code> / <code>range end</code></td>
-<td style="text-align: left;">Defines the pool of dynamic IPs for unknown or temporary nodes.</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>systemd name</code></td>
-<td style="text-align: left;">The name of the service to restart.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>TFTP</strong></td>
-<td style="text-align: left;"><code>enabled</code></td>
-<td style="text-align: left;"><code>true</code> uses systemd service (e.g. <code>tftp.socket</code>). <strong>Set to <code>false</code> if using <code>dnsmasq</code>.</strong></td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>tftproot</code></td>
-<td style="text-align: left;">Directory for bootloaders (default: <code>/var/lib/tftpboot</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>ipxe</code></td>
-<td style="text-align: left;">Maps architectures (x86_64, arm64) to specific <code>.efi</code> boot binaries.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>NFS</strong></td>
-<td style="text-align: left;"><code>enabled</code></td>
-<td style="text-align: left;"><code>true</code> allows Warewulf to manage <code>/etc/exports</code> for basic sharing.</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>export paths</code></td>
-<td style="text-align: left;">A list of paths (e.g., <code>/home</code>, <code>/opt</code>) to export to the cluster.</td>
-</tr>
-</tbody>
-</table>
-<h4>2.4.3 Advanced Paths (<code>paths</code>)</h4>
-<p>Introduced in Warewulf v4.5.0, the <code>paths</code> section allows administrators to override the default filesystem locations for critical Warewulf components. This is essential for adhering to site-specific storage policies, such as keeping large container images on specific high-capacity partitions (e.g., separate from the root filesystem) or strictly following the Filesystem Hierarchy Standard (FHS).</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Section</th>
-<th style="text-align: left;">Parameter</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Paths</strong></td>
-<td style="text-align: left;"><code>sysconfdir</code></td>
-<td style="text-align: left;">Location of config files (Default: <code>/etc</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>wwprovisiondir</code></td>
-<td style="text-align: left;">Where built container images are stored (Default: <code>/var/lib/warewulf/provision</code>).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>ipxesource</code></td>
-<td style="text-align: left;">Where to find iPXE binaries to copy to the TFTP root.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example Configuration Snippet</strong> (System-managed Services):</p>
-<pre><code class="language-yaml">ipaddr: 10.0.0.1
-netmask: 255.255.255.0
-warewulf:
-  port: 9873
-  secure: true
-dhcp:
-  enabled: true
-  systemd name: isc-dhcp-server
-  range start: 10.0.0.50
-  range end: 10.0.0.99
-tftp:
-  enabled: true
-  systemd name: tftp
-nfs:
-  enabled: true
-  export paths:
-    - path: /home
-      export options: rw,sync,no_root_squash
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> A YAML configuration snippet defining the core network parameters and managed services (DHCP, TFTP, NFS) for the Warewulf controller.</p>
-<h3>2.5 The All-in-One Service: dnsmasq</h3>
-<p>In OpenHPC 4.1, <strong>dnsmasq</strong> is the default provider for Infrastructure Services (DHCP, TFTP, and DNS).</p>
-<h4>2.5.1 Why dnsmasq?</h4>
-<p>Unlike traditional enterprise setups that run separate, heavy daemons for each service (e.g., BIND for DNS, ISC-DHCP for IP assignment, and tftpd-hpa for boot files), <code>dnsmasq</code> combines all three into a single, lightweight binary.</p>
-<ul>
-    <li><strong>Simplicity</strong>: One configuration file (<code>/etc/dnsmasq.conf</code>) handles everything.</li>
-    <li><strong>Integration</strong>: It automatically reads <code>/etc/hosts</code> to provide DNS resolution for the cluster.</li>
-</ul>
-<h4>2.5.2 Configuration Strategy</h4>
-<p>If you choose to use <code>dnsmasq</code>, you must <strong>disable</strong> the system-managed DHCP and TFTP in <code>warewulf.conf</code> (set <code>enabled: false</code>) to prevent conflicts.</p>
-<p><strong>Sample <code>/etc/dnsmasq.conf</code>:</strong></p>
-<pre><code class="language-ini"># Only listen on the internal cluster interface
-interface=eth1
-bind-interfaces
+<h3>8.2 Hybrid MPI + OpenMP Job Script</h3>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <pre><code class="language-bash">#!/bin/bash
+#SBATCH --job-name=hybrid_matrix
+#SBATCH --output=logs/hybrid_%j.out
+#SBATCH --error=logs/hybrid_%j.err
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16000M
+#SBATCH --time=01:30:00
+#SBATCH --partition=batch
 
-# DHCP Settings
-dhcp-range=10.0.0.50,10.0.0.99,12h
-dhcp-option=option:router,10.0.0.1
+# Configure OpenMP multithreading environment matching allocated cpus-per-task
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_PROC_BIND=close
+export OMP_PLACES=cores
 
-# TFTP Settings (for PXE Boot)
-enable-tftp
-tftp-root=/var/lib/tftpboot
-dhcp-boot=undionly.kpxe
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Configuration file for `dnsmasq` that combines DNS, DHCP, and TFTP services, replacing Warewulf's system-managed services for simplicity.</p>
-<p>For this course, we will use <strong>dnsmasq</strong> exclusively to simplify our lab deployment, as recommended by the OpenHPC 4.1 guide for openEuler. This means in your <code>warewulf.conf</code>, you must set <code>dhcp: enabled: false</code> and <code>tftp: enabled: false</code> because we are completely bypassing the system-managed services in favor of dnsmasq.</p>
-<hr />
-<h2>3. The Provisioning Process</h2>
-<p>When a cluster node boots from Warewulf, it follows a strict sequence of events:</p>
-<ol>
-<li><strong>Firmware Initialization</strong>: The BIOS/UEFI initializes hardware and the network card.</li>
-<li><strong>DHCP Request</strong>: The node broadcasts "Who am I?". The Warewulf server responds with an IP and a "Next-Server" option.</li>
-<li><strong>iPXE Boot</strong>: The node downloads the <strong>iPXE</strong> network bootloader via TFTP. Unlike legacy PXE, iPXE understands HTTP.</li>
-<li><strong>Container Fetch</strong>: iPXE contacts the Warewulf Controller (warewulfd) via HTTP to download the Kernel and the OCI Container Image.</li>
-<li><strong>Overlay Injection</strong>: Warewulf injects the "Overlays" (custom configs like <code>/etc/hostname</code>) into the container in RAM.</li>
-<li><strong>Switch Root</strong>: The kernel switches from the initramfs to the full container root filesystem, and the node is ready.</li>
-</ol>
-<p><strong>Visual Boot Flow</strong>:</p>
-<p><img class="max-w-full h-auto max-h-[400px] object-contain rounded-lg shadow-sm" alt="Warewulf Provisioning Flow" src="../images/warewulf_provisioning_flow_vut_1781112929801.png" />
-<em>Figure 3.1: The Warewulf 4 Stateless Provisioning Boot Process.</em></p>
-<p>Warewulf supports <strong>Two-Stage Provisioning</strong> (using a small <code>dracut</code> image first) for efficiency, but for this course, we treat the process as a seamless boot.</p>
-<hr />
-<h2>4. The Warewulf Object Model: Nodes and Profiles</h2>
-<p>Managing configurations for thousands of nodes individually is impossible. Warewulf solves this with a hierarchical <strong>Object Model</strong>.</p>
-<h3>4.1 Nodes</h3>
-<p>The <strong>Node</strong> object represents a physical machine. It is uniquely identified by its hardware address (MAC Address). A node object contains settings specific to that physical box.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Attribute</th>
-<th style="text-align: left;">Example</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>IP Address</strong></td>
-<td style="text-align: left;"><code>10.0.0.x</code></td>
-<td style="text-align: left;">The unique network identity.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Hostname</strong></td>
-<td style="text-align: left;"><code>compute-01</code></td>
-<td style="text-align: left;">The system name.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>IPMI Address</strong></td>
-<td style="text-align: left;"><code>10.1.0.x</code></td>
-<td style="text-align: left;">The out-of-band management address.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example Command</strong>:</p>
-<pre><code class="language-bash"># Register a node with specific hardware settings
-sudo wwctl node add node01 --ipaddr=10.0.0.2 --hwaddr=00:11:22:33:44:55
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Registers a physical compute node to the cluster registry, explicitly binding its IP address to its hardware MAC address for stateless boot.</p>
-<h3>4.2 Profiles</h3>
-<p>A <strong>Profile</strong> is a template or "Class" of configuration. It allows administrators to group nodes that share common characteristics. For example, you might create a <code>gpu-nodes</code> profile and a <code>login-nodes</code> profile.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Setting</th>
-<th style="text-align: left;">Example</th>
-<th style="text-align: left;">Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Container</strong></td>
-<td style="text-align: left;"><code>openeuler-24.03</code></td>
-<td style="text-align: left;">The OS image to boot.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Kernel Args</strong></td>
-<td style="text-align: left;"><code>quiet splash</code></td>
-<td style="text-align: left;">Boot-time options passed to the kernel.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Overlays</strong></td>
-<td style="text-align: left;"><code>system</code>, <code>munge</code></td>
-<td style="text-align: left;">Configuration files to inject.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example Command</strong>:</p>
-<pre><code class="language-bash"># Create a profile for GPU nodes using a specific container
-sudo wwctl profile add gpu-nodes
-sudo wwctl profile set gpu-nodes --container openeuler-24.03-gpu
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Creates a new configuration profile tailored for GPU nodes and assigns a specific container image to this profile.</p>
-<h3>4.3 Inheritance</h3>
-<p>Warewulf uses a cascading inheritance model. If a setting is defined in the Profile, it applies to all member Nodes unless the Node explicitly overrides it.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Priority</th>
-<th style="text-align: left;">Level</th>
-<th style="text-align: left;">Scope</th>
-<th style="text-align: left;">Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>1 (Lowest)</strong></td>
-<td style="text-align: left;"><strong>Default Profile</strong></td>
-<td style="text-align: left;">All Nodes</td>
-<td style="text-align: left;">Netmask <code>255.255.255.0</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>2 (Medium)</strong></td>
-<td style="text-align: left;"><strong>Specific Profile</strong></td>
-<td style="text-align: left;">Group of Nodes</td>
-<td style="text-align: left;">Container <code>openeuler-24.03</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>3 (Highest)</strong></td>
-<td style="text-align: left;"><strong>Node</strong></td>
-<td style="text-align: left;">Single Machine</td>
-<td style="text-align: left;">IP <code>10.0.0.5</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Example Command</strong>:</p>
-<pre><code class="language-bash"># Set a default netmask for everyone
-sudo wwctl profile set default --netmask 255.255.255.0
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Configures the default profile with a subnet mask. Because of inheritance, this netmask will automatically apply to all nodes in the cluster unless explicitly overridden.</p>
-<p>If a setting is defined in the Profile, it applies to all member Nodes unless the Node explicitly overrides it. This allows for extremely concise configuration management.</p>
-<hr />
-<h2>5. Configuration Management: Overlays</h2>
-<p>A predefined container image solves the bulk of the provisioning problem, but it creates a new one: <strong>Uniqueness</strong>. While 99% of the OS should be identical across all nodes (the kernel, the libraries, the applications), 1% must be unique. For example, every node needs a unique Hostname and a unique IP Address. If every node booted the exact same container, they would all try to be <code>localhost</code> at <code>127.0.0.1</code>.</p>
-<p>Warewulf solves this with <strong>Overlays</strong>. An overlay is a set of files generated dynamically by the Controller Node and injected into the container image at boot time. The <strong>System Overlay</strong> contains files that must be unique per node, such as <code>/etc/hostname</code>, <code>/etc/hosts</code>, and <code>/etc/NetworkManager/system-connections/</code>. The <strong>Runtime Overlay</strong> is used to update user accounts, password files (<code>/etc/passwd</code>, <code>/etc/shadow</code>), and SSH keys across the cluster while the nodes are running, without requiring a reboot.</p>
-<p><strong>Example Command</strong>:</p>
-<pre><code class="language-bash"># List all available overlays
-sudo wwctl overlay list
+module load mpi/openmpi-x86_64
 
-# View the template for the hosts file
-sudo wwctl overlay show system /etc/hosts
-</code></pre>
-<p class="text-sm text-slate-600 dark:text-slate-400 mt-2"><strong>Explanation:</strong> Lists all available overlays and displays the template structure used by Warewulf to generate the dynamic `/etc/hosts` file for compute nodes.</p>
-<p>When a node boots, it first loads the generic Container Image (the heavy lifting). Then, it applies the Overlays (the customization) on top of the filesystem in RAM. This allows a single generic image to service thousands of unique nodes.</p>
-<hr />
-<h2>6. Common Management Operations</h2>
-<p>Once the cluster is deployed, the administrator uses <code>wwctl</code> for daily maintenance tasks.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Categoriy</th>
-<th style="text-align: left;">Command</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Status</strong></td>
-<td style="text-align: left;"><code>sudo wwctl node list -a</code></td>
-<td style="text-align: left;">List all nodes and their current status (e.g., last seen).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>sudo wwctl node status &lt;node&gt;</code></td>
-<td style="text-align: left;">detailed status of a specific node.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Power</strong></td>
-<td style="text-align: left;"><code>sudo wwctl power cycle &lt;node&gt;</code></td>
-<td style="text-align: left;">Reboot a node via IPMI.</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>sudo wwctl power on &lt;node&gt;</code></td>
-<td style="text-align: left;">Power on a node.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Updates</strong></td>
-<td style="text-align: left;"><code>sudo wwctl overlay build</code></td>
-<td style="text-align: left;">Rebuild system overlays (run after editing <code>/etc/hosts</code> or overlays).</td>
-</tr>
-<tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><code>sudo wwctl configure -a</code></td>
-<td style="text-align: left;">Reconfigure DHCP/TFTP/NFS services after changes to <code>warewulf.conf</code>.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Console</strong></td>
-<td style="text-align: left;"><code>sudo wwctl node console &lt;node&gt;</code></td>
-<td style="text-align: left;">Connect to the Serial-over-LAN console (troubleshooting boot issues).</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>7. Troubleshooting Common Issues</h2>
-<p>Provisioning is complex because it relies on the perfect synchronization of multiple services (DHCP, TFTP, HTTP). Failures often fall into two categories: getting the node to boot (Network), and getting the OS to run (Configuration).</p>
-<h3>7.1 Network &amp; Boot Phase Failures</h3>
-<p>These errors occur early in the boot process, usually before the Linux kernel has loaded. They almost always indicate a service failure (DHCP/TFTP) or a firewall blocking traffic.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Symptom</th>
-<th style="text-align: left;">Probable Cause</th>
-<th style="text-align: left;">Corrective Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>"Searching for DHCP..."</strong><br><em>(Infinite Loop)</em></td>
-<td style="text-align: left;"><code>dnsmasq</code> service is not running or the node is on the wrong interface.</td>
-<td style="text-align: left;">1. Check status: <code>sudo systemctl status dnsmasq</code><br>2. Check logs: <code>tail -f /var/log/messages</code><br>3. Verify IP: <code>ip addr show eth1</code> matches config.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>"Connection Refused"</strong><br><em>(iPXE Error)</em></td>
-<td style="text-align: left;">Firewall is blocking Warewulf (9873), TFTP (69), or DHCP.</td>
-<td style="text-align: left;"><strong>Open required ports</strong>:<br><code>sudo firewall-cmd --add-service=dns --permanent</code><br><code>sudo firewall-cmd --add-service=dhcp --permanent</code><br><code>sudo firewall-cmd --add-service=tftp --permanent</code><br><code>sudo firewall-cmd --add-port=9873/tcp --permanent</code><br><code>sudo firewall-cmd --reload</code></td>
-</tr>
-</tbody>
-</table>
-<h3>7.2 Image &amp; Configuration Failures</h3>
-<p>These errors occur after the node has successfully downloaded the kernel. They indicate problems with the container image itself or the configuration overlays.</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Symptom</th>
-<th style="text-align: left;">Probable Cause</th>
-<th style="text-align: left;">Corrective Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>"Dracut Timeout"</strong><br><em>(Kernel Panic)</em></td>
-<td style="text-align: left;">The container image is missing hardware drivers (e.g., InfiniBand or specific Ethernet).</td>
-<td style="text-align: left;">1. Shell into container: <code>sudo wwctl image shell openeuler-24.03</code><br>2. Install drivers: <code>dnf install kernel-modules-extra</code><br>3. Rebuild: <code>sudo wwctl image build openeuler-24.03</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Wrong Hostname / Old IP</strong><br><em>(Stale State)</em></td>
-<td style="text-align: left;">Database changes were made (e.g., <code>wwctl node set</code>) but Overlays were not rebuilt.</td>
-<td style="text-align: left;"><strong>Rebuild Overlays</strong>:<br><code>sudo wwctl overlay build</code><br>Reboot the node.</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2>8. Summary and Next Steps</h2>
-<p>This week, we solved the challenge of deploying software to hundreds of machines simultaneously. We mastered <strong>Warewulf</strong>, learning how to define <strong>Nodes</strong> and <strong>Profiles</strong> to manage hardware at scale. We explored the power of <strong>Stateless Provisioning</strong> (shipping the OS to RAM via PXE) and used <strong>Overlays</strong> to inject unique configurations into generic container images.</p>
-<h3>Preparing for Week 4</h3>
-<p>Next week, we will address the next major problem: How do users share this massive computer? We will introduce <strong>Slurm (Resource Management)</strong>. We will learn how to enforce fair usage policies, prioritize critical jobs, and prevent users from crashing the system by requesting more RAM than physically exists.</p>
-<div class="flex items-start p-4 my-4 rounded-lg border-l-4 shadow-sm bg-[#c9984a]/10 dark:bg-[#c9984a]/20 border-[#c9984a] text-slate-700 dark:text-slate-300"><svg class="w-6 h-6 mr-3 flex-shrink-0 text-[#c9984a]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg><div class="flex-1 text-sm md:text-base"><strong>Checklist for Next Week</strong><br />
-&#9744; Can you explain what happens when a node boots via PXE? (DHCP -&gt; TFTP -&gt; HTTP)<br />
-&#9744; Do you understand the difference between a <strong>System Overlay</strong> (Boot time) and a <strong>Runtime Overlay</strong> (Live updates)?<br />
-&#9744; Why is IPMI critical for managing a cluster that may be in a different building?<br />
-&#9744; What is the role of <code>dnsmasq</code> in the provisioning process?</p></div></div>
-
-<h3>Resources</h3>
-<ul>
-<li><strong>Sterling, T., Anderson, M. and Brodowicz, M. (2018)</strong>. <em>High Performance Computing: Modern Systems and Practices</em>. Morgan Kaufmann.</li>
-<li><strong>Warewulf Project</strong>. (2024). <em>Warewulf 4 User Guide</em>. Available at: <a href="https://warewulf.org/docs/v4/">https://warewulf.org/docs/v4/</a> (Accessed: 22 December 2025).</li>
-</ul>
-
-<div class="mt-12 p-8 bg-[#002F6E]/10 dark:bg-[#002F6E]/20 rounded-xl border border-[#002F6E] text-center">
-    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">Test Your Knowledge</h3>
-    <p class="text-slate-600 dark:text-slate-300 mb-6">Ready to check your understanding of this week's material? Take the interactive quiz now!</p>
-    <a href="Week_3_Quiz.html" class="inline-block px-8 py-3 bg-[#002F6E] hover:bg-[#002355] text-white font-bold rounded-lg transition-colors shadow-md no-underline">
-        Start Quiz
-    </a>
+# Execute 4 total MPI ranks (2 ranks/node), each launching 4 OpenMP threads (16 total cores)
+srun /shared/apps/hybrid_solver</code></pre>
 </div>
-        </article>
-    </main>
+                    
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+                    
+
+                    <!-- SECTION 9 -->
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 9 -->
+                    <section id="section-9">
+                        <h2>9. Summary</h2>
+                        <p>Slurm transforms isolated server blades into a unified, multi-tenant supercomputing system. In Week 4, we explore single-node memory microarchitectures—<strong>Symmetric Multiprocessing (SMP) and NUMA</strong>.</p>
+
+
+                    </section>
+
+                    <!-- Quiz Link Widget -->
+                    
+    
+                    </section>
+
+                    <!-- Quiz Link Widget -->
+                    <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span>Knowledge Check</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
+                        <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 3 concepts? Take the interactive quiz to reinforce key ideas.</p>
+                        <a href="Week_3_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Take Week 3 Quiz Now
+                        </a>
+                    </div>
+                </div>
+</div>
+                </article>
+</main>
+
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    
-                        <a href="../Week%202%20-%20System%20Design%20and%20Memory/Week_2_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 2</span>
-                        </a>
-                        
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-    
-                        <a href="../Week%204%20-%20Resource%20Management/Week_4_Student_Notes.html" class="group flex flex-col items-center hover:text-primary dark:hover:text-sky-400 transition-colors">
-                            <div class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 mb-1">
-                                <svg class="w-6 h-6 text-slate-400 group-hover:text-primary dark:group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </div>
-                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider group-hover:text-primary dark:group-hover:text-sky-400">Week 4</span>
-                        </a>
-                        
-</div>
 
 </body>
 </html>

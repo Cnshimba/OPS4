@@ -3,293 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Index - OPS4 Course</title>
+    <title>Operating Systems 4 — High-Performance Computing (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
+
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
         });
-    });
-</script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        };
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-20 transition-colors duration-300">
     
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="./index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="./index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-base leading-tight tracking-tight text-slate-900 dark:text-white">Operating Systems 4</span>
+                    <span class="text-xs text-sky-500 font-semibold">EIOPS4A · Vaal University of Technology</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="#weekly-modules" class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Modules</a>
+                <a href="#instructor" class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Instructor</a>
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
             </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="./index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-40 flex-shrink-0 flex items-center justify-center bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800">
-        <img src="images/course_index_icon.png" class="h-full w-full object-contain p-2" alt="Course Index Icon">
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6">
-        <h1 class="text-3xl font-bold text-yellow-600 dark:text-yellow-400 m-0 text-center">Operating Systems 4</h1>
-        <span class="text-xs font-bold text-gray-400 tracking-widest uppercase mt-2">EIOSY4A (HPC)</span>
-    </div>
-</div>
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 max-w-6xl space-y-12">
+        
+        <!-- Hero Section -->
+        <section class="relative rounded-3xl p-8 md:p-12 overflow-hidden border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl shadow-xl shadow-sky-500/5">
+            <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-gradient-to-br from-sky-500/20 via-purple-500/10 to-transparent blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-600 dark:text-sky-400 text-xs font-bold tracking-wide uppercase">
+                        <svg class="w-3.5 h-3.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span>High Performance Computing 2026</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                        Operating Systems 4 <br><span class="bg-gradient-to-r from-sky-400 via-indigo-400 to-amber-400 bg-clip-text text-transparent">EIOPS4A Course Hub</span>
+                    </h1>
+                    <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
+                        This course introduces students to High-Performance Computing (HPC), providing hands-on training to master enterprise multi-core architectures, commodity cluster provisioning, Slurm workload scheduling, OpenMP shared-memory pragmas, MPI distributed-memory message passing, and parallel storage systems.
+                    </p>
 
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-6 overflow-hidden">
-    <div class="w-48 flex-shrink-0">
-        <img src="instructor/instructor.jpg" class="w-full h-full object-cover" alt="Mr. KT Nshimba">
-    </div>
-    <div class="flex-1 p-6">
-        <h3 class="text-xl font-bold text-primary dark:text-sky-400 mb-3">Course Designer & Instructor</h3>
-        <p class="text-lg font-bold text-primary dark:text-sky-400 mb-1">Mr. KT Nshimba</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1 italic">Programme Coordinator: Computer Systems & Process Control</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 italic"><strong>Certifications:</strong> CyberOPS | Network Security | CCNA | Linux | HPC</p>
-        <div class="flex flex-wrap gap-3 text-xs items-center">
-            <a href="mailto:nshimba@vut.ac.za" class="text-primary dark:text-sky-400">nshimba@vut.ac.za</a>
-        </div>
-    </div>
-</div>
+                    <!-- Key Course Stats Bar -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
+                        <div class="p-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50">
+                            <div class="text-2xl font-black text-slate-900 dark:text-white">12</div>
+                            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Weekly Modules</div>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50">
+                            <div class="text-2xl font-black text-sky-500">7</div>
+                            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">HPC Cluster Labs</div>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50">
+                            <div class="text-2xl font-black text-amber-500">NQF 7</div>
+                            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Level Standard</div>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-100/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50">
+                            <div class="text-2xl font-black text-purple-500">VUT</div>
+                            <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">Computer Systems Eng.</div>
+                        </div>
+                    </div>
+                </div>
 
-<hr />
-<h2>Course Overview</h2>
-<p>This course introduces students to High-Performance Computing (HPC), covering architecture, cluster provisioning, job scheduling, and parallel programming with OpenMP and MPI.</p>
-<hr />
-<h2>Weekly Materials</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Week</th>
-<th style="text-align: left;">Topic</th>
-<th style="text-align: left;">Student Notes</th>
-<th style="text-align: left;">Labs</th>
-<th style="text-align: left;">Slides</th>
-</tr>
-</thead>
-<tbody>
+                <!-- Instructor Card Widget -->
+                <div id="instructor" class="lg:col-span-4 rounded-3xl p-7 md:p-8 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 shadow-xl flex flex-col justify-between items-center text-center space-y-6 h-full">
+                    <div class="space-y-4 flex flex-col items-center w-full">
+                        <div class="relative inline-block mx-auto">
+                            <img src="instructor/instructor.jpg" class="w-36 h-36 md:w-40 md:h-40 rounded-3xl object-cover object-top border-4 border-sky-400 shadow-2xl shadow-sky-500/25 ring-4 ring-sky-500/10 transition-transform hover:scale-105 duration-300 mx-auto" alt="Mr. KT Nshimba">
+                            <span class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[11px] font-black tracking-wider uppercase shadow-lg whitespace-nowrap">Instructor</span>
+                        </div>
+                        <div class="pt-2">
+                            <span class="text-[11px] font-bold text-sky-500 uppercase tracking-widest block mb-0.5">Course Lead</span>
+                            <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white m-0 leading-tight">Mr. KT Nshimba</h3>
+                            <p class="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-1 m-0">Programme Coordinator</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 m-0">Department of Electrical Engineering - Computer Systems Engineering</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700/80 text-xs w-full">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Professional Certifications</span>
+                            <p class="text-xs font-medium text-slate-700 dark:text-slate-300 m-0 leading-relaxed">
+                                CyberOPS · Network Security · CCNA · Linux · HPC Specialist
+                            </p>
+                        </div>
+                        <div>
+                            <a href="mailto:nshimba@vut.ac.za" class="w-full py-3 px-4 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-all no-underline shadow-lg shadow-sky-500/25 flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                <span>nshimba@vut.ac.za</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <tr>
-            <td style="text-align: left;"><strong>1</strong></td>
-            <td style="text-align: left;">HPC Introduction & Architectures</td>
-            <td style="text-align: left;"><a href="Week 1 - HPC Introduction and Architectures/Week_1_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 1 - HPC Introduction and Architectures/Week_1_Lab_Vagrant.html">Lab Guide (Vagrant)</a><br><a href="Week 1 - HPC Introduction and Architectures/Week_1_Lab_KVM.html" class="text-sm mt-1 inline-block">Lab Guide (KVM Alternative)</a></td>
-            <td style="text-align: left;"><a href="Week 1 - HPC Introduction and Architectures/Week_1_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>2</strong></td>
-            <td style="text-align: left;">System Design</td>
-            <td style="text-align: left;"><a href="Week 2 - System Design and Memory/Week_2_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 2 - System Design and Memory/Week_2_Lab_Cluster_Services.html">Lab Guide (Proxmox)</a></td>
-            <td style="text-align: left;"><a href="Week 2 - System Design and Memory/Week_2_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>3</strong></td>
-            <td style="text-align: left;">Node Provisioning (Warewulf)</td>
-            <td style="text-align: left;"><a href="Week 3 - Node Provisioning/Week_3_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 3 - Node Provisioning/Week_3_Lab_Warewulf_Install.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 3 - Node Provisioning/Week_3_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>4</strong></td>
-            <td style="text-align: left;">Resource Management</td>
-            <td style="text-align: left;"><a href="Week 4 - Resource Management/Week_4_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 4 - Resource Management/Week_4_Lab_Workload_Management.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 4 - Resource Management/Week_4_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>5</strong></td>
-            <td style="text-align: left;">Benchmarking and Tuning</td>
-            <td style="text-align: left;"><a href="Week 5 - Benchmarking and Tuning/Week_5_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 5 - Benchmarking and Tuning/Week_5_Lab_Benchmarking.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 5 - Benchmarking and Tuning/Week_5_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>6</strong></td>
-            <td style="text-align: left;">Parallel Programming</td>
-            <td style="text-align: left;"><a href="Week 6 - Parallel Programming/Week_6_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 6 - Parallel Programming/Week_6_Lab_OpenMP.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 6 - Parallel Programming/Week_6_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>7</strong></td>
-            <td style="text-align: left;">Parallel Algorithms and Libraries</td>
-            <td style="text-align: left;"><a href="Week 7 - Parallel Algorithms/Week_7_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 7 - Parallel Algorithms/Week_7_Lab_1_Decomposition.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 7 - Parallel Algorithms/Week_7_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>8</strong></td>
-            <td style="text-align: left;">Advanced Storage Concepts (NFS & Parallel FS)</td>
-            <td style="text-align: left;"><a href="Week 8 - Advanced Storage Concepts/Week_8_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 8 - Advanced Storage Concepts/Week_8_Lab_2_BeeGFS.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 8 - Advanced Storage Concepts/Week_8_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>9</strong></td>
-            <td style="text-align: left;">Accelerators (Sterling Ch 15)</td>
-            <td style="text-align: left;"><a href="Week 9 - Accelerators/Week_9_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 9 - Accelerators/Week_9_Lab_Accelerators.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 9 - Accelerators/Week_9_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>10</strong></td>
-            <td style="text-align: left;">Real World HPC Applications</td>
-            <td style="text-align: left;"><a href="Week 10 - HPC Applications/Week_10_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 10 - HPC Applications/Week_10_Lab_Applications.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 10 - HPC Applications/Week_10_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>11</strong></td>
-            <td style="text-align: left;">Cluster Monitoring and Analytics</td>
-            <td style="text-align: left;"><a href="Week 11 - Cluster Monitoring/Week_11_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 11 - Cluster Monitoring/Week_11_Lab_Monitoring.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 11 - Cluster Monitoring/Week_11_Slides.html">Slides</a></td>
-        </tr>
-        <tr>
-            <td style="text-align: left;"><strong>12</strong></td>
-            <td style="text-align: left;">Capstone Project</td>
-            <td style="text-align: left;"><a href="Week 12 - Capstone Project/Week_12_Student_Notes.html">Student Notes</a></td>
-            <td style="text-align: left;"><a href="Week 12 - Capstone Project/Week_12_Lab_Capstone_Guide.html">Lab Guide</a></td>
-            <td style="text-align: left;"><a href="Week 12 - Capstone Project/Week_12_Slides.html">Slides</a></td>
-        </tr>
-</tbody>
-</table>
-<hr />
 
-            
-        </article>
+        <!-- Weekly Modules Section -->
+        <section id="weekly-modules" class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">Course Curriculum &amp; Learning Modules</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 m-0 mt-1">Select a week to access full student notes and step-by-step cluster lab guides.</p>
+                </div>
+                <div class="flex items-center space-x-2 text-xs font-bold text-slate-400">
+                    <span class="px-2.5 py-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">12 Weeks</span>
+                    <span class="px-2.5 py-1 rounded-md bg-sky-500/10 text-sky-500 border border-sky-500/20">Updated 2026</span>
+                </div>
+            </div>
+
+            <!-- Modern 2-Column Responsive Card Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Week 1 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-black text-xs shadow-md">WEEK 01</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 1 &amp; 2</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                            Introduction to HPC &amp; Architecture
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Supercomputing history, Flynn's taxonomy (SISD, SIMD, MISD, MIMD), Flynn's limits, South African CHPC Lengau &amp; NICIS context.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 1 - HPC Introduction and Architectures/Week_1_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 1 - HPC Introduction and Architectures/Week_1_Lab_Vagrant.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 1 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 2 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 02</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 3</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                            Commodity Clusters &amp; System Design
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Beowulf cluster architecture, commodity off-the-shelf components, head nodes, compute nodes, and private cluster networks.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 2 - System Design and Memory/Week_2_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <span class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 text-slate-400 font-medium text-xs italic">Theory Only</span>
+                    </div>
+                </div>
+
+                <!-- Week 3 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 03</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 5</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Resource Management with Slurm
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Slurm workload architecture (<code>slurmctld</code>, <code>slurmd</code>), fair-share priority math, cgroups v2 memory enforcement, <code>sbatch</code> job scripts.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 3 - Node Provisioning/Week_3_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 3 - Node Provisioning/Week_3_Lab_Warewulf_Install.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 2 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 4 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 04</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 6</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                            Symmetric Multiprocessor (SMP) Architecture
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            UMA vs NUMA memory topologies, cache coherence MESI/MOESI state matrices, false sharing <code>alignas(64)</code> padding, and <code>numactl</code>.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 4 - Resource Management/Week_4_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <span class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 text-slate-400 font-medium text-xs italic">Theory Only</span>
+                    </div>
+                </div>
+
+                <!-- Week 5 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 05</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 7</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Shared-Memory Programming with OpenMP
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Fork-Join thread lifecycle, data scoping (<code>shared</code>, <code>private</code>, <code>reduction</code>), race condition fixes, static/dynamic loop scheduling.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 5 - Benchmarking and Tuning/Week_5_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 5 - Benchmarking and Tuning/Week_5_Lab_Benchmarking.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 3 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 6 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 06</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 8</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            Distributed-Memory Programming with MPI
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            SPMD model, communicators, ranks, non-blocking <code>MPI_Isend</code>/<code>MPI_Irecv</code>, collective operations, <code>mpi4py</code>, and Hybrid MPI+OpenMP.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 6 - Parallel Programming/Week_6_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 6 - Parallel Programming/Week_6_Lab_OpenMP.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 4 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 7 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 07</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 9 &amp; 10</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            Parallel Algorithms &amp; Numerical Libraries
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Work/Span analysis, domain decomposition, Foster's methodology, parallel matrix algorithms, BLAS/LAPACK, ScaLAPACK, PETSc.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 7 - Parallel Algorithms/Week_7_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 7 - Parallel Algorithms/Week_7_Lab_1_Decomposition.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 5 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 8 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 08</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 4 &amp; 13</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Benchmarking &amp; Performance Monitoring
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            High-Performance Linpack (HPL), STREAM memory bandwidth kernels, Roofline Model equations, Prometheus &amp; Grafana telemetry.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 8 - Advanced Storage Concepts/Week_8_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 8 - Advanced Storage Concepts/Week_8_Lab_1_NFS.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 6 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 9 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 09</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 14</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            Debugging Parallel Applications
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Concurrency failures, GDB multi-process debugging workflows, Valgrind Memcheck/Helgrind suite, GCC sanitizers (<code>-fsanitize=address</code>).
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 9 - Accelerators/Week_9_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <span class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 text-slate-400 font-medium text-xs italic">Theory Only</span>
+                    </div>
+                </div>
+
+                <!-- Week 10 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 10</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 15 &amp; 16</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Accelerator &amp; GPU Architecture
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Heterogeneous Host-Device PCIe models, CUDA 3-tier thread grid hierarchy, HBM3 memory bandwidth, OpenACC directives.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 10 - HPC Applications/Week_10_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <span class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 text-slate-400 font-medium text-xs italic">Theory Only</span>
+                    </div>
+                </div>
+
+                <!-- Week 11 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 dark:hover:border-sky-500/50 hover:shadow-xl hover:shadow-sky-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 11</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 17 &amp; 18</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                            High-Performance Parallel File Systems
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Lustre &amp; BeeGFS architecture, Metadata Servers (MDS/MDT) vs Object Storage Servers (OSS/OST), file striping (<code>lfs setstripe</code>), MPI-IO.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 11 - Cluster Monitoring/Week_11_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 11 - Cluster Monitoring/Week_11_Lab_Monitoring.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 7 Guide
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Week 12 Card -->
+                <div class="group relative rounded-2xl p-6 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 dark:hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-xs shadow-md">WEEK 12 · CAPSTONE</span>
+                            <span class="text-xs font-bold text-amber-500">HPC Automation</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors m-0 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                            Capstone Project — Cluster Deployment
+                        </h3>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
+                            Automated 5-node Rocky Linux HPC cluster deployment with Vagrant (IaC), Slurm scheduler, Lmod modules, compiled OpenBLAS/FFTW3/HDF5/ScaLAPACK scientific software stack, and Prometheus/Grafana monitoring.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+                        <a href="Week 12 - Capstone Project/Week_12_Student_Notes.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs transition-colors no-underline shadow-md shadow-amber-500/20 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Student Notes
+                        </a>
+                        <a href="Week 12 - Capstone Project/Week_12_Lab_Capstone_Guide.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                            Project Brief
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="./index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>

@@ -1,0 +1,45 @@
+# ============================================================
+# EIOPS4A HPC Course - .gitignore
+# ============================================================
+
+# --- Python build scripts (maintenance/dev tools) ---
+*.py
+*.ps1
+
+# --- Project folder (student submissions, drafts) ---
+Project/
+
+# --- Labs source folder (original .docx files) ---
+Labs/
+
+# --- Extracted text files (generated from .docx) ---
+LAB*_text.txt
+*_text.txt
+temp.txt
+learner_guide*.txt
+
+# --- Generated JSON data files ---
+labs_extracted.json
+
+# --- Books / Slides / Large binary documents ---
+books/
+books/slides/
+*.pptx
+*.ppt
+
+# --- Python cache ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editor configs ---
+.vscode/
+*.swp
+*.swo
+*~

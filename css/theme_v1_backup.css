@@ -1,0 +1,38 @@
+/* ============================================================
+   VUT HPC Course - Theme V1 Backup Stylesheet (Original Classic Theme)
+   Module: EIOPS4A
+   Use this file to instantly revert to Theme V1 (Midnight Blue & Gold)
+   ============================================================ */
+
+:root {
+    --v1-primary: #002F6E;       /* VUT Midnight Blue */
+    --v1-secondary: #c9984a;     /* VUT Classic Gold */
+    --v1-bg-light: #f8fafc;
+    --v1-bg-dark: #0f172a;
+    --v1-card-light: #ffffff;
+    --v1-card-dark: #1e293b;
+    --v1-text-light: #334155;
+    --v1-text-dark: #cbd5e1;
+}
+
+/* Classic V1 Callout Box Styles */
+.v1-callout-info {
+    background-color: rgba(0, 47, 110, 0.1);
+    border-left: 4px solid #002F6E;
+    color: #334155;
+}
+
+.v1-callout-gold {
+    background-color: rgba(201, 152, 74, 0.1);
+    border-left: 4px solid #c9984a;
+    color: #334155;
+}
+
+/* Classic V1 Code Block Styling */
+.v1-code-block {
+    background: #0f0f0f !important;
+    border-left: 4px solid #c9984a !important;
+    padding: 20px !important;
+    border-radius: 5px !important;
+    color: #e2e8f0 !important;
+}

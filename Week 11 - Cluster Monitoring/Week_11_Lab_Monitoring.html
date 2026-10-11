@@ -1,319 +1,361 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 11: Cluster Monitoring - Lab Guide - OPS4 Course</title>
+    <title>Lab 11 Workbook: Prometheus & Grafana Monitoring — OPS4 Course (EIOPS4A)</title>
     
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        darkMode: 'class',
-        theme: {
-            extend: {
-                fontFamily: { sans: ['Inter', 'sans-serif'] },
-                colors: {
-                    primary: '#002F6E', // VUT Midnight Blue
-                    secondary: '#c9984a', // Gold
-                    background: '#f8fafc',
-                    card: '#ffffff',
-                },
-                typography: {
-                    DEFAULT: {
-                        css: {
-                            color: '#334155',
-                            maxWidth: '100%',
-                            h1: { color: '#002F6E' },
-                            h2: { color: '#c9984a', borderBottom: '2px solid #c9984a', paddingBottom: '0.5rem' },
-                            h3: { color: '#002F6E' },
-                            a: { color: '#002F6E', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#475569' },
-                            code: { color: '#d63384', backgroundColor: '#f1f5f9', borderRadius: '0.25rem', padding: '0.2rem 0.4rem' },
-                            'code::before': { content: '""' },
-                            'code::after': { content: '""' }
-                        }
-                    },
-                    dark: {
-                        css: {
-                            color: '#cbd5e1',
-                            h1: { color: '#38bdf8' }, // Sky 400
-                            h2: { color: '#c9984a' },
-                            h3: { color: '#38bdf8' },
-                            a: { color: '#38bdf8', '&:hover': { color: '#c9984a' } },
-                            blockquote: { borderLeftColor: '#c9984a', backgroundColor: 'rgba(201, 152, 74, 0.1)', color: '#94a3b8' },
-                            code: { color: '#f472b6', backgroundColor: '#1e293b' }
-                        }
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/theme_v2_modern.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        primary: '#0F172A',
+                        secondary: '#38BDF8',
+                        accent: '#F59E0B',
+                        surface: '#1E293B'
                     }
                 }
             }
         }
-    }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const html = document.documentElement;
-        const iconSun = document.getElementById('icon-sun');
-        const iconMoon = document.getElementById('icon-moon');
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const iconSun = document.getElementById('icon-sun');
+            const iconMoon = document.getElementById('icon-moon');
 
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            iconSun.classList.remove('hidden');
-            iconMoon.classList.add('hidden');
-        } else {
-            html.classList.remove('dark');
-            iconSun.classList.add('hidden');
-            iconMoon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-                iconSun.classList.add('hidden');
-                iconMoon.classList.remove('hidden');
-            } else {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
-                localStorage.theme = 'dark';
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
+            } else {
+                html.classList.remove('dark');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
             }
-        });
-    });
-</script>
 
+            themeToggle.addEventListener('click', () => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.theme = 'light';
+                    iconSun.classList.add('hidden');
+                    iconMoon.classList.remove('hidden');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.theme = 'dark';
+                    iconSun.classList.remove('hidden');
+                    iconMoon.classList.add('hidden');
+                }
+            });
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        /* Glossary Tooltip */
-        .glossary-term { color: #c9984a; border-bottom: 2px dotted #c9984a; cursor: help; position: relative; text-decoration: none; }
-        .glossary-term:hover { color: #002F6E; }
-        html.dark .glossary-term:hover { color: #ffffff; }
-        /* OPS3-Style Code Blocks (VUT Theme) */
-        pre {
-            background: #0f0f0f !important;
-            border-left: 4px solid #c9984a !important; /* VUT Gold */
-            padding: 20px !important;
-            margin: 20px 0 !important;
-            border-radius: 5px !important;
-            overflow-x: auto !important;
-            font-size: 1.1em !important;
-            line-height: 1.5 !important;
-            color: #e2e8f0 !important;
-        }
-        code {
-            font-family: 'Courier New', monospace !important;
-        }
-        /* Override prose defaults */
-        .prose pre {
-            background-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 pt-20 transition-colors duration-300">
-    
-<nav class="fixed top-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
-    <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-        <a href="../index.html" class="flex items-center space-x-3 text-slate-900 dark:text-white hover:text-blue-600 transition-colors no-underline">
-            <div class="flex flex-col">
-                <span class="font-bold text-lg leading-tight tracking-tight text-primary dark:text-sky-400 hidden sm:block">Operating Systems 4
-                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">HPC & Cluster Computing 2026</span>
-                </span>
-            </div>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="../index.html" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-sky-400 transition-colors no-underline">Course Home</a>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <svg id="icon-sun" class="w-5 h-5 text-yellow-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </div>
-</nav>
+<body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
 
-    
-    <main class="container mx-auto px-4 max-w-5xl mb-12">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-800 p-6 md:p-12 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_11_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
+    <!-- Top Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
+        <div class="container mx-auto px-4 max-w-6xl h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 11 Workbook: Prometheus & Grafana Monitoring</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
+            </a>
+            <div class="flex items-center space-x-4">
+                <a href="Week_11_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
+                </a>
+                <a href="Week_11_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <span>Quiz 11</span>
+                </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span>Course Home</span>
+                </a>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
+                    <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
         </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 11</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 11: Cluster Monitoring - Lab Guide</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container mx-auto px-4 max-w-5xl mb-12">
+        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
+
+            <!-- Hero Header Card -->
+            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-6">
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 11 Workbook: Prometheus & Grafana Monitoring</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">Cluster Metrics Scraping & Real-Time Dashboards</span>
+                </div>
+            </div>
+
+
+
+
+
+<p><strong>Subject:</strong> Operating Systems 4 (EIOPS4A) — Week 11: High-Performance File Systems (Chapter 18)<br>
+<strong>Chapter Reference:</strong> Namespaces, metadata, POSIX interfaces, NFS, GPFS, and Lustre</p>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📋 Overview</p>
+    <p class="m-0 mt-1 text-sm">A critical bottleneck in massive supercomputers is storage I/O throughput. Traditional NFS operates on a centralised client-server paradigm that serialises writes under parallel load. <strong>Parallel Filesystems</strong> (Lustre, GPFS) solve this by decoupling metadata from raw block writes and distributing data blocks dynamically across isolated storage servers — enabling linear I/O scaling as storage drives are added.</p>
 </div>
 
-<p><strong>Objective</strong>: Deploy a complete monitoring stack.
-<strong>Goal</strong>: Visualize the real-time CPU and RAM usage of your cluster.</p>
-<hr />
-<h2>1. Prerequisites</h2>
-<p><strong>Note:</strong> This lab assumes your Virtual Cluster (configured in previous weeks) is <strong>up and running</strong>. We are adding services to the existing live system.</p>
+<hr>
+<h2>Section 1: File Storage Fundamentals &amp; POSIX Limitations</h2>
+
+<table>
+    <thead><tr><th>Technology</th><th>Metadata Handling</th><th>Data Writing Method</th><th>Best Used For</th></tr></thead>
+    <tbody>
+        <tr><td><strong>NFS</strong></td><td>Managed entirely by a single master node</td><td>Serialised writes to a single network storage drive</td><td>Small-to-medium clusters, config directories (<code>/shared</code>)</td></tr>
+        <tr><td><strong>Lustre</strong></td><td>Decoupled onto dedicated Metadata Servers (MDS)</td><td>Striped in parallel across multiple Object Targets (OST) over a private SAN</td><td>Extreme scale-out, massive scratch directories, large-file scientific runs</td></tr>
+        <tr><td><strong>GPFS / Spectrum Scale</strong></td><td>Distributed evenly across all cluster hosts dynamically</td><td>Block-level access synchronised over a Shared Disk matrix</td><td>IBM enterprise topologies, AI pipelines, active archiving</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 2: Lustre Architecture and Components</h2>
+<p>Lustre is the primary storage system of the world's fastest supercomputers. Understanding its components is essential for parallel systems administrators:</p>
+
+<table>
+    <thead><tr><th>Component</th><th>Acronym</th><th>Function</th></tr></thead>
+    <tbody>
+        <tr><td>Metadata Server</td><td><strong>MDS</strong></td><td>Manages directory paths, filenames, active permissions, and file layouts</td></tr>
+        <tr><td>Metadata Target</td><td><strong>MDT</strong></td><td>The physical storage media (e.g., NVMe SSD arrays) attached to the MDS that stores the metadata structure</td></tr>
+        <tr><td>Object Storage Server</td><td><strong>OSS</strong></td><td>The storage servers that manage raw file data blocks</td></tr>
+        <tr><td>Object Storage Target</td><td><strong>OST</strong></td><td>The physical disk drives (e.g., HDD arrays or SSD pools) attached to the OSS that store block objects</td></tr>
+    </tbody>
+</table>
+
+<h3>2.1 Lustre File Striping</h3>
+<p>Lustre uses <strong>file striping</strong> to maximise write bandwidth. When a file is written, Lustre breaks it into equal-sized chunks and writes them across multiple OSTs simultaneously:</p>
 <ul>
-<li>[ ] <strong>Master Node</strong>: Will host Prometheus and Grafana.</li>
-<li>[ ] <strong>Compute Nodes</strong>: Will host Node Exporter.</li>
-<li>[ ] <strong>Networking</strong>: Port 9090 (Prometheus) and 3000 (Grafana) must be open.</li>
+    <li><strong>Stripe Count:</strong> The number of OSTs across which a single file is segmented and written in parallel.</li>
+    <li><strong>Stripe Size:</strong> The size of each data chunk (default is typically 1 Megabyte).</li>
 </ul>
-<hr />
-<h2>2. Deploy Node Exporter (Compute Nodes)</h2>
-<p>We need to start generating metrics.</p>
-<h3>2.1 Update Warewulf Image</h3>
-<p>Since our nodes are stateless, we add the exporter to the container.</p>
-<ul>
-<li>[ ] Enter the container:
-    <code>bash
-    sudo wwctl container exec rocky-9 /bin/bash</code></li>
-<li>
-<p>[ ] Download and Install (Inside Container):
-    ```bash
-    # Download
-    wget https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz
-    tar xvf node_exporter-<em>.tar.gz
-    cp node_exporter-</em>.linux-amd64/node_exporter /usr/local/bin/</p>
-<h1>Create Systemd Service</h1>
-<p>cat &lt;<EOF > /etc/systemd/system/node_exporter.service
-[Unit]
-Description=Node Exporter
-After=network.target</p>
-<p>[Service]
-User=root
-ExecStart=/usr/local/bin/node_exporter</p>
-<p>[Install]
-WantedBy=multi-user.target
-EOF</p>
-<h1>Enable</h1>
-<p>systemctl enable node_exporter
-<code>- [ ] Exit and Rebuild:</code>bash
-exit
-sudo wwctl container build rocky-9
-sudo wwctl power cycle node[01-04]
-```</p>
-</li>
-</ul>
-<h3>2.2 Verify</h3>
-<ul>
-<li>[ ] Check if a node is reporting:
-    <code>bash
-    curl http://node01:9100/metrics | head</code>
-    <em>Did you see lines starting with <code>node_</code>?</em></li>
-</ul>
-<blockquote>
-<p><strong>📝 Question 1</strong>: Look at the output of the curl command. What is the value of <code>node_context_switches_total</code>? What does this number imply about the OS kernel?</p>
-</blockquote>
-<hr />
-<h2>3. Deploy Prometheus (Master)</h2>
-<h3>3.1 Install</h3>
-<ul>
-<li>[ ] Download and Install:
-    <code>bash
-    wget https://github.com/prometheus/prometheus/releases/download/v2.45.0/prometheus-2.45.0.linux-amd64.tar.gz
-    tar xvf prometheus-*.tar.gz
-    sudo mv prometheus-*.linux-amd64 /opt/prometheus</code></li>
-</ul>
-<h3>3.2 Configure Targets</h3>
-<ul>
-<li>[ ] Edit <code>/opt/prometheus/prometheus.yml</code>:
-    ```yaml
-    scrape_configs:<ul>
-<li>job_name: 'cluster'
-    static_configs:<ul>
-<li>targets: ['node01:9100', 'node02:9100', 'node03:9100', 'node04:9100']
-```</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p><strong>📝 Question 2</strong>: Why do we specify port <code>9100</code> for the targets, but access Prometheus itself on port <code>9090</code>?</p>
-</blockquote>
-<h3>3.3 Start Service</h3>
-<ul>
-<li>[ ] Run Prometheus (Background):
-    <code>bash
-    /opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml &amp;</code></li>
-<li>[ ] <strong>Verification</strong>: Open Browser to <code>http://&lt;master-ip&gt;:9090/targets</code>. Are all endpoints <strong>UP</strong>?</li>
-</ul>
-<hr />
-<h2>4. Deploy Grafana (Master)</h2>
-<h3>4.1 Install</h3>
-<ul>
-<li>[ ] Install RPM:
-    <code>bash
-    sudo dnf install -y https://dl.grafana.com/oss/release/grafana-10.0.0-1.x86_64.rpm</code></li>
-<li>[ ] Start Service:
-    <code>bash
-    sudo systemctl enable --now grafana-server</code></li>
-</ul>
-<h3>4.2 Login</h3>
-<ul>
-<li>[ ] Open Browser: <code>http://&lt;master-ip&gt;:3000</code>.</li>
-<li>[ ] Default Login: <code>admin</code> / <code>admin</code>.</li>
-</ul>
-<hr />
-<h2>5. Build the Dashboard (Interactive)</h2>
-<h3>5.1 Add Data Source</h3>
-<ul>
-<li>[ ] Click <strong>Connections</strong> -&gt; <strong>Data Sources</strong> -&gt; <strong>Add new</strong>.</li>
-<li>[ ] Select <strong>Prometheus</strong>.</li>
-<li>[ ] URL: <code>http://localhost:9090</code>.</li>
-<li>[ ] Click <strong>Save &amp; Test</strong>. <em>Did it say "Successfully queried"?</em></li>
-</ul>
-<h3>5.2 Create Dashboard</h3>
-<ul>
-<li>[ ] Click <strong>Dashboards</strong> -&gt; <strong>New</strong>.</li>
-<li>[ ] <strong>Add Visualization</strong>.</li>
-<li>[ ] Select <strong>Prometheus</strong> as source.</li>
-<li>[ ] Query: <code>node_memory_MemTotal_bytes</code>.</li>
-<li>[ ] Click <strong>Run Queries</strong>.
-    <em>Result</em>: You should see a graph of memory usage for all your nodes!</li>
-</ul>
-<blockquote>
-<p><strong>📝 Question 3</strong>: Run a stress test on <code>node01</code> (e.g., <code>stress --cpu 4</code>). Watch the Grafana dashboard. How long is the delay between starting the stress test and seeing the spike on the graph? Why is there a delay?</p>
-</blockquote>
-<hr />
-<h2>6. Submission</h2>
-<p>Create a <strong>Lab Report PDF</strong> containing:</p>
-<ol>
-<li><strong>Answers</strong>: Provide your written answers for Questions 1, 2, and 3.</li>
-<li><strong>Screenshots</strong>:<ul>
-<li>Prometheus Targets page showing all nodes UP.</li>
-<li>Your Grafana Dashboard showing live data (with the stress test spike visible).</li>
-</ul>
-</li>
-</ol>
+
+<hr>
+<h2>Section 3: Integrating Parallel I/O with MPI-IO</h2>
+<p>In Lab 6 (HPC Software Stack), you compiled Parallel HDF5 using MPI compiler wrappers. HDF5 uses the <strong>MPI-IO interface</strong> to execute collective write operations. Instead of nodes performing independent random writes, the MPI collective I/O layer reorganises data write blocks in RAM, executing long sequential streaming write sweeps to the parallel filesystem's OSTs — bypassing metadata lock contention.</p>
+
+<div class="cyber-callout cyber-callout-info not-prose">
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📌 POSIX File Interface</p>
+    <p class="m-0 mt-1 text-sm">The POSIX file interface (open, read, write, close, seek) was designed for single-process access. Its strict consistency model becomes a bottleneck when thousands of MPI ranks attempt concurrent writes to the same file. MPI-IO and parallel filesystems extend POSIX semantics with collective I/O operations optimised for distributed workloads.</p>
+</div>
+
+<hr>
+<h2>Section 4: Storage Throughput Testing</h2>
+
+<h3>Exercise 1 – Measure NFS Sequential Write Bandwidth</h3>
+<p>Using the <code>dd</code> command, execute a 1 GB sequential write on the <code>/shared</code> NFS mount. The <code>oflag=direct</code> flag bypasses the OS page cache, forcing direct writes to disk media:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">dd if=/dev/zero of=/shared/test_io.img bs=1M count=1024 oflag=direct</code></pre>
+            </div>
+</div>
+<p>Note the returned write bandwidth speed (e.g., <code>22.4 MB/s</code>). This bottleneck represents the network latency and serialisation overhead of NFS over a single socket.</p>
+
+<h3>Exercise 2 – Measure Local Disk Write Bandwidth</h3>
+<p>Repeat the transaction on a local node directory:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">dd if=/dev/zero of=/tmp/test_io.img bs=1M count=1024 oflag=direct</code></pre>
+            </div>
+</div>
+<p>Observe how local disk bandwidth is significantly faster (e.g., <code>120 MB/s</code>) because it does not traverse the NFS socket layer.</p>
+
+<div class="cyber-callout cyber-callout-gold not-prose">
+    <p class="font-semibold text-amber-700 dark:text-amber-300 m-0">📊 Analysis</p>
+    <p class="m-0 mt-1 text-sm">Record both values in the table below. Calculate the NFS overhead as a percentage of local bandwidth. This difference quantifies the cost of network file I/O for your cluster workloads.</p>
+    <table class="mt-3 text-sm">
+        <thead><tr><th>Test</th><th>Write Speed (MB/s)</th><th>Notes</th></tr></thead>
+        <tbody>
+            <tr><td>NFS Sequential Write (<code>/shared</code>)</td><td>___________</td><td>Network-bound; single socket</td></tr>
+            <tr><td>Local Disk Write (<code>/tmp</code>)</td><td>___________</td><td>Direct block device access</td></tr>
+            <tr><td>Speedup Ratio (Local / NFS)</td><td>___________</td><td>Quantifies NFS serialisation cost</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<h3>Exercise 3 – Running Parallel I/O Benchmarks (IOR)</h3>
+<p>Scientists use the <strong>IOR</strong> (Interleaved Or Random) benchmark to test distributed parallel write throughput. Submit an IOR parallel sweep across all 4 compute nodes via Slurm:</p>
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash">srun -N 4 -n 4 /shared/benchmarks/ior/ior \
+  -w -r \
+  -o /shared/ior_test.dat \
+  -b 256m \
+  -t 1m</code></pre>
+            </div>
+</div>
+
+<table>
+    <thead><tr><th>IOR Flag</th><th>Meaning</th></tr></thead>
+    <tbody>
+        <tr><td><code>-w</code></td><td>Perform parallel write benchmark</td></tr>
+        <tr><td><code>-r</code></td><td>Perform parallel read benchmark after write</td></tr>
+        <tr><td><code>-o /shared/ior_test.dat</code></td><td>Output file path (on NFS shared storage)</td></tr>
+        <tr><td><code>-b 256m</code></td><td>Block size per task (256 MB)</td></tr>
+        <tr><td><code>-t 1m</code></td><td>Transfer size per I/O operation (1 MB)</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 5: Lustre Administrative Commands</h2>
+<p>On a production Lustre system, administrators use these commands to manage and tune storage:</p>
+
+<div class="cyber-code-block">
+    <div class="cyber-code-header">
+        <div class="cyber-code-dots">
+            <span class="cyber-dot dot-red"></span>
+            <span class="cyber-dot dot-yellow"></span>
+            <span class="cyber-dot dot-green"></span>
+        </div>
+        <span class="text-xs font-mono text-slate-400">Terminal</span>
+    </div>
+    <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                </div>
+                <pre><code class="language-bash"># Check OST disk space distribution
+lfs df -h
+
+# Check file striping for a specific file
+lfs getstripe /lustre/scratch/myfile.h5
+
+# Set striping for a new directory (4 OSTs, 4 MB stripe size)
+lfs setstripe -c 4 -S 4M /lustre/scratch/myproject/
+
+# List available OSTs
+lfs osts
+
+# Check Lustre client mount status
+lctl get_param llite.*.stats</code></pre>
+            </div>
+</div>
+
+<hr>
+<h2>Section 6: Troubleshooting Storage Bottlenecks</h2>
+<table>
+    <thead><tr><th>Symptom</th><th>Possible Cause</th><th>Resolution</th></tr></thead>
+    <tbody>
+        <tr><td>I/O error: disk quota exceeded</td><td>One or more OSTs have run out of physical block space, even though other OSTs remain empty.</td><td>Check OST capacity with <code>lfs df -h</code>. Adjust file striping with <code>lfs setstripe</code> to balance blocks across other targets.</td></tr>
+        <tr><td>Extreme file creation delays (Metadata lock timeout)</td><td>The MDS is bottlenecked due to thousands of parallel processes creating tiny files concurrently.</td><td>Rewrite application to write large sequential arrays within consolidated HDF5 containers rather than millions of small files.</td></tr>
+        <tr><td>Write bandwidth drops during MPI runs</td><td>Data blocks are unaligned with the underlying parallel filesystem stripe size, triggering heavy write lock contention.</td><td>Ensure MPI-IO transfer alignment matches the Lustre stripe size. Configure HDF5: <code>H5Pset_alignment()</code>.</td></tr>
+        <tr><td>NFS mount hangs under heavy parallel load</td><td>Single NFS server socket is saturated by concurrent write requests from all compute nodes.</td><td>Reduce concurrency, or migrate large scratch workloads to a parallel filesystem (Lustre/BeeGFS).</td></tr>
+    </tbody>
+</table>
+
+<hr>
+<h2>Section 7: Comprehension Review Questions</h2>
+<div class="cyber-callout cyber-callout-gold not-prose">
+    <p class="font-semibold text-amber-700 dark:text-amber-300 m-0">💡 Review Questions</p>
+    <ol class="mt-2 mb-0 text-sm space-y-2">
+        <li><strong>Q1:</strong> Explain the functional and architectural differences between NFS and parallel filesystems like Lustre.</li>
+        <li><strong>Q2:</strong> Detail how decoupling Metadata (MDS/MDT) from Object block storage (OSS/OST) optimises filesystem scaling.</li>
+        <li><strong>Q3:</strong> What is file striping in Lustre, and how can an administrator optimise stripe count for large scientific runs?</li>
+        <li><strong>Q4:</strong> Why does the POSIX file interface become a bottleneck in massively parallel applications, and how does MPI-IO address this?</li>
+    </ol>
+</div>
+
+<hr>
+<h2>Section 8: Laboratory Verification Checklist</h2>
+<table>
+    <thead><tr><th>Milestone</th><th>Deliverable</th><th>Status</th></tr></thead>
+    <tbody>
+        <tr><td>Exercise 1 – Architecture Diagrams</td><td>Explain the block diagrams of MDS, OSS, MDT, and OST component scopes.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 2 – NFS vs Local dd Benchmark</td><td>Measured and recorded sequential write throughput on NFS versus local storage.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 3 – Parallel IOR Run</td><td>Verified parallel throughput scaling on <code>/shared</code> mount using parallel IOR clients via Slurm.</td><td>[ ] Assessor Sign-Off</td></tr>
+        <tr><td>Exercise 4 – HDF5 MPI-IO Integration</td><td>Verified MPI-IO collective write parameters in HDF5 from Lab 6 write files correctly.</td><td>[ ] Assessor Sign-Off</td></tr>
+    </tbody>
+</table>
+
+
+
         </article>
     </main>
 
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-sm pb-24">
-        Vaal University of Technology - Operating Systems 4 (HPC) 2026
+    <!-- Footer -->
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
     </footer>
-
-    
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-full shadow-2xl px-6 py-2 flex items-center space-x-8 z-50">
-    <a href="../index.html" class="group relative flex items-center justify-center p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg border-2 border-secondary group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-        </div>
-        <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Course Index</span>
-    </a>
-</div>
 
 </body>
 </html>
