@@ -6,7 +6,7 @@
     <title>Lab 4 Workbook: Slurm Workload Manager — OPS4 Course (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -109,7 +109,7 @@
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-6">
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 4 Workbook: Slurm Workload Manager</h1>
-                    <span class="text-xs font-semibold text-sky-500 mt-1">Multi-Node Queue Configuration & Cgroups Enforcement</span>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">Multi-Node Queue Configuration &amp; Cgroups Enforcement</span>
                 </div>
             </div>
 
@@ -124,17 +124,17 @@
     </div>
     <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
         <h1 class="text-3xl font-bold text-secondary m-0">Week 4: Resource Management - Lab Guide</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
+        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC &amp; Cluster Computing</span>
     </div>
 </div>
 
-<p><strong>Objective</strong>: Transform your collection of nodes into a managed cluster using OpenHPC 4.1 methodology.
-<strong>Goal</strong>: Install the Slurm Workload Manager on the Master Node, inject it into your openEuler Compute Image, configure overlays, and submit your first parallel job.</p>
+<p>Objective: Transform your collection of nodes into a managed cluster using OpenHPC 4.1 methodology.
+Goal: Install the Slurm Workload Manager on the Master Node, inject it into your openEuler Compute Image, configure overlays, and submit your first parallel job.</p>
 <hr />
-<h2>1. Prerequisites & Environment Variables</h2>
-<p>Ensure your Master Node is running, and you have completed the Week 3 Lab. Because this lab session might be in a new terminal window, you <strong>must load your environment variables</strong> from Week 3 before proceeding.</p>
+<h2>1. Prerequisites &amp; Environment Variables</h2>
+<p>Ensure your Master Node is running, and you have completed the Week 3 Lab. Because this lab session might be in a new terminal window, you must load your environment variables from Week 3 before proceeding.</p>
 
-<p><strong>Explanation</strong>: The OpenHPC installation tools rely on these bash variables. We will source the <code>cluster_env.sh</code> file we created in Week 3, and then export one additional variable specifically for Warewulf containers.</p>
+<p>Explanation: The OpenHPC installation tools rely on these bash variables. We will source the <code>cluster_env.sh</code> file we created in Week 3, and then export one additional variable specifically for Warewulf containers.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -164,7 +164,7 @@ export CHROOT=$(sudo wwctl image show openeuler-24.03)
 <p>Slurm requires Munge to authenticate messages between nodes.</p>
 
 <h3>2.1 Install Munge on Master</h3>
-<p><strong>Explanation</strong>: Installs Munge, an authentication service that Slurm uses to trust messages sent between the master and compute nodes.</p>
+<p>Explanation: Installs Munge, an authentication service that Slurm uses to trust messages sent between the master and compute nodes.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -189,7 +189,7 @@ export CHROOT=$(sudo wwctl image show openeuler-24.03)
 </div>
 
 <h3>2.2 Generate the Key</h3>
-<p><strong>Explanation</strong>: Generates a secure cryptographic key (<code>munge.key</code>) and strictly restricts its read permissions, a security requirement for Munge to start.</p>
+<p>Explanation: Generates a secure cryptographic key (<code>munge.key</code>) and strictly restricts its read permissions, a security requirement for Munge to start.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -219,7 +219,7 @@ sudo chmod 400 /etc/munge/munge.key
 <h2>3. Install Slurm on Master Node</h2>
 
 <h3>3.1 Install OpenHPC Server Packages</h3>
-<p><strong>Explanation</strong>: Installs the OpenHPC-provided Slurm server packages that include the <code>slurmctld</code> daemon.</p>
+<p>Explanation: Installs the OpenHPC-provided Slurm server packages that include the <code>slurmctld</code> daemon.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -246,7 +246,7 @@ sudo chmod 400 /etc/munge/munge.key
 <h3>3.2 Configure <code>slurm.conf</code></h3>
 <p>We use the OpenHPC templates and automatically replace the hostname with our <code>$sms_name</code> variable.</p>
 
-<p><strong>Explanation</strong>: Copies the default OpenHPC templates into the Slurm configuration directory and automatically substitutes the master hostname into the configuration using the <code>sed</code> utility.</p>
+<p>Explanation: Copies the default OpenHPC templates into the Slurm configuration directory and automatically substitutes the master hostname into the configuration using the <code>sed</code> utility.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -273,7 +273,7 @@ sudo sed -i "s/SlurmctldHost=\S\+/SlurmctldHost=${SMS_NAME}/" /etc/slurm/slurm.c
 </div>
 
 <p>Then, open <code>/etc/slurm/slurm.conf</code> and add/edit the node and partition definitions at the bottom to match your cluster:</p>
-<p><strong>Explanation</strong>: Opens the configuration file in the nano editor so you can manually define the node resources.</p>
+<p>Explanation: Opens the configuration file in the nano editor so you can manually define the node resources.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -327,7 +327,7 @@ PartitionName=debug Nodes=compute-[01-02] Default=YES MaxTime=INFINITE State=UP
 <h2>4. Install Slurm into the Compute Image (Warewulf)</h2>
 
 <p>We execute commands inside our container image to install the OpenHPC slurm client and NTP tools.</p>
-<p><strong>Explanation</strong>: Uses <code>wwctl image exec</code> to run an installation script inside the compute node container image, downloading the Slurm client packages and enabling the Munge and Slurmd services for the next boot.</p>
+<p>Explanation: Uses <code>wwctl image exec</code> to run an installation script inside the compute node container image, downloading the Slurm client packages and enabling the Munge and Slurmd services for the next boot.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -366,7 +366,7 @@ EOF
 <p>Warewulf uses "overlays" to push config files to the stateless nodes securely.</p>
 
 <h3>5.1 Import Basic Configs</h3>
-<p><strong>Explanation</strong>: Uses Warewulf Overlays to securely inject the host's subuid/subgid and Chrony configurations into the compute node dynamically, without baking them directly into the generic image.</p>
+<p>Explanation: Uses Warewulf Overlays to securely inject the host's subuid/subgid and Chrony configurations into the compute node dynamically, without baking them directly into the generic image.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -397,7 +397,7 @@ sudo wwctl profile set --yes nodes --tagadd ntpserver="${SMS_IP}"
 </div>
 
 <h3>5.2 Configure Slurm Overlays</h3>
-<p><strong>Explanation</strong>: Copies the Slurm and Munge configuration files into the Warewulf nodeconfig overlay, ensuring they are identical on all compute nodes, and strictly applies the necessary file permissions required by Munge.</p>
+<p>Explanation: Copies the Slurm and Munge configuration files into the Warewulf nodeconfig overlay, ensuring they are identical on all compute nodes, and strictly applies the necessary file permissions required by Munge.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -434,7 +434,7 @@ sudo wwctl overlay chmod nodeconfig /etc/munge 0700
 <hr />
 <h2>6. Finalizing Provisioning</h2>
 <p>Rebuild the image to include the new packages and the overlays.</p>
-<p><strong>Explanation</strong>: Compiles the Warewulf overlays and container image to finalize all the changes we injected in the previous steps.</p>
+<p>Explanation: Compiles the Warewulf overlays and container image to finalize all the changes we injected in the previous steps.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -464,7 +464,7 @@ sudo wwctl configure --all
 <h2>7. Start the Cluster</h2>
 
 <h3>7.1 Start Slurm on Master</h3>
-<p><strong>Explanation</strong>: Enables and starts the Slurm controller and Munge authentication daemon on the Master node.</p>
+<p>Explanation: Enables and starts the Slurm controller and Munge authentication daemon on the Master node.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -494,7 +494,7 @@ sudo systemctl enable --now slurmctld
 
 <h3>7.3 Check Registration</h3>
 <p>Once the node is fully booted, check if it checked in with Slurm on the Master:</p>
-<p><strong>Explanation</strong>: Queries the Slurm controller to see the state of all managed compute partitions and nodes.</p>
+<p>Explanation: Queries the Slurm controller to see the state of all managed compute partitions and nodes.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -522,7 +522,7 @@ sudo systemctl enable --now slurmctld
 <h2>8. Run Your First Job</h2>
 
 <p>Create a test job script named <code>job.sh</code>:</p>
-<p><strong>Explanation</strong>: Creates a batch script defining resource constraints (1 node) for the Slurm Workload Manager to execute.</p>
+<p>Explanation: Creates a batch script defining resource constraints (1 node) for the Slurm Workload Manager to execute.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">
@@ -554,7 +554,7 @@ echo "Job Complete"
 </div>
 
 <p>Submit it:</p>
-<p><strong>Explanation</strong>: Submits the batch script into the Slurm queue for execution on the compute node.</p>
+<p>Explanation: Submits the batch script into the Slurm queue for execution on the compute node.</p>
 <div class="cyber-code-block">
     <div class="cyber-code-header">
         <div class="cyber-code-dots">

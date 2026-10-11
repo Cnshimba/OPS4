@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 4 Student Notes — Resource Management (EIOPS4A)</title>
+    <title>Week 4 Student Notes — Resource Management &amp; Slurm Scheduling (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -61,7 +61,7 @@
     <script>hljs.highlightAll();</script>
     <script>
         window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -76,7 +76,7 @@
                     04
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 4: Resource Management</span>
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 4: Resource Management &amp; Slurm Scheduling</span>
                     <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
             </a>
@@ -86,7 +86,7 @@
                     Lab 4 Guide
                 </a>
                 <a href="Week_4_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
-                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     <span>Quiz 4</span>
                 </a>
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
@@ -102,7 +102,7 @@
     <main class="container mx-auto px-4 max-w-7xl">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <!-- Left Sticky Sidebar (Table of Contents &amp; Meta) -->
             <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
                 
                 <!-- Quick Navigation Box -->
@@ -112,13 +112,13 @@
                         <span>On This Page</span>
                     </div>
                     <nav class="space-y-1.5 text-xs font-medium">
-                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Foundations of Symmetric Multiprocessing (SMP)</a>
-                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Component Architecture of Modern Microprocessors (Chapter 6)</a>
-                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. UMA vs. NUMA Memory Architectures</a>
-                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Cache Coherence Protocols: MESI &amp; MOESI</a>
-                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. The False Sharing Performance Trap</a>
-                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Hardware Topology Discovery &amp; Thread Pinning</a>
-                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Summary</a>
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Shared-Memory Architecture (SMP &amp; NUMA)</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Cache Coherence &amp; False Sharing</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. Slurm Workload Manager Architecture</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Deep Dive: Slurm Configuration Files</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Exhaustive Slurm Command Reference</a>
+                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Hardware Topology &amp; Thread Pinning</a>
+                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Summary &amp; Self-Assessment</a>
                     </nav>
                 </div>
 
@@ -130,11 +130,11 @@
                     </div>
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
                         <span class="text-slate-400 font-semibold">Reading Time</span>
-                        <span class="font-bold text-slate-700 dark:text-slate-300">~25 Minutes</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~35 Minutes</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-slate-400 font-semibold">Slides Ref</span>
-                        <span class="font-bold text-amber-500">Ch. 6 & 7</span>
+                        <span class="font-bold text-amber-500">Ch. 6 &amp; 7</span>
                     </div>
                     <div class="pt-2">
                         <a href="Week_4_Lab_Workload_Management.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
@@ -160,130 +160,72 @@
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 04</span>
                         </div>
                         <div class="flex-1 flex flex-col justify-center p-6">
-                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Resource Management</h1>
-                            <span class="text-sm font-semibold text-sky-500 mt-1">Slurm Scheduler Architecture, Workload Queues & Cgroups (Ch. 6 & 7)</span>
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Resource Management &amp; Slurm Scheduling</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">SMP, NUMA Microarchitectures, Exhaustive Slurm Commands &amp; Configuration Engineering (Ch. 6 &amp; 7)</span>
                         </div>
                     </div>
 
-                    
-
-                    
-
-                    
-
-
-
-                    <!-- SECTION 1 -->
-                    
-                        
+                    <!-- Learning Outcomes Card -->
+                    <div class="p-6 mb-8 rounded-2xl border border-sky-500/30 bg-sky-500/5 dark:bg-sky-500/10 text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center space-x-2 text-sky-500 font-bold text-sm mb-3 uppercase tracking-wider">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg>
+                            <span>Learning Outcomes (NQF Level 7)</span>
+                        </div>
+                        <ol class="space-y-1.5 text-sm m-0 pl-4">
+                            <li>Analyze and evaluate Symmetric Multiprocessing (SMP) and NUMA memory topologies on modern server microprocessors.</li>
+                            <li>Critique cache coherence protocols (MESI/MOESI) and formulate code solutions to eliminate false sharing performance degradation.</li>
+                            <li>Deconstruct the component architecture of Slurm Workload Manager (slurmctld, slurmd, slurmdbd, Cgroups) across compute nodes.</li>
+                            <li>Configure and engineer enterprise Slurm configuration files (slurm.conf, cgroup.conf) specifying SelectType, Backfill parameters, and resource boundaries.</li>
+                            <li>Master the full suite of Slurm client and administrative commands (sbatch, srun, salloc, squeue, sinfo, scancel, scontrol, sacct).</li>
+                        </ol>
+                    </div>
 
                     <!-- SECTION 1 -->
                     <section id="section-1">
-                        <h2>1. Foundations of Symmetric Multiprocessing (SMP)</h2>
-                        <p>Before scaling computational workloads across multi-node network clusters, HPC engineers must optimize shared-memory parallelism on single multi-socket server nodes. A <strong>Symmetric Multiprocessor (SMP)</strong> system consists of two or more identical physical processor sockets connected to a common, shared main memory (RAM) space and governed by a single operating system kernel.</p>
-                    
+                        <h2>1. Shared-Memory Architecture (SMP &amp; NUMA)</h2>
+                        
+                        <h3>1.1 Foundations of Symmetric Multiprocessing (SMP)</h3>
+                        <p>Before scaling computational workloads across multi-node network clusters, HPC engineers must optimize shared-memory parallelism on single multi-socket server nodes. A Symmetric Multiprocessor (SMP) system consists of two or more identical physical processor sockets connected to a common, shared main memory space and governed by a single operating system kernel.</p>
 
-                    
+                        <p>In modern server microprocessors (such as AMD EPYC and Intel Xeon Scalable processors), dozens or hundreds of physical cores reside on a single silicon substrate. Each physical core possesses private L1 and L2 caches, while sharing a last-level cache (L3) and integrated memory controllers.</p>
 
-                    <!-- SECTION 2 -->
+                        <h3>1.2 Memory Architectures: UMA vs. NUMA</h3>
+                        <p>In legacy UMA architectures, all CPU cores connect to a single centralized memory controller over a shared system bus. Memory access latency is identical regardless of which core executes the read or write instruction. However, as core counts scaled beyond 8 cores, bus contention created severe latency bottlenecks.</p>
+
+                        <p>Modern enterprise servers split system memory into discrete NUMA Nodes, where each CPU socket or core complex directly controls its local bank of RAM DIMMs:</p>
+
+                        <div class="my-4 text-center">
+                            $$\text{NUMA Distance Ratio} = \frac{\text{Latency}_{\text{Remote Node}}}{\text{Latency}_{\text{Local Node}}} \approx 1.5\text{x to } 2.5\text{x}$$
+                        </div>
+
+                        <p>Cores fetching data from local RAM experience low latency (~60 ns) and full memory bus bandwidth. Conversely, cores fetching data from RAM attached to a foreign CPU socket must traverse inter-socket interconnects (AMD Infinity Fabric, Intel UPI), suffering up to 2.5x higher latency (~140 ns) and reduced bandwidth.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 2 -->
                     <section id="section-2">
-                        <h2>2. Component Architecture of Modern Microprocessors (Chapter 6)</h2>
-                        <p>Modern server microprocessors (e.g., AMD EPYC 9004/9005 series, Intel Xeon Scalable Granite Rapids) pack up to 128 physical cores onto a single silicon substrate using chiplet designs. Below is the hardware layer hierarchy:</p>
+                        <h2>2. Cache Coherence &amp; False Sharing</h2>
+                        
+                        <h3>2.1 The MESI &amp; MOESI Protocols</h3>
+                        <p>Because multiple CPU cores maintain private L1/L2 caches of shared main memory locations, hardware enforces Cache Coherence using the MESI protocol (Modified, Exclusive, Shared, Invalid) or the MOESI protocol (which adds an Owner state to allow sharing dirty cache lines without memory write-backs).</p>
 
-<table>
-    <thead><tr><th>Hardware Component</th><th>Location &amp; Scope</th><th>Access Latency &amp; Bandwidth Profile</th></tr></thead>
-    <tbody>
-        <tr><td><strong>Execution Units (ALU/FMA)</strong></td><td>Inside physical core. Performs 512-bit SIMD vector ops.</td><td>Sub-nanosecond latency (&lt; 1 cycle).</td></tr>
-        <tr><td><strong>L1 Instruction &amp; Data Caches</strong></td><td>Private per core (typically 32KB - 64KB).</td><td>~1.0 - 1.5 ns (4 clock cycles). Extremely high bandwidth.</td></tr>
-        <tr><td><strong>L2 Cache</strong></td><td>Private per core (typically 1MB per core).</td><td>~3.0 - 4.5 ns (12–14 clock cycles).</td></tr>
-        <tr><td><strong>L3 Last-Level Cache (LLC)</strong></td><td>Shared across a core complex (CCX) or chiplet die (32MB - 256MB).</td><td>~10 - 15 ns (40–50 clock cycles). Shared by up to 8 cores.</td></tr>
-        <tr><td><strong>Integrated Memory Controller (IMC)</strong></td><td>On-chip die interface controlling DDR5 channels.</td><td>Coordinates physical memory access across 8–12 channels per socket.</td></tr>
-        <tr><td><strong>Inter-Socket Interconnect</strong></td><td>AMD Infinity Fabric / Intel UPI bridges.</td><td>Connects foreign CPU sockets over high-speed differential links.</td></tr>
-    </tbody>
-</table>
-                    
+                        <h3>2.2 The False Sharing Performance Trap</h3>
+                        <p>False Sharing occurs when two independent threads executing on separate CPU cores modify independent variables that happen to reside within the same 64-byte cache line. Even though the software logic is independent, the hardware MESI protocol repeatedly invalidates the cache line across both cores (cache line bouncing), causing severe throughput loss.</p>
 
-                    
-
-                    <!-- SECTION 3 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 3 -->
-                    <section id="section-3">
-                        <h2>3. UMA vs. NUMA Memory Architectures</h2>
-                        <h3>3.1 Uniform Memory Access (UMA)</h3>
-<p>In legacy UMA architectures, all CPU cores connect to a single centralized memory controller over a shared system bus. Memory access latency is identical regardless of which core executes the read or write instruction. However, as core counts scaled beyond 8 cores, bus contention created severe latency bottlenecks.</p>
-
-<h3>3.2 Non-Uniform Memory Access (NUMA)</h3>
-<p>Modern enterprise servers split system memory into discrete **NUMA Nodes**, where each CPU socket or core complex directly controls its local bank of RAM DIMMs:</p>
-
-$$ \text{NUMA Distance Ratio} = \frac{\text{Latency}_{\text{Remote Node}}}{\text{Latency}_{\text{Local Node}}} \approx 1.5\text{x to } 2.5\text{x} $$
-
-<ul>
-    <li><strong>Local Memory Read</strong>: Cores fetching data from local RAM experience low latency (~60 ns) and full bus bandwidth (~300 GB/s per socket).</li>
-    <li><strong>Remote Memory Read</strong>: Cores fetching data from RAM attached to a foreign socket must traverse inter-socket interconnects (AMD Infinity Fabric, Intel UPI), suffering up to 2.5x higher latency (~140 ns) and reduced available bandwidth.</li>
-</ul>
-                    
-
-                    
-
-                    <!-- SECTION 4 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 4 -->
-                    <section id="section-4">
-                        <h2>4. Cache Coherence Protocols: MESI &amp; MOESI</h2>
-                        <p>Because multiple CPU cores maintain private L1/L2 caches of shared main memory locations, hardware must enforce **Cache Coherence** so no core reads stale data.</p>
-
-<h3>4.1 The MESI Protocol (4 States)</h3>
-<table>
-    <thead><tr><th>State Name</th><th>Meaning &amp; Ownership Property</th><th>Is RAM Up to Date?</th></tr></thead>
-    <tbody>
-        <tr><td><strong>M (Modified)</strong></td><td>Cache line is present only in the current core's cache and has been written to (dirty). The core must write back to RAM before eviction.</td><td>No (RAM contains stale data).</td></tr>
-        <tr><td><strong>E (Exclusive)</strong></td><td>Cache line is present only in the current core's cache and has not been written to (clean).</td><td>Yes (Matches RAM).</td></tr>
-        <tr><td><strong>S (Shared)</strong></td><td>Cache line is present in multiple cores' private caches in clean read-only state.</td><td>Yes (Matches RAM).</td></tr>
-        <tr><td><strong>I (Invalid)</strong></td><td>Cache line contains invalid/stale data and cannot be read.</td><td>N/A</td></tr>
-    </tbody>
-</table>
-
-<h3>4.2 The MOESI Extension</h3>
-<p>The MOESI protocol adds an <strong>O (Owner)</strong> state. The Owner state allows a core to hold a dirty cache line while sharing read access with other cores without writing the line back to main RAM, preserving precious memory bus bandwidth.</p>
-                    
-
-                    
-
-                    <!-- SECTION 5 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 5 -->
-                    <section id="section-5">
-                        <h2>5. The False Sharing Performance Trap</h2>
-                        <p><strong>False Sharing</strong> occurs when two independent threads executing on separate CPU cores modify independent variables that happen to reside within the same 64-byte cache line. Even though the software logic is independent, the hardware MESI protocol repeatedly invalidates the cache line across both cores ("cache line bouncing"), causing up to a 90% drop in computational throughput.</p>
-
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-cpp">// Problem: False sharing (both variables reside in the same 64-byte cache line)
+                        <div class="cyber-code-block my-6">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">C++17 Cache Line Alignment Solution</span>
+                            </div>
+                            <pre><code class="language-cpp">// Problem: False sharing (both variables reside in the same 64-byte line)
 struct BadThreadData {
     uint64_t counter_thread0; // 8 bytes
-    uint64_t counter_thread1; // 8 bytes (Resides in same 64-byte line!)
+    uint64_t counter_thread1; // 8 bytes (same 64-byte line!)
 };
 
 // Solution: C++17 Explicit Cache Line Alignment (64 Bytes)
@@ -296,12 +238,258 @@ struct alignas(64) GoodThreadData2 {
     uint64_t counter_thread1;
     uint8_t  padding[56];
 };</code></pre>
-</div>
-                    
+                        </div>
+                    </section>
 
-                    
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
 
-                    <!-- SECTION 6 -->
+                    <!-- SECTION 3 -->
+                    <section id="section-3">
+                        <h2>3. Slurm Workload Manager Architecture</h2>
+
+                        <h3>3.1 Why Resource Managers are Essential</h3>
+                        <p>In a shared high-performance computing cluster, hundreds of users submit computationally intensive parallel jobs simultaneously. If users launched programs directly on compute nodes without coordination, multiple jobs would collide on the same CPU cores, exhaust physical RAM memory, cause Out-Of-Memory (OOM) kernel panics, and crash the cluster. The Slurm Workload Manager (Simple Linux Utility for Resource Management) serves as the cluster operating system, arbitrating resource allocations and scheduling job queues.</p>
+
+                        <h3>3.2 Slurm Daemon Microarchitecture</h3>
+                        <p>Slurm uses a decoupled, agent-based daemon architecture across the cluster:</p>
+                        
+                        <p>The Slurm Controller Daemon (<code>slurmctld</code>) runs on the master control node. It acts as the central brain of the cluster, monitoring node availability, managing pending job queues, computing priority scores, and granting resource allocations to users.</p>
+
+                        <p>The Slurm Node Daemon (<code>slurmd</code>) runs on every compute node. It listens for execution requests from <code>slurmctld</code>, spawns user tasks, monitors CPU and RAM consumption, and interfaces with Linux Control Groups (Cgroups v2) to enforce strict memory and core boundaries.</p>
+
+                        <p>The Slurm Database Daemon (<code>slurmdbd</code>) records cluster usage statistics, job completion logs, fair-share historical data, and user account limits into a centralized MySQL/MariaDB database.</p>
+
+                        <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Slurm Architecture Diagram" src="images/slurm_architecture_diagram.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 4.1: Component Architecture of Slurm Workload Manager (slurmctld, slurmd, slurmdbd, and Cgroups).</p>
+                        </div>
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 4 -->
+                    <section id="section-4">
+                        <h2>4. Deep Dive: Enterprise Slurm Configuration Files</h2>
+
+                        <h3>4.1 Anatomy of <code>slurm.conf</code></h3>
+                        <p>The central configuration file for Slurm is <code>/etc/slurm/slurm.conf</code>. It must be identical across all controller and compute nodes in the cluster. Below is an exhaustive breakdown of core configuration directives grouped by functional domain:</p>
+
+                        <div class="cyber-code-block my-6">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">/etc/slurm/slurm.conf — Annotated Master Configuration</span>
+                            </div>
+                            <pre><code class="language-ini"># ------------------------------------------------------------------
+# CLUSTER IDENTIFICATION &amp; CONTROL DAEMON SETTINGS
+# ------------------------------------------------------------------
+ClusterName=vut-hpc-cluster
+SlurmctldHost=master(192.168.56.10)
+SlurmUser=slurm
+SlurmctldPort=6817
+SlurmdPort=6818
+AuthType=auth/munge
+CryptoType=crypto/munge
+StateSaveLocation=/var/spool/slurmctld
+SlurmdSpoolDir=/var/spool/slurmd
+
+# ------------------------------------------------------------------
+# LOGGING &amp; PROCESS MANAGEMENT
+# ------------------------------------------------------------------
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmdPidFile=/var/run/slurmd.pid
+SlurmSchedLogFile=/var/log/slurm/slurmsched.log
+
+# ------------------------------------------------------------------
+# SCHEDULER &amp; RESOURCE ALLOCATION ALGORITHMS
+# ------------------------------------------------------------------
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core_Memory
+ProctrackType=proctrack/cgroup
+TaskPlugin=task/cgroup
+
+# ------------------------------------------------------------------
+# PRIORITY &amp; FAIR-SHARE WEIGHTING
+# ------------------------------------------------------------------
+PriorityType=priority/multifactor
+PriorityWeightDecayHalfLife=14-0
+PriorityWeightFairshare=100000
+PriorityWeightAge=10000
+PriorityWeightPartition=10000
+PriorityWeightJobSize=1000
+
+# ------------------------------------------------------------------
+# ACCOUNTING DATABASE INTEGRATION
+# ------------------------------------------------------------------
+AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageHost=master
+AccountingStoragePort=6819
+AccountingStorageUser=slurm
+AccountingStoreFlags=job_comment,script
+
+# ------------------------------------------------------------------
+# COMPUTE NODE &amp; PARTITION DEFINITIONS
+# ------------------------------------------------------------------
+NodeName=node[01-04] CPUs=2 RealMemory=2048 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+NodeName=master      CPUs=2 RealMemory=4096 Sockets=1 CoresPerSocket=2 ThreadsPerCore=1 State=UNKNOWN
+
+PartitionName=standard Nodes=node[01-04] Default=YES MaxTime=24:00:00 State=UP DefMemPerCPU=1024 MaxMemPerCPU=2048
+PartitionName=highmem  Nodes=master      Default=NO  MaxTime=04:00:00 State=UP DefMemPerCPU=2048 MaxMemPerCPU=4096</code></pre>
+                        </div>
+
+                        <p>Key Parameter Explanations:</p>
+                        <ul>
+                            <li><code>AuthType=auth/munge</code>: Uses the Munge authentication daemon to produce cryptographic MUNGE credentials, verifying that IPC requests originate from valid cluster users.</li>
+                            <li><code>SelectType=select/cons_tres</code>: Enables Consumable Trackable Resources, allowing Slurm to track and allocate specific numbers of CPU cores, RAM bytes, and GPU devices independently.</li>
+                            <li><code>SelectTypeParameters=CR_Core_Memory</code>: Configures Slurm to treat both individual CPU Cores and RAM Memory as consumable resources. If a job requests 2GB RAM on a node with 2GB total RAM, no other job can be scheduled on that node even if CPU cores remain idle.</li>
+                            <li><code>TaskPlugin=task/cgroup</code>: Binds spawned user tasks to Linux Control Groups (cgroups), enforcing hardware isolation.</li>
+                        </ul>
+
+                        <h3>4.2 Anatomy of <code>cgroup.conf</code></h3>
+                        <p>The <code>/etc/slurm/cgroup.conf</code> file governs Linux Kernel Cgroup isolation on compute nodes:</p>
+
+                        <div class="cyber-code-block my-6">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">/etc/slurm/cgroup.conf — Linux Cgroup Enforcement Rules</span>
+                            </div>
+                            <pre><code class="language-ini">CgroupAutomount=yes
+CgroupReleaseAgentDir="/etc/slurm/cgroup"
+ConstrainCores=yes
+ConstrainRAMSpace=yes
+ConstrainSwapSpace=yes
+ConstrainDevices=yes
+AllowedRAMSpace=100
+AllowedSwapSpace=0</code></pre>
+                        </div>
+
+                        <p>Parameter Explanations:</p>
+                        <ul>
+                            <li><code>ConstrainCores=yes</code>: Restricts job processes exclusively to the CPU core masks assigned by Slurm. Threads attempting to execute on unallocated cores are blocked by the kernel.</li>
+                            <li><code>ConstrainRAMSpace=yes</code>: Enforces strict physical RAM memory limits. If a user job exceeds its requested RAM allocation (e.g. requesting 1GB but attempting to allocate 3GB), the kernel Out-Of-Memory (OOM) killer immediately terminates the job process, protecting neighboring jobs from memory starvation.</li>
+                            <li><code>ConstrainDevices=yes</code>: Restricts GPU device access so users can only see and access the specific GPU cards assigned to their job.</li>
+                        </ul>
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 5 -->
+                    <section id="section-5">
+                        <h2>5. Exhaustive Slurm Command &amp; Parameter Reference</h2>
+
+                        <h3>5.1 Batch Job Submission: <code>sbatch</code> Options</h3>
+                        <p>The <code>sbatch</code> command parses `#SBATCH` directives in a script and submits the job asynchronously to the Slurm queue. Below is a comprehensive reference table of essential <code>sbatch</code> parameters:</p>
+
+                        <div class="overflow-x-auto my-6">
+                            <table class="w-full text-xs text-left border-collapse border border-slate-200 dark:border-slate-800">
+                                <thead>
+                                    <tr class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Directive Parameter</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Example Usage</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Detailed Operational Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--job-name (-J)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --job-name=matrix_mult</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Assigns a human-readable identifier name displayed in queue listings.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--nodes (-N)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --nodes=2</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Requests a specific minimum and maximum number of physical compute nodes.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--ntasks (-n)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --ntasks=8</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Requests total number of parallel tasks (e.g. MPI processes) across all allocated nodes.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--cpus-per-task (-c)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --cpus-per-task=4</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Allocates CPU cores per task for hybrid OpenMP/MPI applications (sets OMP_NUM_THREADS).</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--mem / --mem-per-cpu</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --mem=4G</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Specifies real memory requirement per node (--mem=4G) or per CPU core (--mem-per-cpu=1024M).</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--time (-t)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --time=02:30:00</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Sets maximum wall-clock runtime limit (HH:MM:SS or DD-HH:MM:SS). Job is killed if exceeded.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--partition (-p)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH --partition=standard</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Submits job to a specific queue partition (e.g. standard, highmem, gpu).</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">--output / --error (-o / -e)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">#SBATCH -o out_%j.log -e err_%j.log</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Redirects standard output (stdout) and standard error (stderr) file paths. %j expands to Job ID.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3>5.2 Real-Time &amp; Interactive Allocation: <code>srun</code> &amp; <code>salloc</code></h3>
+                        <p>While <code>sbatch</code> is for non-interactive batch jobs, <code>srun</code> and <code>salloc</code> provide real-time interactive access:</p>
+                        
+                        <p>Interactive Shell Allocation (<code>salloc</code>): Allocates compute resources in real time and spawns a bash shell on the login node with job environment variables exported:</p>
+                        <pre><code class="language-bash"># Request 1 node with 2 CPUs for 1 hour interactively
+salloc --nodes=1 --cpus-per-task=2 --time=01:00:00 --partition=standard</code></pre>
+
+                        <p>Interactive Terminal Access (<code>srun --pty</code>): Spawns an interactive pseudo-terminal directly inside a compute node environment:</p>
+                        <pre><code class="language-bash"># SSH directly into an allocated compute node shell
+srun --nodes=1 --pty /bin/bash</code></pre>
+
+                        <h3>5.3 Queue Inspection &amp; Administrative Diagnostics: <code>squeue</code>, <code>sinfo</code>, <code>scontrol</code> &amp; <code>sacct</code></h3>
+
+                        <div class="space-y-4 my-6">
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-sky-500 text-sm m-0 mb-1">Queue Monitoring (squeue)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Displays pending (PD), running (R), and completing (CG) jobs. Advanced custom formatting syntax:</p>
+                                <pre><code class="language-bash">squeue -u student1 -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R"</code></pre>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-indigo-500 text-sm m-0 mb-1">Node Status Inspection (sinfo)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Summarizes node state codes: <code>idle</code> (available), <code>alloc</code> (fully loaded), <code>mix</code> (partially loaded), <code>drain</code> (maintenance mode), <code>down</code> (offline).</p>
+                                <pre><code class="language-bash">sinfo -N -l</code></pre>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-amber-500 text-sm m-0 mb-1">Live Administrative Modification (scontrol)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Allows administrators to inspect detailed job state metadata or dynamically modify running job parameters without killing the job:</p>
+                                <pre><code class="language-bash"># View full internal diagnostic dump of Job 104
+scontrol show job 104
+
+# Hold and release a queued job
+scontrol hold 104
+scontrol release 104
+
+# Dynamically update requested memory allocation
+scontrol update JobId=104 MinMemoryCPU=2048</code></pre>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-emerald-500 text-sm m-0 mb-1">Accounting Log Queries (sacct)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Queries historical job accounting logs from the MySQL database to analyze memory usage and exit status codes:</p>
+                                <pre><code class="language-bash">sacct -j 104 --format=JobID,JobName,Partition,AllocCPUs,Elapsed,State,ExitCode,MaxRSS</code></pre>
+                            </div>
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
@@ -311,66 +499,63 @@ struct alignas(64) GoodThreadData2 {
                         <h2>6. Hardware Topology Discovery &amp; Thread Pinning</h2>
                         <p>To prevent the Linux kernel OS scheduler from migrating threads across NUMA domains during execution, HPC developers enforce thread binding and CPU affinity:</p>
 
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-bash"># Inspect NUMA hardware topology, node distance matrices, and core mapping
+                        <div class="cyber-code-block my-6">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">Terminal — NUMA Discovery &amp; Thread Binding</span>
+                            </div>
+                            <pre><code class="language-bash"># Inspect NUMA hardware topology and distance matrix
 numactl --hardware
 
 # Display graphical topology diagram of sockets, NUMA nodes, and caches
 lstopo --output-format png > topology.png
 
-# Launch process bound to NUMA node 0 cores and local RAM
-numactl --cpunodebind=0 --membind=0 ./my_multithreaded_app
-
 # Enforce core binding via Slurm
 srun --cpu-bind=cores ./my_app</code></pre>
-</div>
-                    
-
-                    
-
-                    <!-- SECTION 7 -->
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 7 -->
                     <section id="section-7">
-                        <h2>7. Summary</h2>
-                        <p>Understanding single-node multi-core SMP and NUMA mechanics is essential before writing multithreaded code. In Week 5, we apply these hardware principles using <strong>OpenMP</strong>.</p>
+                        <h2>7. Summary &amp; Self-Assessment</h2>
+                        <p>Resource management is the critical link between single-node hardware optimization and cluster-wide parallel job execution. This week, we explored SMP/NUMA microarchitectures, cache coherence protocols, slurm.conf/cgroup.conf parameter engineering, and the complete Slurm command suite.</p>
 
-
-                    </section>
-
-                    <!-- Quiz Link Widget -->
-                    
-    
+                        <div class="p-5 my-6 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs leading-relaxed">
+                            <strong class="text-sky-500 text-sm block mb-2">Checklist: Test Your Knowledge</strong>
+                            <ul class="space-y-1.5 m-0 pl-4">
+                                <li>What is the function of `SelectTypeParameters=CR_Core_Memory` in `slurm.conf`?</li>
+                                <li>How does `ConstrainRAMSpace=yes` in `cgroup.conf` protect shared compute nodes from OOM crashes?</li>
+                                <li>What is the difference between `sbatch`, `srun`, and `salloc`?</li>
+                                <li>How can `scontrol show job` and `sacct` be used for cluster troubleshooting?</li>
+                            </ul>
+                        </div>
                     </section>
 
                     <!-- Quiz Link Widget -->
                     <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
                         <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             <span>Knowledge Check</span>
                         </div>
                         <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
                         <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 4 concepts? Take the interactive quiz to reinforce key ideas.</p>
                         <a href="Week_4_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             Take Week 4 Quiz Now
                         </a>
                     </div>
-                </div>
-</div>
+
                 </article>
-</main>
+            </div>
+
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">

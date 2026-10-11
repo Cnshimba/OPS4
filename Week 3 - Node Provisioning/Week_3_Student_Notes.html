@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 3 Student Notes — Node Provisioning (EIOPS4A)</title>
+    <title>Week 3 Student Notes — Node Provisioning Strategies &amp; Microarchitecture (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -59,12 +59,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
-    <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
     
@@ -76,14 +70,14 @@
                     03
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 3: Node Provisioning</span>
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 3: Node Provisioning Strategies</span>
                     <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
             </a>
             <div class="flex items-center space-x-4">
-                <a href="Week_3_Lab_Warewulf_Install.html" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-500 hover:bg-sky-500 hover:text-white transition-all no-underline hidden sm:flex items-center">
+                <a href="../Week 1 - HPC Introduction and Architectures/Week_1_Lab_Vagrant.html" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-500 hover:bg-sky-500 hover:text-white transition-all no-underline hidden sm:flex items-center">
                     <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    Lab 3 Guide
+                    Lab 1 Vagrant Guide
                 </a>
                 <a href="Week_3_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
                     <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
@@ -102,7 +96,7 @@
     <main class="container mx-auto px-4 max-w-7xl">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <!-- Left Sticky Sidebar (Table of Contents &amp; Meta) -->
             <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
                 
                 <!-- Quick Navigation Box -->
@@ -112,15 +106,11 @@
                         <span>On This Page</span>
                     </div>
                     <nav class="space-y-1.5 text-xs font-medium">
-                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Introduction &amp; Operational Rationale</a>
-                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Taxonomy of Managed HPC Resources (Chapter 5)</a>
-                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. Slurm Architecture &amp; Daemon Hierarchy</a>
-                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Priority Calculation &amp; Fair-Share Scheduling Mathematics</a>
-                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Detailed Slurm Configuration Anatomy (slurm.conf)</a>
-                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Linux Control Groups (cgroups v2) &amp; Memory Isolation</a>
-                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Comprehensive Slurm Command Quick Reference</a>
-                        <a href="#section-8" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">8. Annotated Production Batch Scripts</a>
-                        <a href="#section-9" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">9. Summary</a>
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Fundamentals of Node Provisioning</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Vagrant &amp; Virtualization Inner Workings</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. Warewulf 4 Bare-Metal Architecture</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Strategy Comparison &amp; Decision Framework</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Summary &amp; Self-Assessment</a>
                     </nav>
                 </div>
 
@@ -132,16 +122,16 @@
                     </div>
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
                         <span class="text-slate-400 font-semibold">Reading Time</span>
-                        <span class="font-bold text-slate-700 dark:text-slate-300">~20 Minutes</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~30 Minutes</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-slate-400 font-semibold">Slides Ref</span>
-                        <span class="font-bold text-amber-500">Ch. 4 & 5</span>
+                        <span class="font-bold text-amber-500">Ch. 4 &amp; 5</span>
                     </div>
                     <div class="pt-2">
-                        <a href="Week_3_Lab_Warewulf_Install.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
+                        <a href="../Week 1 - HPC Introduction and Architectures/Week_1_Lab_Vagrant.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Launch Lab 3 Guide
+                            Launch Lab 1 Guide
                         </a>
                     </div>
                 </div>
@@ -157,317 +147,218 @@
                         <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
                             <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
                                 <span class="text-xl font-black text-white tracking-tight">03</span>
-                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
                             </div>
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 03</span>
                         </div>
                         <div class="flex-1 flex flex-col justify-center p-6">
-                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Node Provisioning</h1>
-                            <span class="text-sm font-semibold text-sky-500 mt-1">Warewulf 4, Stateless Provisioning & Network Booting (Ch. 4 & 5)</span>
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Node Provisioning Strategies &amp; Microarchitecture</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">Vagrant Virtualization Mechanics, Warewulf 4 OCI Bare-Metal Protocols &amp; Decision Engineering (Ch. 4 &amp; 5)</span>
                         </div>
                     </div>
 
-                    
-
-                    
-
-                    
-
-
-
-                    <!-- SECTION 1 -->
-                    
-                        
+                    <!-- Learning Outcomes Card -->
+                    <div class="p-6 mb-8 rounded-2xl border border-sky-500/30 bg-sky-500/5 dark:bg-sky-500/10 text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center space-x-2 text-sky-500 font-bold text-sm mb-3 uppercase tracking-wider">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg>
+                            <span>Learning Outcomes (NQF Level 7)</span>
+                        </div>
+                        <ol class="space-y-1.5 text-sm m-0 pl-4">
+                            <li>Deconstruct the architectural mechanics of Vagrant box packaging, VirtualBox provider drivers, host-only networking, and guest communicators.</li>
+                            <li>Analyze Warewulf 4's transition from legacy VNFS tarballs to OCI-standard container images, initramfs overlay injection, and live runtime synchronization.</li>
+                            <li>Critique the 5-stage network boot protocol stack (IPMI -&gt; DHCP -&gt; TFTP -&gt; HTTP -&gt; Kernel Exec) powering bare-metal supercomputing clusters.</li>
+                            <li>Formulate an enterprise infrastructure selection matrix comparing virtualized desktop orchestration against physical stateless bare-metal provisioning.</li>
+                        </ol>
+                    </div>
 
                     <!-- SECTION 1 -->
                     <section id="section-1">
-                        <h2>1. Introduction &amp; Operational Rationale</h2>
-                        <p>High-Performance Computing (HPC) clusters represent shared multi-tenant infrastructure costing millions of dollars. Compute nodes host tens of thousands of processing cores, terabytes of system memory, and high-speed network switches. Without automated workload management, multi-user cluster environments would instantly descend into operational chaos: processes from different research groups would collide on the same physical CPU cores, compete for system memory, overflow available RAM, and trigger non-deterministic Linux Out-Of-Memory (OOM) kernel panics.</p>
-<p>A <strong>Resource Manager and Job Scheduler</strong> acts as the central operating system kernel of an HPC cluster. It abstracts physical compute hardware into consumable resource pools, tracks node health status, prioritizes pending execution queues according to institutional policies, enforces strict memory and process isolation boundaries, and logs historical resource utilization metrics for auditing and capacity planning.</p>
-                    
+                        <h2>1. Fundamentals of Node Provisioning in High Performance Computing</h2>
+                        
+                        <h3>1.1 What is Node Provisioning?</h3>
+                        <p>In High Performance Computing (HPC) and distributed system architecture, Node Provisioning is the automated pipeline responsible for initializing raw compute capacity (whether physical bare-metal hardware, virtual machines, or cloud instances), instantiating operating system kernels, installing device drivers and math libraries, binding network interfaces, and bringing the node into an active state ready to execute parallel jobs.</p>
 
-                    
+                        <h3>1.2 The Scalability &amp; Consistency Challenge</h3>
+                        <p>Managing a cluster introduces a severe administrative scaling bottleneck. Manually installing an operating system on a single server using interactive USB installers takes approximately 30 minutes. Provisioning a 500-node cluster manually would require over 250 hours of tedious work, making data center deployment impossible.</p>
 
-                    <!-- SECTION 2 -->
+                        <p>Furthermore, HPC parallel applications demand strict Bit-for-Bit Consistency. In an MPI application executing across 1,000 cores, if a single node possesses a slightly different minor version of an OpenMP runtime or linear algebra library (e.g. <code>libopenblas.so.0.3.20</code> versus <code>libopenblas.so.0.3.21</code>), the simulation will experience subtle floating-point drift, produce non-reproducible scientific results, or crash with segmentation faults. Automated provisioning ensures every node boots a mathematically identical operating system environment.</p>
+
+                        <h3>1.3 Declarative Infrastructure as Code (IaC)</h3>
+                        <p>Modern infrastructure management uses Infrastructure as Code (IaC)—defining cluster topologies using version-controlled text configuration files. IaC is <em>declarative</em>: the systems engineer defines the desired target state of the infrastructure (e.g., "5 nodes running Rocky Linux 9.6 with 2GB RAM on private IP subnet 192.168.56.0/24"), and the provisioning orchestrator automatically executes the API commands required to enforce that exact state.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 2 -->
                     <section id="section-2">
-                        <h2>2. Taxonomy of Managed HPC Resources (Chapter 5)</h2>
-                        <p>Slurm (Simple Linux Utility for Resource Management) manages resources across a multi-dimensional matrix:</p>
+                        <h2>2. Vagrant &amp; Virtualization Inner Workings (Lab 1 Practical Approach)</h2>
 
-<table>
-    <thead><tr><th>Resource Domain</th><th>Physical Entity</th><th>Slurm Management Mechanics</th></tr></thead>
-    <tbody>
-        <tr><td><strong>Nodes</strong></td><td>Individual server blades / chassis in compute racks.</td><td>Grouped into logical partitions (queues). Tracked in real-time states (e.g., <code>IDLE</code>, <code>ALLOCATED</code>, <code>DRAIN</code>, <code>DOWN</code>).</td></tr>
-        <tr><td><strong>Sockets &amp; Cores</strong></td><td>Physical CPU sockets and hardware cores.</td><td>Allocated via Consumable Resources plugin (<code>select/cons_tres</code>). Bound to processes via cgroups to prevent core contention.</td></tr>
-        <tr><td><strong>System Memory</strong></td><td>RAM DIMMs on compute node mainboards.</td><td>Enforced as strict memory limits per node (<code>--mem</code>) or per CPU core (<code>--mem-per-cpu</code>). Oversubscription triggers cgroup OOM termination.</td></tr>
-        <tr><td><strong>Accelerators / GPUs</strong></td><td>NVIDIA H100/A100 GPUs, AMD Instinct accelerators.</td><td>Managed as Generic Resources (GRES). Tracks GPU device indices, memory utilization, and PCIe topology affinity.</td></tr>
-        <tr><td><strong>Interconnect &amp; Topology</strong></td><td>InfiniBand switches and optical fabric links.</td><td>Slurm's topology plugin (<code>topology/tree</code>) schedules multi-node jobs onto nodes attached to the same leaf switch to minimize network hops.</td></tr>
-    </tbody>
-</table>
-                    
+                        <h3>2.1 High-Level Orchestration Architecture</h3>
+                        <p>Vagrant is an open-source orchestration tool designed by HashiCorp that acts as an abstraction wrapper on top of underlying virtualization providers (such as Oracle VM VirtualBox, KVM/QEMU, Hyper-V, or VMware). Rather than managing virtual machines manually through hypervisor graphical user interfaces, Vagrant exposes a unified Command Line Interface (CLI) and a declarative Ruby-based configuration file named <code>Vagrantfile</code>.</p>
 
-                    
+                        <h3>2.2 Box Packaging &amp; Image Mechanics</h3>
+                        <p>At the core of Vagrant's fast deployment speed is the Vagrant Box framework. A box is a compressed gzipped tarball (<code>.box</code> extension) containing three critical elements:</p>
+                        <ul>
+                            <li>Virtual Disk Image: The pre-installed operating system disk (e.g. <code>box-disk1.vmdk</code> or <code>box-disk1.vdi</code> containing a clean Rocky Linux 9.6 installation).</li>
+                            <li>Provider Metadata (<code>metadata.json</code>): Specifies the compatible hypervisor driver (e.g. <code>{"provider": "virtualbox"}</code>).</li>
+                            <li>Vagrantfile Defaults: Sets base RAM, CPU, and default guest credentials (`vagrant` user with passwordless `sudo` and standard insecure SSH keypair).</li>
+                        </ul>
+                        <p>When a developer executes <code>vagrant up</code> for the first time, Vagrant downloads the requested box archive (such as `bento/rockylinux-9.6`) from the Vagrant Cloud registry into a global cache directory on the host (`~/.vagrant.d/boxes/`). For every virtual node instantiated, VirtualBox creates a high-speed Copy-on-Write linked clone referencing the cached base image, allowing 5 virtual machines to spin up in under 60 seconds without duplicating gigabytes of disk storage.</p>
 
-                    <!-- SECTION 3 -->
+                        <h3>2.3 Virtual Network Drivers &amp; Interconnect Emulation</h3>
+<p>To simulate multi-node HPC cluster networking on a single physical laptop (as performed in Lab 1 Workbook), Vagrant coordinates VirtualBox virtual network adapters across three distinct driver modes:</p>
+<p>The first adapter is configured as a NAT Network Adapter (eth0), which Vagrant attaches automatically to the primary VirtualBox NIC. This interface translates guest IP requests to the host machine's outbound internet connection, enabling software package installations via package managers like <code>dnf</code> while establishing SSH port forwarding (mapping host <code>127.0.0.1:2222</code> to guest port <code>22</code>).</p>
+<p>The second adapter is configured as a Host-Only Private Network (eth1). This creates an isolated virtual switch (such as <code>vboxnet0</code>) linking only the host workstation and guest virtual machines on static IP addresses within the <code>192.168.56.0/24</code> subnet. This arrangement emulates the internal compute network of an HPC cluster without exposing cluster traffic to public local area networks.</p>
+<p>In scenarios requiring external network access, Vagrant can also configure a Bridged Public Network. This binds the virtual network interface directly to the host machine's physical Ethernet card, allowing external servers on the physical network to interact with the virtual machine as an independent network host.</p>
+
+<h3>2.4 Provisioning Pipeline &amp; Guest Communicators</h3>
+                        <p>When executing <code>vagrant up</code>, Vagrant passes through a rigid 6-stage microarchitectural initialization pipeline:</p>
+
+                        <div class="cyber-code-block my-6">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">Vagrant Startup Micro-Pipeline</span>
+                            </div>
+                            <pre><code class="language-plaintext">[1. State Check] ----> [2. VM Import &amp; Linked Clone] ----> [3. Hardware Tuning (RAM/CPUs)]
+                                                                    |
+[6. Shell Provisioning] <---- [5. SSH Communicator Connect] <---- [4. Virtual Network Binding]</code></pre>
+                        </div>
+
+                        <p>Once hardware is instantiated, Vagrant uses its internal SSH Guest Communicator to establish an encrypted tunnel into the guest kernel. It replaces the default insecure SSH key with a newly generated random SSH keypair, mounts host-shared folders via VirtualBox Guest Additions, and executes the inline shell provisioner (or Ansible playbook) to set hostnames, populate <code>/etc/hosts</code>, and configure cluster authentication keys.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 3 -->
                     <section id="section-3">
-                        <h2>3. Slurm Architecture &amp; Daemon Hierarchy</h2>
-                        <p>Slurm uses a resilient, distributed daemon model comprising master control controllers, accounting daemons, node execution agents, and cryptographic authentication protocols:</p>
+                        <h2>3. Enterprise Bare-Metal &amp; Stateless Provisioning with Warewulf 4</h2>
 
-<table>
-    <thead><tr><th>Daemon Process</th><th>Host Location</th><th>Core System Responsibilities</th></tr></thead>
-    <tbody>
-        <tr><td><code>slurmctld</code></td><td>Master Controller Node</td><td>The central brain of the cluster. Manages queue states, evaluates fair-share algorithm math, allocates compute nodes to jobs, and monitors node heartbeats. Supports active/backup failover pairs.</td></tr>
-        <tr><td><code>slurmd</code></td><td>Every Compute Node</td><td>The compute node execution agent. Listens for step launch requests from <code>slurmctld</code>, spawns user tasks, creates cgroup containers, attaches CPU masks, and reports local node health.</td></tr>
-        <tr><td><code>slurmdbd</code></td><td>Database Host Server</td><td>The Slurm Database Daemon. Provides a secure gateway between <code>slurmctld</code> and a relational MariaDB database for historical accounting, user bank allocations, and job metrics.</td></tr>
-        <tr><td><code>munged</code></td><td>All Cluster Nodes</td><td>MUNGE (Munge Uid 'N' Gid Environment) service. Generates cryptographic SAML-like payload tokens to authenticate RPC messages between nodes without password prompts.</td></tr>
-    </tbody>
-</table>
-                    
+                        <h3>3.1 Bare-Metal Performance &amp; Hypervisor Overhead</h3>
+                        <p>While local virtualization with Vagrant and VirtualBox is ideal for development and educational labs, running production supercomputers inside virtual machines introduces a 3% to 8% CPU virtualization overhead and severe network I/O latency penalties. Physical supercomputers require Bare-Metal Performance—executing directly on bare silicon hardware without hypervisor abstraction layers.</p>
 
-                    
+                        <h3>3.2 Architectural Evolution: Warewulf 3 (VNFS) vs Warewulf 4 (Go &amp; OCI Containers)</h3>
+<p>Warewulf is the standard open-source bare-metal provisioning framework for HPC clusters. Understanding Warewulf 4 requires examining its technological evolution from legacy architectures.</p>
+<p>Legacy Warewulf 3 relied on Perl scripts to generate custom Virtual Node File System (VNFS) compressed tarballs from local chroots using the <code>wwvnfs</code> utility. While functional, VNFS archives were complex to maintain, difficult to version-control, and dependent on proprietary image formats.</p>
+<p>Warewulf 4 represents a complete rewrite in Go, replacing legacy VNFS tarballs with Open Container Initiative (OCI) Containers compatible with Docker and Apptainer. Operating system images for compute nodes are defined using standard Dockerfiles (such as <code>FROM rockylinux:9</code> followed by <code>RUN dnf install -y openmpi slurm-slurmd</code>) and pulled directly from public or private container registries.</p>
 
-                    <!-- SECTION 4 -->
+<h3>3.3 Complete Network Boot Protocol Stack</h3>
+                        <p>Warewulf 4 provisions hundreds of diskless physical compute nodes simultaneously over the network using a 5-stage protocol stack:</p>
+
+                        <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Warewulf 4 Provisioning Flow" src="../images/warewulf_provisioning_flow_vut.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 3.1: The Warewulf 4 Stateless Bare-Metal Provisioning Boot Sequence.</p>
+                        </div>
+
+                        <ol class="space-y-3 text-sm leading-relaxed">
+                            <li>IPMI Remote Power Management: Warewulf issues power commands (`wwctl power on node[01-99]`). The master node connects over the out-of-band management network to each server's Baseboard Management Controller (BMC) using the Intelligent Platform Management Interface (IPMI) protocol or Redfish API, triggering hardware power-on.</li>
+                            <li>DHCP Network Discovery (`dnsmasq`): The physical network interface (NIC) initiates a Preboot Execution Environment (PXE) broadcast. Warewulf's integrated `dnsmasq` service matches the node's MAC address, assigns its static IP address, and returns the network path of the stage-1 bootloader binary (`ipxe.efi`).</li>
+                            <li>TFTP Bootloader Transfer: The compute node uses Trivial File Transfer Protocol (TFTP) to fetch `ipxe.efi` into RAM, initializing advanced network stack capabilities (such as HTTP downloading and VLAN tagging).</li>
+                            <li>HTTP OCI Container Image Download: The node issues high-speed HTTP GET requests to Warewulf's internal web server to download the compressed Linux kernel (`vmlinuz`) and container root filesystem image (`rootfs.img`) into RAM memory at multi-gigabit speeds (bypassing slow TFTP file transfer bottlenecks).</li>
+                            <li>Overlay Injection &amp; Kernel Execution: Warewulf injects specialized node configuration overlays into the initial RAM disk (initramfs). The node unpacks the container image into RAM, executes `init`, and boots into a pristine, fully operational Linux state.</li>
+                        </ol>
+
+                        <h3>3.4 The Warewulf 4 Object Model &amp; Dynamic Overlays</h3>
+                        <p>Warewulf 4 manages infrastructure declaratively through the `wwctl` command-line utility, organizing cluster state into three core object types:</p>
+
+                        <p>Nodes: Physical server definitions mapping MAC addresses, static IPs, hostnames, and IPMI parameters (e.g. <code>wwctl node add node01 --mac 52:54:00:12:34:56 --ip 192.168.56.11 --ipmi-ip 10.0.0.11</code>).</p>
+
+                        <p>Profiles: Group templates (e.g., `default`, `gpu-nodes`) establishing shared container images, kernel arguments, and network netmasks. Nodes inherit profile configurations automatically, allowing an administrator to update 500 nodes by modifying a single profile.</p>
+
+                        <p>Overlays (System vs Runtime Overlays): To keep generic container images clean, Warewulf uses Template Overlays (Jinja2 rendered files):</p>
+                        <ul>
+                            <li>System Overlays: Injected into the initial RAM disk (initramfs) before kernel execution. Used for fundamental boot files (e.g., <code>/etc/fstab</code>, <code>/etc/network/interfaces</code>, kernel module parameters).</li>
+                            <li>Runtime Overlays: Dynamically synced to live, running compute nodes in real time by the background <code>wwclient</code> daemon (e.g., updating <code>/etc/slurm/slurm.conf</code>, user SSH keys, or <code>/etc/passwd</code> without requiring a node reboot).</li>
+                        </ul>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 4 -->
                     <section id="section-4">
-                        <h2>4. Priority Calculation &amp; Fair-Share Scheduling Mathematics</h2>
-                        <p>When multiple users submit jobs simultaneously, Slurm computes a dynamic <strong>Job Priority Score</strong> for every pending job in the queue using the Multifactor Priority Plugin:</p>
+                        <h2>4. Provisioning Strategy Selection &amp; Decision Engineering</h2>
 
-$$ \text{Priority} = (W_{age} \times A) + (W_{fairshare} \times F) + (W_{jobsize} \times S) + (W_{partition} \times P) + (W_{qos} \times Q) $$
+                        <h3>4.1 Comparative Architectural Matrix</h3>
+                        <p>Selecting the optimal provisioning strategy requires evaluating workload performance requirements, hardware availability, deployment scale, and administrative complexity.</p>
 
-<ul>
-    <li><strong>Age Factor (<strong>A</strong>)</strong>: Increases linearly the longer a job remains pending in the queue, preventing job starvation.</li>
-    <li><strong>Fair-Share Factor (<strong>F</strong>)</strong>: Measures an account's historical resource consumption relative to its allocated share. Accounts that have under-utilized their quota receive higher fair-share scores; heavy users receive lower priority.</li>
-    <li><strong>Job Size Factor ($S$)</strong>: Rewards jobs requesting larger node counts to maximize cluster parallel efficiency and throughput.</li>
-    <li><strong>Partition Priority ($P$)</strong>: Baseline weight assigned to specific queues (e.g., high-priority interactive queues vs. low-priority preemptible queues).</li>
-</ul>
-                    
+                        <div class="overflow-x-auto my-6">
+                            <table class="w-full text-xs text-left border-collapse border border-slate-200 dark:border-slate-800">
+                                <thead>
+                                    <tr class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Provisioning Strategy</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Primary Target Environment</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Key Architectural Advantages</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Technical Limitations &amp; Trade-Offs</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">Vagrant + VirtualBox (Lab 1)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Local developer laptops, student labs, CI/CD automated test pipelines.</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Zero physical hardware cost; rapid `vagrant up` / `destroy` cycle; portable single-file `Vagrantfile` IaC.</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Hypervisor CPU/RAM overhead (3–8%); limited by workstation RAM capacity; unsuitable for multi-node MPI performance benchmarks.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-indigo-500 border border-slate-200 dark:border-slate-800">Warewulf 4 (Stateless Bare-Metal)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Production supercomputers, research clusters (100–10,000 physical servers).</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">100% bare-metal speed (zero hypervisor loss); zero disk I/O latency; 100% immutable reboot resilience; modern OCI container images.</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Requires physical server hardware, dedicated network switches, DHCP/PXE infrastructure, and out-of-band IPMI setup.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-amber-500 border border-slate-200 dark:border-slate-800">Stateful Disk Imaging (Clonezilla)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Static desktop computer labs, traditional IT server rooms.</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Simple initial setup; persistent disk storage retains state across reboots.</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">Slow disk write times; high maintenance overhead; severe configuration drift over time across compute nodes.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    
-
-                    <!-- SECTION 5 -->
+                        <h3>4.2 Decision Framework: When to Use Which Strategy?</h3>
+                        <p>Use Vagrant &amp; VirtualBox during initial software prototyping, development of Slurm configuration scripts, and academic practical assignments (as performed in Lab 1). Use Warewulf 4 when deploying physical enterprise server racks in a data center to run compute-bound parallel MPI scientific simulations where bare-metal CPU performance and sub-microsecond InfiniBand network speeds are mandatory.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 5 -->
                     <section id="section-5">
-                        <h2>5. Detailed Slurm Configuration Anatomy (<code>slurm.conf</code>)</h2>
-                        <p>The global configuration file located at <code>/etc/slurm/slurm.conf</code> must be identical across all master and compute nodes. Below is a comprehensive annotated configuration snippet:</p>
+                        <h2>5. Summary &amp; Self-Assessment</h2>
+                        <p>Node provisioning forms the foundation of modern high-performance computing infrastructure. This week, we explored the microarchitectural inner workings of local virtualized provisioning using Vagrant IaC (Lab 1) and enterprise bare-metal stateless booting using Warewulf 4, establishing a clear engineering framework for selecting the optimal provisioning strategy for any deployment scenario.</p>
 
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-ini"># ============================================================
-# Core Identity & Master Controller Node Configuration
-# ============================================================
-ClusterName=vut_hpc_cluster
-ControlMachine=master-node
-ControlAddr=10.10.10.1
-SlurmUser=slurm
-SlurmctldPort=6817
-SlurmdPort=6818
-
-# ============================================================
-# Authentication & Resource Isolation Plugins
-# ============================================================
-AuthType=auth/munge
-CryptoType=crypto/munge
-ProctrackType=proctrack/cgroup
-TaskPlugin=task/cgroup,task/affinity
-TaskPluginParam=Cpusets
-
-# ============================================================
-# Scheduling & Consumable Resource Selection
-# ============================================================
-SchedulerType=sched/backfill
-SelectType=select/cons_tres
-SelectTypeParameters=CR_Core_Memory
-
-# ============================================================
-# Node Definitions (Hardware Topology Specs)
-# ============================================================
-NodeName=node[01-04] RealMemory=15500 Sockets=2 CoresPerSocket=4 ThreadsPerCore=1 State=UNKNOWN Gres=gpu:2
-
-# ============================================================
-# Partition (Queue) Definitions
-# ============================================================
-PartitionName=batch Nodes=node[01-04] Default=YES MaxTime=2-00:00:00 State=UP DefMemPerCPU=2000 MaxMemPerCPU=4000 PriorityTier=1
-PartitionName=gpu   Nodes=node[01-04] Default=NO  MaxTime=1-00:00:00 State=UP PriorityTier=2 GRES=gpu:2</code></pre>
-</div>
-                    
-
-                    
-
-                    <!-- SECTION 6 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 6 -->
-                    <section id="section-6">
-                        <h2>6. Linux Control Groups (cgroups v2) &amp; Memory Isolation</h2>
-                        <p>Slurm uses <strong>cgroups (Control Groups)</strong> to construct isolated kernel containers for every job step. This prevents a single misbehaving process from affecting neighbor tasks on shared nodes:</p>
-
-<ul>
-    <li><code>cpu.cfs_quota_us</code>: Hard-limits CPU cycle bandwidth to the exact core count requested by the job script.</li>
-    <li><code>cpuset.cpus</code>: Binds thread execution strictly to designated physical core IDs, eliminating cross-socket cache bouncing.</li>
-    <li><code>memory.max</code>: Enforces hard RAM limits. If a process exceeds its requested limit (<code>--mem</code>), the cgroup subsystem terminates the job cleanly with an <code>OUT_OF_MEMORY</code> error.</li>
-</ul>
-                    
-
-                    
-
-                    <!-- SECTION 7 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 7 -->
-                    <section id="section-7">
-                        <h2>7. Comprehensive Slurm Command Quick Reference</h2>
-                        <table>
-    <thead><tr><th>Command</th><th>Syntax Example</th><th>Description</th></tr></thead>
-    <tbody>
-        <tr><td><code>sbatch</code></td><td><code>sbatch submit_job.sh</code></td><td>Submits a non-interactive batch script to the scheduler queue. Returns a unique Job ID.</td></tr>
-        <tr><td><code>srun</code></td><td><code>srun -N 2 -n 8 --pty bash</code></td><td>Launches parallel job steps or requests an interactive pseudo-terminal allocation shell.</td></tr>
-        <tr><td><code>salloc</code></td><td><code>salloc -N 1 -c 4 --time=01:00:00</code></td><td>Allocates resources interactively, spawning a local shell with Slurm environment variables set.</td></tr>
-        <tr><td><code>squeue</code></td><td><code>squeue -u $USER -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R"</code></td><td>Displays current job status, queue positions, allocated nodes, and execution times.</td></tr>
-        <tr><td><code>sinfo</code></td><td><code>sinfo -N -l</code></td><td>Displays node states (e.g., <code>idle</code>, <code>alloc</code>, <code>drain</code>, <code>down</code>, <code>maint</code>).</td></tr>
-        <tr><td><code>scancel</code></td><td><code>scancel 12345</code> (or <code>scancel -u $USER</code>)</td><td>Cancels pending or running jobs cleanly by sending SIGTERM/SIGKILL signals.</td></tr>
-        <tr><td><code>scontrol</code></td><td><code>scontrol show job 12345</code></td><td>Displays exhaustive diagnostic metadata for specific jobs, nodes, or partitions.</td></tr>
-        <tr><td><code>sacct</code></td><td><code>sacct -j 12345 --format=JobID,JobName,AllocCPUS,Elapsed,State,MaxRSS</code></td><td>Queries historical database accounting logs for completed or failed jobs.</td></tr>
-    </tbody>
-</table>
-                    
-
-                    
-
-                    <!-- SECTION 8 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 8 -->
-                    <section id="section-8">
-                        <h2>8. Annotated Production Batch Scripts</h2>
-                        <h3>8.1 Multi-Node MPI Job Script</h3>
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-bash">#!/bin/bash
-#SBATCH --job-name=mpi_fluid_sim
-#SBATCH --output=logs/mpi_%j.out
-#SBATCH --error=logs/mpi_%j.err
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=4
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=8000M
-#SBATCH --time=02:00:00
-#SBATCH --partition=batch
-
-# Environment configuration
-module purge
-module load gcc/12.2.0 mpi/openmpi-x86_64
-
-# Execute parallel application across 8 total MPI tasks (2 nodes x 4 tasks/node)
-srun /shared/apps/fluid_simulation --grid-size=2048</code></pre>
-</div>
-
-<h3>8.2 Hybrid MPI + OpenMP Job Script</h3>
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-bash">#!/bin/bash
-#SBATCH --job-name=hybrid_matrix
-#SBATCH --output=logs/hybrid_%j.out
-#SBATCH --error=logs/hybrid_%j.err
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=2
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=16000M
-#SBATCH --time=01:30:00
-#SBATCH --partition=batch
-
-# Configure OpenMP multithreading environment matching allocated cpus-per-task
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-export OMP_PROC_BIND=close
-export OMP_PLACES=cores
-
-module load mpi/openmpi-x86_64
-
-# Execute 4 total MPI ranks (2 ranks/node), each launching 4 OpenMP threads (16 total cores)
-srun /shared/apps/hybrid_solver</code></pre>
-</div>
-                    
-
-                    
-
-                    <!-- SECTION 9 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 9 -->
-                    <section id="section-9">
-                        <h2>9. Summary</h2>
-                        <p>Slurm transforms isolated server blades into a unified, multi-tenant supercomputing system. In Week 4, we explore single-node memory microarchitectures—<strong>Symmetric Multiprocessing (SMP) and NUMA</strong>.</p>
-
-
-                    </section>
-
-                    <!-- Quiz Link Widget -->
-                    
-    
+                        <div class="p-5 my-6 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs leading-relaxed">
+                            <strong class="text-sky-500 text-sm block mb-2">Checklist: Test Your Knowledge</strong>
+                            <ul class="space-y-1.5 m-0 pl-4">
+                                <li>How does Vagrant's Copy-on-Write linked clone mechanism accelerate virtual machine instantiation from base boxes?</li>
+                                <li>What are the distinct operational roles of NAT adapters (eth0) versus Host-Only adapters (eth1) in a Vagrant cluster?</li>
+                                <li>Why did Warewulf 4 replace legacy VNFS tarballs with OCI-standard container images?</li>
+                                <li>What is the difference between a Warewulf System Overlay (initramfs) and a Runtime Overlay (`wwclient`)?</li>
+                                <li>Why do production supercomputing centers favor bare-metal stateless provisioning over hypervisor-based virtualization?</li>
+                            </ul>
+                        </div>
                     </section>
 
                     <!-- Quiz Link Widget -->
                     <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
                         <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             <span>Knowledge Check</span>
                         </div>
                         <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
                         <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 3 concepts? Take the interactive quiz to reinforce key ideas.</p>
                         <a href="Week_3_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             Take Week 3 Quiz Now
                         </a>
                     </div>
-                </div>
-</div>
+
                 </article>
-</main>
+            </div>
+
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">

@@ -228,14 +228,14 @@
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 03</span>
-                            <span class="text-xs font-bold text-slate-400">Ch. 5</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 4 &amp; 5</span>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            Resource Management with Slurm
+                            Node Provisioning Strategies
                         </h3>
                         <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
-                            Slurm workload architecture (<code>slurmctld</code>, <code>slurmd</code>), fair-share priority math, cgroups v2 memory enforcement, <code>sbatch</code> job scripts.
+                            General provisioning concepts, Infrastructure as Code (Vagrant &amp; VirtualBox), bare-metal stateless booting (Warewulf 4), and trade-off selection.
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
@@ -245,7 +245,7 @@
                         </a>
                         <a href="Week 3 - Node Provisioning/Week_3_Lab_Warewulf_Install.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
                             <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Lab 2 Guide
+                            Lab 3 Guide
                         </a>
                     </div>
                 </div>
@@ -255,14 +255,14 @@
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="px-3 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-black text-xs">WEEK 04</span>
-                            <span class="text-xs font-bold text-slate-400">Ch. 6</span>
+                            <span class="text-xs font-bold text-slate-400">Ch. 6 &amp; 7</span>
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors m-0 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                            Symmetric Multiprocessor (SMP) Architecture
+                            Resource Management with Slurm
                         </h3>
                         <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
-                            UMA vs NUMA memory topologies, cache coherence MESI/MOESI state matrices, false sharing <code>alignas(64)</code> padding, and <code>numactl</code>.
+                            Slurm workload architecture (<code>slurmctld</code>, <code>slurmd</code>), fair-share priority math, cgroups v2 memory enforcement, <code>sbatch</code> job scripts.
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
@@ -270,7 +270,10 @@
                             <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                             Student Notes
                         </a>
-                        <span class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100/50 dark:bg-slate-800/40 text-slate-400 font-medium text-xs italic">Theory Only</span>
+                        <a href="Week 4 - Resource Management/Week_4_Lab_Workload_Management.html" class="flex-1 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors no-underline border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <svg class="w-3.5 h-3.5 mr-1.5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Lab 4 Guide
+                        </a>
                     </div>
                 </div>
 
@@ -466,10 +469,10 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors m-0 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-                            Capstone Project — Cluster Deployment
+                            Capstone Project — HPC Cluster Synthesis & Live Demo
                         </h3>
                         <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed m-0">
-                            Automated 5-node Rocky Linux HPC cluster deployment with Vagrant (IaC), Slurm scheduler, Lmod modules, compiled OpenBLAS/FFTW3/HDF5/ScaLAPACK scientific software stack, and Prometheus/Grafana monitoring.
+                            Synthesis of Labs 1, 2, 3, 4, 6, and Chapter 8 MPI: Pre-configured 5-node baseline, compiling Lab 4 scientific libraries (OpenBLAS, FFTW3, HDF5, ScaLAPACK, PETSc) with Lmod, centralized Python with mpi4python, HPL benchmarking, and live on-the-fly algorithm execution in pairs.
                         </p>
                     </div>
                     <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capstone Project Brief: Automated Cluster Deployment — OPS4 Course (EIOPS4A)</title>
+    <title>Capstone Project Brief: HPC Cluster Synthesis, Scientific Stack & Live Algorithm Demonstration — EIOPS4A</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -59,6 +59,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 pt-20 pb-24 transition-colors duration-300">
 
@@ -70,7 +76,7 @@
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Capstone Project Brief: Automated Cluster Deployment</span>
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Capstone Project: HPC Synthesis & Live Demo</span>
                     <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
             </a>
@@ -79,9 +85,9 @@
                     <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     <span>Student Notes</span>
                 </a>
-                <a href="Week_12_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
-                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    <span>Quiz 12</span>
+                <a href="Week_12_Slides.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12H4z"></path></svg>
+                    <span>Slides</span>
                 </a>
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
                     <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
@@ -102,68 +108,95 @@
             <!-- Hero Header Card -->
             <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
                 <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
-                </div>
-                <div class="flex-1 flex flex-col justify-center p-6">
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Capstone Project Brief: Automated Cluster Deployment</h1>
-                    <span class="text-xs font-semibold text-sky-500 mt-1">End-to-End Automated Provisioning, Scientific Stack & Monitoring</span>
-                </div>
-            </div>
-
-
-
-            <!-- Hero Header Card -->
-            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
-                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
                     <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 border-2 border-sky-400 flex flex-col items-center justify-center shadow-lg shadow-amber-500/20 mb-1">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                     </div>
                     <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest mt-1">CAPSTONE</span>
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-6">
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Capstone Project — Automated HPC Cluster Deployment</h1>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Capstone Project — HPC Cluster Synthesis & Live Demo</h1>
+                    <span class="text-xs font-semibold text-amber-500 mt-1">Scientific Software Compilation, Lmod Modules, HPL Benchmarking & On-The-Fly Algorithm Execution</span>
                 </div>
             </div>
 
             <!-- Subject Info Banner -->
-            <div class="p-4 mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-slate-700 dark:text-slate-300 text-sm">
-                <p class="m-0"><strong>Module Code:</strong> Operating Systems 4 (EIOPS4A) — High Performance Computing 2026<br>
-                <strong>Project Title:</strong> End-to-End Automated HPC Cluster Provisioning, Scientific Stack Compilation &amp; Observability<br>
-                <strong>Assessment Weight:</strong> Final Capstone Evaluation (NQF Level 7)</p>
+            <div class="p-5 mb-8 rounded-2xl border border-amber-500/30 bg-amber-500/10 text-slate-700 dark:text-slate-300 text-sm space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-500/20 pb-2">
+                    <div><strong>Module Code:</strong> Operating Systems 4 (EIOPS4A) — High Performance Computing 2026</div>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500 text-white">Pairs: Group of 2</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
+                    <div><strong>Curriculum Alignment:</strong> Labs 1, 2, 3, 4, 6 &amp; Chapter 8 (MPI Workbook)</div>
+                    <div><strong>Assessment Mode:</strong> Live Cluster Demonstration &amp; Oral Defense per Group</div>
+                    <div><strong>Starting Baseline:</strong> 5-Node Infrastructure with MPI, Munge &amp; Slurm pre-configured</div>
+                    <div><strong>Demo Challenge:</strong> Live On-the-Fly Algorithm provided by Lecturer</div>
+                </div>
             </div>
 
-            <h2>1. Executive Summary &amp; Project Goal</h2>
-            <p>The Capstone Project synthesizes all theoretical and practical competencies acquired across the 12-week course into a single production-grade automated deployment. Students are required to design, script, and provision a fully functioning <strong>5-node Rocky Linux 9.6 HPC Cluster</strong> (1 Controller Master Node + 4 Compute Worker Nodes) using Infrastructure as Code (IaC) principles.</p>
+            <h2>1. Executive Summary &amp; Project Mission</h2>
+            <p>The Capstone Project represents the practical pinnacle of the <strong>Operating Systems 4 (EIOPS4A)</strong> curriculum. Working collaboratively in <strong>groups of two (2)</strong>, students demonstrate the ability to transform a raw High-Performance Computing infrastructure into a production-grade, optimized scientific computing platform.</p>
+            <p>To reflect real-world supercomputing workflows, your group is <strong>provided with a fully functional starting infrastructure</strong> consisting of a 5-node Rocky Linux 9 cluster where private networking, shared NFS storage, Munge security authentication, the Slurm Workload Manager, and base Open MPI are already active. Your team's mission is to:</p>
+            <ol>
+                <li><strong>Verify the starting foundation</strong> (Labs 1, 2, 3) ensuring multi-node communication, scheduler health, and shared storage.</li>
+                <li><strong>Build and configure the complete scientific software stack</strong> (Lab 4) natively from source under <code>/shared/apps/</code> and register each library with dynamic <strong>Lmod Lua environment modules</strong> under <code>/shared/modulefiles/</code>.</li>
+                <li><strong>Deploy a centralized Python HPC environment</strong> (Lab 4) linked dynamically to custom OpenBLAS and fully configure <strong><code>mpi4python</code> (mpi4py)</strong> for distributed Python execution.</li>
+                <li><strong>Conduct cluster benchmarking and performance tuning</strong> (Lab 6) using High-Performance Linpack (HPL), calculating theoretical <em>R</em><sub>peak</sub>, extracting sustained <em>R</em><sub>max</sub>, and evaluating cluster efficiency.</li>
+                <li><strong>Master distributed-memory MPI parallel programming</strong> (Chapter 8 Workbook) covering point-to-point, synchronization barriers, and collective communication primitives.</li>
+                <li><strong>Successfully defend your deployment in a live demonstration</strong>: During the scheduled group assessment, the lecturer will inspect your cluster and hand your team an <strong>unannounced test algorithm</strong> based on any of the installed libraries. Your group must compile, submit via Slurm, execute across worker nodes, and explain the parallel execution live on the spot!</li>
+            </ol>
 
-            <h2>2. Core Architectural Components</h2>
-            <p>Your automated deployment scripts (<code>bootstrap_master.sh</code> and <code>bootstrap_compute.sh</code>) must configure five integrated subsystems:</p>
+            <div class="cyber-callout cyber-callout-info my-6">
+                <p class="m-0 font-bold text-sky-500">👥 Group Collaboration Policy</p>
+                <p class="m-0 text-xs mt-1">This capstone must be executed in <strong>pairs (groups of two)</strong>. Both partners are expected to contribute equally to the library compilation, Lmod configuration, benchmarking, and code execution. During the live demonstration, each student will undergo an individual oral examination to defend specific architectural aspects of the cluster.</p>
+            </div>
+
+            <h2>2. Covered Laboratory Units &amp; Technical Scope</h2>
+            <p>This capstone project synthesizes competencies exclusively from the following six curriculum modules:</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
                 <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
-                    <h3 class="text-base font-bold text-amber-500 m-0">1. Infrastructure &amp; Network (IaC)</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Vagrantfile automation deploying <code>master</code> (4GB RAM, 2 CPUs) and <code>compute01-04</code> (2GB RAM each) on private subnet <code>192.168.57.0/24</code> with Chrony time sync.</p>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-sky-500 m-0">Lab 1 &amp; Lab 2: Infrastructure &amp; Slurm</h3>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-sky-500/10 text-sky-500">Baseline Provided</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">5-node Rocky Linux 9.6 topology (<code>master</code> + <code>compute01-04</code>), Chrony time sync, private subnet <code>192.168.56.0/24</code>, NFS <code>/shared</code> export, Munge key authentication, and Slurm scheduler (<code>slurmctld</code>, <code>slurmd</code>) in active <code>IDLE</code> state.</p>
                 </div>
+
                 <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
-                    <h3 class="text-base font-bold text-sky-500 m-0">2. Storage &amp; Security</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Multi-host private NFS export (<code>/shared/apps</code>, <code>/shared/modulefiles</code>), ED25519 passwordless SSH, and Munge cryptographic authentication.</p>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-indigo-500 m-0">Lab 3: Open MPI &amp; PMIx Integration</h3>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-500">Baseline Provided</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Open MPI 4.1.x runtime and <code>mpicc</code> compiler wrappers integrated with Slurm via Process Management Interface Exascale (PMIx). Validated multi-node job dispatch using <code>srun</code> and <code>sbatch</code>.</p>
                 </div>
-                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
-                    <h3 class="text-base font-bold text-indigo-500 m-0">3. Slurm Workload Scheduler</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Multi-node Slurm orchestrator (<code>slurmctld</code> on master, <code>slurmd</code> on worker nodes) managing job queues and hardware allocations.</p>
+
+                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-amber-500/40 bg-amber-500/5 dark:bg-slate-800/80 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-amber-500 m-0">Lab 4: The Scientific Software Stack</h3>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-white">Core Student Task</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Source compilation of <strong>OpenBLAS</strong> (OpenMP, dynamic architecture), <strong>FFTW 3</strong> (MPI enabled), <strong>Parallel HDF5</strong> (MPI-IO), <strong>ScaLAPACK</strong> (CMake, OpenBLAS-linked), and <strong>PETSc</strong>. Lmod modulefiles and centralized Python with <strong>mpi4python</strong>.</p>
                 </div>
-                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-2">
-                    <h3 class="text-base font-bold text-emerald-500 m-0">4. Scientific Software Stack</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Lmod Environment Modules, source-compiled OpenBLAS (with OpenMP), FFTW 3 (with MPI), Parallel HDF5, ScaLAPACK, and Python <code>mpi4py</code>.</p>
+
+                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-emerald-500/40 bg-emerald-500/5 dark:bg-slate-800/80 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-emerald-500 m-0">Lab 6: Cluster Benchmarking (HPL)</h3>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500 text-white">Core Student Task</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Source compilation of High-Performance Linpack (<code>xhpl</code>) linked to custom OpenBLAS and Open MPI. Memory sizing of <em>N</em> in <code>HPL.dat</code>, process grid tuning (<em>P</em> &times; <em>Q</em> = 8), Slurm batch execution, and calculation of <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency <em>E</em>.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-purple-500/40 bg-purple-500/5 dark:bg-slate-800/80 md:col-span-2 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-purple-400 m-0">Chapter 8 Workbook: Distributed-Memory MPI Programming</h3>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-purple-500 text-white">Core Student Task &amp; Demo Foundation</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Mastery of MPI communication paradigms: Point-to-point (<code>MPI_Send</code>/<code>MPI_Recv</code>), synchronization barriers (<code>MPI_Barrier</code>), host querying (<code>MPI_Get_processor_name</code>), collective distributions (<code>MPI_Bcast</code>, <code>MPI_Scatter</code>, <code>MPI_Gather</code>, <code>MPI_Allgather</code>), parallel reductions (<code>MPI_Reduce</code> with <code>MPI_SUM</code>, <code>MPI_MIN</code>, <code>MPI_MAX</code>), and end-to-end multi-stage distributed algorithms.</p>
                 </div>
             </div>
 
-            <h2>3. Master &amp; Worker Provisioning Scripts</h2>
-
-            <h3>3.1 Master Node Provisioning Script (<code>bootstrap_master.sh</code>)</h3>
-            <p>The master node script configures core network routes, installs system services, compiles scientific libraries from source, and starts monitoring daemons:</p>
+            <h2>3. Provided Baseline Infrastructure (Starting Point)</h2>
+            <p>Your team does <strong>not</strong> need to provision virtual machines, generate Munge keys, or configure Slurm daemons from scratch. The course lecturer provides your group with an operational 5-node cluster image. Before beginning library installations, verify that your starting baseline is healthy:</p>
 
             <div class="cyber-code-block">
                 <div class="cyber-code-header">
@@ -172,64 +205,295 @@
                         <span class="cyber-dot dot-yellow"></span>
                         <span class="cyber-dot dot-green"></span>
                     </div>
-                    <span class="text-xs font-mono text-slate-400">bootstrap_master.sh — Master Node Script</span>
+                    <span class="text-xs font-mono text-slate-400">Terminal — Baseline Verification Commands (Run on Master)</span>
                 </div>
-                <div class="cyber-code-block">
+                <pre><code class="language-bash"># 1. Connect to the cluster master controller
+vagrant ssh master
+
+# 2. Verify all 4 compute nodes are in IDLE state in Slurm
+sinfo
+
+# Expected Output:
+# PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+# debug*       up   infinite      4   idle compute[01-04]
+
+# 3. Test multi-node command dispatch via Slurm
+srun -N 4 hostname
+
+# Expected Output (one line per worker node):
+# compute01
+# compute02
+# compute03
+# compute04
+
+# 4. Verify shared NFS directory is mounted and accessible
+pdsh -R ssh -g compute "df -h /shared"
+
+# 5. Confirm base Open MPI wrapper compiler is accessible
+module load mpi/openmpi-x86_64
+which mpicc && which mpirun
+mpirun --version</code></pre>
+            </div>
+
+            <h2>4. Student Implementation Requirements (Lab 4, Lab 6 &amp; Ch 8)</h2>
+            <p>Your group must build the following components on the shared storage volume (<code>/shared/apps/</code> and <code>/shared/modulefiles/</code>) so that they immediately propagate to all compute nodes:</p>
+
+            <h3>4.1 Milestone 1: Compiling the Scientific Software Stack (Lab 4)</h3>
+            <p>All software must be compiled natively from source using appropriate compiler optimization flags and parallel MPI wrappers:</p>
+
+            <div class="space-y-4 my-6">
+                <!-- OpenBLAS -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-sm font-bold text-sky-500 m-0">1. OpenBLAS (v0.3.26)</h4>
+                        <span class="text-[11px] font-mono text-slate-400">/shared/apps/openblas</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Optimized BLAS &amp; LAPACK linear algebra kernels. Must be compiled with dynamic CPU architecture detection and OpenMP multi-threading support:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-bash">cd /workspace/scratch/OpenBLAS-0.3.26
+make -j2 DYNAMIC_ARCH=1 USE_OPENMP=1
+make PREFIX=/shared/apps/openblas install</code></pre>
+                    </div>
+                </div>
+
+                <!-- FFTW 3 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-sm font-bold text-sky-500 m-0">2. FFTW 3 (v3.3.10)</h4>
+                        <span class="text-[11px] font-mono text-slate-400">/shared/apps/fftw3</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Fastest Fourier Transform in the West. Must be configured with shared libraries and distributed MPI support enabled:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-bash">cd /workspace/scratch/fftw-3.3.10
+module load mpi/openmpi-x86_64
+./configure --enable-shared --enable-mpi --prefix=/shared/apps/fftw3
+make -j2 && make install</code></pre>
+                    </div>
+                </div>
+
+                <!-- Parallel HDF5 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-sm font-bold text-sky-500 m-0">3. Parallel HDF5 (v1.14.3)</h4>
+                        <span class="text-[11px] font-mono text-slate-400">/shared/apps/hdf5</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Hierarchical scientific data format. Must be compiled with MPI compiler wrappers (<code>CC=mpicc</code>) to activate parallel MPI-IO collective writing:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-bash">cd /workspace/scratch/hdf5-hdf5_1.14.3
+CC=mpicc ./configure --enable-parallel --enable-shared --prefix=/shared/apps/hdf5
+make -j2 && make install</code></pre>
+                    </div>
+                </div>
+
+                <!-- ScaLAPACK -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-sm font-bold text-sky-500 m-0">4. ScaLAPACK (v2.2.0)</h4>
+                        <span class="text-[11px] font-mono text-slate-400">/shared/apps/scalapack</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Scalable Linear Algebra Package for distributed-memory architectures. Built using CMake, explicitly linking against your custom OpenBLAS:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-bash">cd /workspace/scratch/scalapack-2.2.0/build
+cmake .. -DCMAKE_INSTALL_PREFIX=/shared/apps/scalapack \
+         -DBUILD_SHARED_LIBS=ON \
+         -DLAPACK_LIBRARIES=/shared/apps/openblas/lib/libopenblas.so \
+         -DBLAS_LIBRARIES=/shared/apps/openblas/lib/libopenblas.so
+make -j2 && make install</code></pre>
+                    </div>
+                </div>
+
+                <!-- PETSc -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-sm font-bold text-sky-500 m-0">5. PETSc (v3.20.5)</h4>
+                        <span class="text-[11px] font-mono text-slate-400">/shared/apps/petsc</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Portable, Extensible Toolkit for Scientific Computation. Integrates MPI, OpenBLAS, ScaLAPACK, and HDF5 into a unified solver engine:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-bash">cd /workspace/scratch/petsc-3.20.5
+./configure --prefix=/shared/apps/petsc \
+            --with-cc=mpicc --with-cxx=mpicxx --with-fc=mpif90 \
+            --with-blaslapack-lib=/shared/apps/openblas/lib/libopenblas.so \
+            --with-scalapack-dir=/shared/apps/scalapack \
+            --with-hdf5-dir=/shared/apps/hdf5 \
+            --download-metis --download-parmetis
+make all && make install</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3>4.2 Milestone 2: Lmod Environment Modulefiles (Lab 4)</h3>
+            <p>Each compiled library must have a clean, declarative Lua modulefile placed inside <code>/shared/modulefiles/&lt;package&gt;/&lt;version&gt;.lua</code>. Users must be able to load any library on demand via <code>module load &lt;package&gt;</code> without manual environment variable pollution:</p>
+            <ul>
+                <li><code>/shared/modulefiles/openblas/0.3.26.lua</code>: Prepends <code>PATH</code>, <code>LD_LIBRARY_PATH</code>, <code>C_INCLUDE_PATH</code>, and sets <code>OPENBLAS_DIR</code>.</li>
+                <li><code>/shared/modulefiles/fftw3/3.3.10.lua</code>: Prepends binary, library, and header paths; sets <code>FFTW_DIR</code>.</li>
+                <li><code>/shared/modulefiles/hdf5/1.14.3.lua</code>: Prepends HDF5 compiler wrappers, shared libraries, and headers; sets <code>HDF5_DIR</code>.</li>
+                <li><code>/shared/modulefiles/scalapack/2.2.0.lua</code>: Prepends ScaLAPACK library and header paths; sets <code>SCALAPACK_DIR</code>.</li>
+                <li><code>/shared/modulefiles/petsc/3.20.5.lua</code>: Prepends PETSc paths and sets <code>PETSC_DIR</code>.</li>
+            </ul>
+
+            <div class="cyber-code-block">
                 <div class="cyber-code-header">
                     <div class="cyber-code-dots">
                         <span class="cyber-dot dot-red"></span>
                         <span class="cyber-dot dot-yellow"></span>
                         <span class="cyber-dot dot-green"></span>
                     </div>
-                    <span class="text-xs font-mono text-slate-400">Terminal Command</span>
+                    <span class="text-xs font-mono text-slate-400">Verifying Lmod on Compute Nodes</span>
                 </div>
-                <pre><code class="language-bash">#!/usr/bin/env bash
-set -euo pipefail
+                <pre><code class="language-bash"># On compute01 (via ssh):
+module use /shared/modulefiles
+module avail
 
-echo ">>> [STAGE 1] Configuring Hostnames &amp; Network..."
-hostnamectl set-hostname master
-
-cat &lt;&lt; 'EOF' &gt; /etc/hosts
-127.0.0.1   localhost
-192.168.57.10 master
-192.168.57.11 compute01
-192.168.57.12 compute02
-192.168.57.13 compute03
-192.168.57.14 compute04
-EOF
-
-echo ">>> [STAGE 2] Installing Core Packages..."
-dnf install -y epel-release
-dnf install -y vim nano wget curl git chrony tar unzip rsync pdsh pdsh-rcmd-ssh \
-               nfs-utils slurm slurm-slurmctld slurm-slurmd munge munge-libs Lmod
-
-echo ">>> [STAGE 3] Provisioning NFS Shared Storage..."
-mkdir -p /shared/apps /shared/modulefiles
-chmod 777 /shared
-echo "/shared 192.168.57.0/24(rw,sync,no_root_squash)" &gt; /etc/exports
-systemctl enable --now nfs-server exportfs -rav
-
-echo ">>> [STAGE 4] Munge Cryptographic Key Generation..."
-dd if=/dev/urandom bs=1 count=1024 of=/etc/munge/munge.key
-chown munge:munge /etc/munge/munge.key
-chmod 400 /etc/munge/munge.key
-systemctl enable --now munge
-cp /etc/munge/munge.key /shared/munge.key
-
-echo ">>> [STAGE 5] Slurm Scheduler &amp; Monitoring Services..."
-systemctl enable --now slurmctld prometheus node_exporter grafana-server</code></pre>
-            </div>
+# Expected output shows custom modules:
+# ---- /shared/modulefiles ----
+# fftw3/3.3.10  hdf5/1.14.3  openblas/0.3.26  petsc/3.20.5  python-hpc/1.0  scalapack/2.2.0</code></pre>
             </div>
 
-            <h2>4. Capstone Project Deliverables &amp; Evaluation Criteria</h2>
-            <p>Students must submit their full Git repository containing:</p>
+            <h3>4.3 Milestone 3: Centralized Python Environment &amp; mpi4python (Lab 4)</h3>
+            <p>Rather than isolated, unlinked user Python installations, students must establish a cluster-wide shared virtual environment under <code>/shared/apps/python-hpc-env</code>:</p>
+            <ol>
+                <li>Instantiate the virtual environment on master: <code>python3 -m venv /shared/apps/python-hpc-env</code>.</li>
+                <li>Create <code>site.cfg</code> instructing pip to link NumPy directly against your compiled OpenBLAS (<code>/shared/apps/openblas/lib</code>).</li>
+                <li>Compile NumPy from source using <code>pip install --no-binary :all: numpy==1.26.4</code>.</li>
+                <li>Install <strong>SciPy</strong> and <strong><code>mpi4python</code> (mpi4py)</strong>, ensuring mpi4py builds with your Open MPI headers.</li>
+                <li>Deploy modulefile <code>/shared/modulefiles/python-hpc/1.0.lua</code> configuring <code>VIRTUAL_ENV</code>, <code>PYTHONPATH</code>, <code>PATH</code>, and <code>LD_LIBRARY_PATH</code>.</li>
+                <li>Verify linkage on compute nodes using <code>python3 -c "import numpy; numpy.show_config()"</code> and a multi-node mpi4py test script.</li>
+            </ol>
+
+            <h3>4.4 Milestone 4: Cluster Benchmarking &amp; Tuning (Lab 6)</h3>
+            <p>To evaluate the real sustained performance of your cluster, your group must compile and tune High-Performance Linpack (HPL):</p>
+            <ol>
+                <li><strong>Compile HPL</strong>: Download HPL 2.3, configure <code>Make.Rocky</code> pointing to <code>/shared/apps/openblas</code> and Open MPI wrappers, compile <code>xhpl</code>, and place it in <code>/shared/benchmarks/hpl/</code>.</li>
+                <li><strong>Tune <code>HPL.dat</code></strong>:
+                    <ul>
+                        <li><strong>Problem Size (<em>N</em>)</strong>: Calculate <em>N</em> to consume approximately 80% of aggregate compute node RAM without inducing kernel disk swapping (e.g., <em>N</em> &asymp; 25,000).</li>
+                        <li><strong>Block Size (<em>NB</em>)</strong>: Set to optimal cache blocking factor (e.g., <em>NB</em> = 128).</li>
+                        <li><strong>Process Grid (<em>P</em> &times; <em>Q</em>)</strong>: Match total allocated MPI tasks across 4 nodes &times; 2 tasks = 8 ranks (e.g., <em>P</em>=2, <em>Q</em>=4).</li>
+                    </ul>
+                </li>
+                <li><strong>Execute via Slurm</strong>: Submit <code>submit_hpl.sh</code> via <code>sbatch</code> allocating all 4 compute nodes.</li>
+                <li><strong>Analyze Metrics</strong>:
+                    <ul>
+                        <li>Calculate theoretical peak performance (<em>R</em><sub>peak</sub> = Nodes &times; CPUs &times; GHz &times; FLOPs/Cycle).</li>
+                        <li>Extract sustained benchmark score (<em>R</em><sub>max</sub> in GFLOPS) from <code>hpl_result_*.out</code>.</li>
+                        <li>Calculate cluster computational efficiency: <em>E</em> = (<em>R</em><sub>max</sub> / <em>R</em><sub>peak</sub>) &times; 100%.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>4.5 Milestone 5: Distributed MPI Programming Mastery (Chapter 8 Workbook)</h3>
+            <p>Your team must be intimately familiar with the foundational MPI primitives covered in the Chapter 8 Workbook, as they form the theoretical and practical basis of the demonstration challenge:</p>
             <ul>
-                <li><strong>Automated Vagrantfile</strong> defining the 5-node topology.</li>
-                <li><strong><code>bootstrap_master.sh</code> and <code>bootstrap_compute.sh</code></strong> shell scripts.</li>
-                <li><strong>Validation Verification Log</strong> proving <code>sinfo</code>, <code>srun -N4 hostname</code>, and Lmod <code>module load openblas fftw3 hdf5</code> execute cleanly across all nodes.</li>
+                <li><strong>Point-to-Point Messaging</strong>: <code>MPI_Send()</code> and <code>MPI_Recv()</code> with explicit buffer lengths, data types, rank identifiers, and message tags. Understanding deadlock avoidance.</li>
+                <li><strong>Process Identification &amp; Synchronization</strong>: <code>MPI_Comm_rank()</code>, <code>MPI_Comm_size()</code>, <code>MPI_Get_processor_name()</code>, and barrier synchronization via <code>MPI_Barrier()</code>.</li>
+                <li><strong>Collective Communication</strong>:
+                    <ul>
+                        <li><code>MPI_Bcast()</code>: One-to-all broadcast of configuration values or parameters.</li>
+                        <li><code>MPI_Scatter()</code>: One-to-all distribution of segmented arrays across worker ranks.</li>
+                        <li><code>MPI_Gather()</code>: All-to-one collection of local results into an aggregate array on root.</li>
+                        <li><code>MPI_Allgather()</code>: All-to-all gathering where every participating rank receives the full aggregated dataset (no root argument).</li>
+                    </ul>
+                </li>
+                <li><strong>Parallel Reductions</strong>: <code>MPI_Reduce()</code> using collective reduction operators (<code>MPI_SUM</code>, <code>MPI_MIN</code>, <code>MPI_MAX</code>, <code>MPI_PROD</code>).</li>
+                <li><strong>End-to-End Application</strong>: The multi-stage Distributed Weather Analysis program synthesizing all primitives into a complete processing pipeline.</li>
             </ul>
 
-        
+            <h2>5. Live Demonstration Protocol &amp; The "On-the-Fly" Challenge</h2>
+            <p>Each pair of students will demonstrate their cluster live to the course lecturer during their assigned evaluation slot. The demonstration follows a rigorous three-phase protocol:</p>
+
+            <div class="border-l-4 border-amber-500 pl-4 py-2 my-6 space-y-4">
+                <div>
+                    <h3 class="text-base font-bold text-amber-500 m-0">Phase 1: Cluster Health &amp; Scientific Stack Audit (20 Mins)</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">The lecturer inspects live cluster status: <code>sinfo</code> showing 4 idle compute nodes, shared NFS mounts, and checks that <code>module use /shared/modulefiles</code> exposes all five scientific modules and the Python environment. The group displays clean HPL benchmark output (<code>xhpl</code> GFLOPS, <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency calculation).</p>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-sky-500 m-0">Phase 2: The Live "On-The-Fly" Algorithm Challenge (25 Mins)</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">During the demo, the lecturer will supply an unannounced source code file or computational problem. It will require one or more of your installed libraries:</p>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 mt-1 mb-0 space-y-1">
+                        <li>An <strong>OpenBLAS</strong> matrix computation (e.g., parallel DGEMM / matrix-matrix multiplication).</li>
+                        <li>An <strong>FFTW 3</strong> multi-dimensional distributed Fourier transform.</li>
+                        <li>A <strong>Parallel HDF5</strong> dataset write/read test exercising parallel MPI-IO chunks across worker nodes.</li>
+                        <li>A <strong>ScaLAPACK</strong> distributed linear equation solver (e.g., <em>Ax</em> = <em>b</em> across a process grid).</li>
+                        <li>A <strong>PETSc</strong> parallel Krylov subspace linear solver / Poisson equation on a distributed grid.</li>
+                        <li>A <strong>Python / mpi4py</strong> distributed pipeline using NumPy arrays linked to OpenBLAS.</li>
+                        <li>An <strong>MPI Collective Algorithm</strong> (e.g., parallel reduction, scatter-gather data partitioning, or Monte Carlo estimation).</li>
+                    </ul>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 mb-0"><strong>Student Actions Required:</strong> Your pair must save the file to <code>/shared/</code>, load the corresponding Lmod module(s), compile the code with correct wrapper flags (or execute within <code>python-hpc-env</code>), submit it across all 4 compute nodes via Slurm (<code>srun</code> or <code>sbatch</code>), and explain the output and data flow to the lecturer.</p>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-indigo-500 m-0">Phase 3: Individual Oral Defense (15 Mins)</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">The lecturer examines each student individually on compiler flags, dynamic library linking (<code>LD_LIBRARY_PATH</code>), Lmod mechanics, MPI collective communication complexity, and benchmarking analysis to ensure equal technical contribution.</p>
+                </div>
+            </div>
+
+            <h2>6. Evaluation Rubric &amp; Mark Breakdown</h2>
+            <p>The Capstone Project carries a total of <strong>100 Marks</strong>, evaluated according to ECSA NQF Level 7 exit standards:</p>
+
+            <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-800 my-6">
+                <thead class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">
+                    <tr>
+                        <th class="p-3 border-b border-slate-200 dark:border-slate-700">Assessment Area</th>
+                        <th class="p-3 border-b border-slate-200 dark:border-slate-700">Performance Criteria &amp; Target Evidence</th>
+                        <th class="p-3 border-b border-slate-200 dark:border-slate-700 text-center w-20">Marks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                    <tr>
+                        <td class="p-3 font-semibold text-sky-500">1. Baseline Verification (Labs 1-3)</td>
+                        <td class="p-3">5-node cluster healthy; all 4 compute nodes in IDLE state; <code>/shared</code> NFS mounted on all workers; <code>srun -N 4 hostname</code> executes cleanly; base Open MPI operational.</td>
+                        <td class="p-3 text-center font-bold">10</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-sky-500">2. Scientific Software Stack (Lab 4)</td>
+                        <td class="p-3">OpenBLAS (DYNAMIC_ARCH=1, OpenMP), FFTW 3 (MPI enabled), Parallel HDF5 (MPI-IO), ScaLAPACK (CMake, OpenBLAS-linked), and PETSc compiled cleanly from source under <code>/shared/apps/</code>.</td>
+                        <td class="p-3 text-center font-bold">25</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-sky-500">3. Lmod Environment Modules (Lab 4)</td>
+                        <td class="p-3">Declarative Lua modulefiles for all 5 packages active under <code>/shared/modulefiles/</code>; modules load cleanly on remote compute nodes via <code>module load</code> without path pollution.</td>
+                        <td class="p-3 text-center font-bold">10</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-sky-500">4. Centralized Python &amp; mpi4py (Lab 4)</td>
+                        <td class="p-3">Shared Python virtual environment in <code>/shared/apps/python-hpc-env</code>; <code>site.cfg</code> configured; NumPy compiled with OpenBLAS dynamic linkage verified via <code>show_config()</code>; SciPy and <code>mpi4python</code> fully configured and operable across worker nodes.</td>
+                        <td class="p-3 text-center font-bold">15</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-sky-500">5. HPL Benchmarking &amp; Tuning (Lab 6)</td>
+                        <td class="p-3">HPL <code>xhpl</code> compiled and linked to OpenBLAS; <code>HPL.dat</code> sized for 80% RAM (<em>N</em>) and process grid (<em>P</em> &times; <em>Q</em> = 8); Slurm batch execution completed; correct calculation of <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency <em>E</em>.</td>
+                        <td class="p-3 text-center font-bold">15</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-amber-500">6. Live "On-The-Fly" Algorithm Execution</td>
+                        <td class="p-3">Rapid ingestion of the lecturer's test algorithm; selection and loading of correct Lmod modules; accurate compilation/linkage with wrappers or Python execution; successful 4-node Slurm job dispatch and explanation of parallel results.</td>
+                        <td class="p-3 text-center font-bold">15</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-indigo-500">7. Individual Oral Defense (Ch 8 &amp; Architecture)</td>
+                        <td class="p-3">Individual questioning on MPI communication patterns (point-to-point vs collectives, reductions, barriers), Slurm queue management, dynamic linkers, and architectural bottlenecks.</td>
+                        <td class="p-3 text-center font-bold">10</td>
+                    </tr>
+                    <tr class="bg-slate-50 dark:bg-slate-800/50 font-bold">
+                        <td class="p-3 text-slate-900 dark:text-white" colspan="2">Total Capstone Mark Allocation</td>
+                        <td class="p-3 text-center text-amber-500">100</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>7. Capstone Submission Checklist</h2>
+            <p>Prior to your group's live demonstration session, ensure each of the following targets has been completed:</p>
+            <ul>
+                <li>[ ] <code>sinfo</code> confirms all 4 worker nodes (<code>compute01-04</code>) are in <code>IDLE</code> state.</li>
+                <li>[ ] <code>/shared/apps/</code> contains complete builds of OpenBLAS, FFTW3, HDF5, ScaLAPACK, and PETSc.</li>
+                <li>[ ] <code>module use /shared/modulefiles &amp;&amp; module avail</code> cleanly exposes all installed packages.</li>
+                <li>[ ] <code>python3 -c "import numpy; numpy.show_config()"</code> shows <code>/shared/apps/openblas/lib</code> linkage.</li>
+                <li>[ ] <code>python3 -c "from mpi4py import MPI; print(MPI.COMM_WORLD.Get_size())"</code> executes cleanly across nodes.</li>
+                <li>[ ] HPL benchmark completed via <code>sbatch</code> with written calculations for <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency <em>E</em>.</li>
+                <li>[ ] Both partners have reviewed the Chapter 8 MPI collective primitives and are prepared to compile, submit, and explain any test algorithm live.</li>
+            </ul>
 
         </article>
     </main>

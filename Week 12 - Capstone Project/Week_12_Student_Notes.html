@@ -76,7 +76,7 @@
                     12
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 12: Capstone Project</span>
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 12: Capstone Project Notes</span>
                     <span class="text-xs text-amber-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
             </a>
@@ -85,6 +85,7 @@
                     <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                     Project Brief
                 </a>
+                <a href="Week_12_Slides.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:block">Slides</a>
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-amber-500/50 transition-colors">
                     <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -108,11 +109,12 @@
                         <span>On This Page</span>
                     </div>
                     <nav class="space-y-1.5 text-xs font-medium">
-                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">1. Capstone Architecture Overview</a>
-                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">2. MapReduce &amp; Data Parallelism</a>
-                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">3. Fault Tolerance &amp; Checkpointing</a>
-                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">4. Exascale Horizon &amp; Beyond</a>
-                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">5. Project Verification Checklist</a>
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">1. Capstone Architecture & Baseline</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">2. Scientific Stack Compilation (Lab 4)</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">3. Lmod & Centralized mpi4py (Lab 4)</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">4. Linpack (HPL) Benchmarking (Lab 6)</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">5. Distributed MPI Patterns (Ch 8)</a>
+                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-amber-500/10 hover:text-amber-500 transition-colors no-underline">6. Live Demo & Algorithm Playbook</a>
                     </nav>
                 </div>
 
@@ -123,12 +125,12 @@
                         <span class="font-bold text-amber-500">EIOPS4A</span>
                     </div>
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
-                        <span class="text-slate-400 font-semibold">Reading Time</span>
-                        <span class="font-bold text-slate-700 dark:text-slate-300">~25 Minutes</span>
+                        <span class="text-slate-400 font-semibold">Assessment</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">Live Demo (Pair)</span>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-400 font-semibold">Project Code</span>
-                        <span class="font-bold text-sky-500">HPC Automation</span>
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <span class="text-slate-400 font-semibold">Scope</span>
+                        <span class="font-bold text-sky-500">Labs 1, 2, 3, 4, 6 & Ch 8</span>
                     </div>
                     <div class="pt-2">
                         <a href="Week_12_Lab_Capstone_Guide.html" class="w-full text-center py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-colors no-underline shadow-md shadow-amber-500/20 flex items-center justify-center">
@@ -154,8 +156,8 @@
                             <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">WEEK 12</span>
                         </div>
                         <div class="flex-1 flex flex-col justify-center p-6">
-                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Capstone Project — Automated HPC Cluster Deployment</h1>
-                            <span class="text-sm font-semibold text-amber-500 mt-1">End-to-End Automated Provisioning, Scientific Stack Compilation &amp; Observability</span>
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Capstone Project Study Notes</h1>
+                            <span class="text-sm font-semibold text-amber-500 mt-1">Infrastructure Synthesis, Scientific Compilation, HPL Benchmarking &amp; MPI Algorithmic Defense</span>
                         </div>
                     </div>
 
@@ -166,22 +168,34 @@
                             <span>Capstone Learning Outcomes (NQF Level 7)</span>
                         </div>
                         <ol class="space-y-1.5 text-sm m-0 pl-4">
-                            <li><strong>Synthesize</strong> multi-node cluster architectures using automated Vagrant infrastructure provisioning.</li>
-                            <li><strong>Configure and integrate</strong> Slurm workload schedulers, ED25519 SSH security, and Munge cryptographic authentication.</li>
-                            <li><strong>Compile and deploy</strong> high-performance scientific libraries (OpenBLAS, FFTW3, Parallel HDF5, ScaLAPACK) with Lmod environment modules.</li>
-                            <li><strong>Implement</strong> cluster-wide telemetry and telemetry dashboards using Prometheus and Grafana.</li>
-                            <li><strong>Validate</strong> multi-node parallel executions using OpenMPI and python <code>mpi4py</code> workloads.</li>
+                            <li><strong>Synthesize</strong> a 5-node distributed cluster infrastructure integrating Slurm, Munge, and Open MPI (Labs 1–3).</li>
+                            <li><strong>Compile from source</strong> and configure optimized mathematical and scientific libraries (OpenBLAS, FFTW3, Parallel HDF5, ScaLAPACK, PETSc) on shared storage (Lab 4).</li>
+                            <li><strong>Design and deploy</strong> dynamic Lmod Lua environment modules and a centralized Python virtual environment with <code>mpi4python</code> (Lab 4).</li>
+                            <li><strong>Profile, tune, and evaluate</strong> cluster computational efficiency using High-Performance Linpack (HPL) benchmarks (Lab 6).</li>
+                            <li><strong>Formulate and execute</strong> distributed-memory parallel algorithms using point-to-point and collective MPI primitives (Chapter 8).</li>
+                            <li><strong>Defend live</strong> on-the-fly computational challenges submitted dynamically by the assessor.</li>
                         </ol>
                     </div>
 
                     <!-- SECTION 1 -->
                     <section id="section-1">
-                        <h2>1. Capstone Architecture Overview</h2>
-                        <p>The Capstone Project brings together all 12 weeks of High Performance Computing concepts into a production-grade automated deployment. Rather than manually configuring nodes, students write declarative infrastructure code to launch a 5-node cluster (1 Master Controller Node + 4 Compute Worker Nodes).</p>
+                        <h2>1. Capstone Architectural Blueprint &amp; Baseline (Labs 1–3)</h2>
+                        <p>In high-performance computing, the physical or virtual hardware is merely the canvas. The real engineering begins when multi-tenant schedulers, secure cryptographic inter-node authenticators, and high-speed message-passing frameworks coalesce into a unified execution fabric.</p>
+                        
+                        <h3>1.1 The Provided Baseline Cluster</h3>
+                        <p>For this capstone, student pairs are provided with a pre-configured 5-node Rocky Linux 9.6 cluster. The architecture comprises:</p>
+                        <ul>
+                            <li><strong>1 Master Controller Node (<code>master</code>)</strong>: 4 GB RAM, 2 vCPUs, hosting <code>slurmctld</code>, the NFS export server (<code>/shared</code>), and Chrony local time server.</li>
+                            <li><strong>4 Compute Worker Nodes (<code>compute01</code>–<code>compute04</code>)</strong>: 2 GB RAM, 2 vCPUs each, running <code>slurmd</code>, mounting <code>master:/shared</code>, and syncing clocks via <code>server master iburst</code>.</li>
+                            <li><strong>Private Network Subnet</strong>: <code>192.168.56.0/24</code> with static entries in <code>/etc/hosts</code>.</li>
+                            <li><strong>Munge Cryptographic Layer</strong>: Symmetric 1024-byte key (<code>munge.key</code> with permissions <code>400</code>, owned by <code>munge:munge</code>) authenticating RPC payloads between the controller and workers.</li>
+                            <li><strong>Slurm Workload Manager</strong>: Partition <code>debug</code> configured in <code>slurm.conf</code> with <code>ReturnToService=2</code>, keeping all worker nodes in the healthy <code>IDLE</code> state.</li>
+                            <li><strong>Open MPI 4.1.x &amp; PMIx</strong>: Wrapper compilers (<code>mpicc</code>) and runtime daemons tightly linked to Slurm via PMIx.</li>
+                        </ul>
 
                         <div class="cyber-callout cyber-callout-info">
-                            <p class="m-0 font-bold text-sky-500">💡 Project Brief Document</p>
-                            <p class="m-0 text-xs mt-1">To view full step-by-step instructions, evaluation rubric, and script specs, refer to the <a href="Week_12_Lab_Capstone_Guide.html" class="font-bold text-amber-500 underline">Capstone Project Brief Guide</a>.</p>
+                            <p class="m-0 font-bold text-sky-500">🔍 Verification Command</p>
+                            <p class="m-0 text-xs mt-1">Always run <code>sinfo</code> and <code>srun -N 4 hostname</code> before starting. If any node is marked <code>DOWN</code> or <code>DRAIN</code>, check Munge service state (<code>systemctl status munge</code>) and resume the node via <code>scontrol update NodeName=compute0X State=RESUME</code>.</p>
                         </div>
                     </section>
 
@@ -189,52 +203,232 @@
 
                     <!-- SECTION 2 -->
                     <section id="section-2">
-                        <h2>2. MapReduce &amp; Data Parallelism</h2>
-                        <p>In addition to traditional message passing (MPI), data-intensive parallel workloads utilize the <strong>MapReduce</strong> paradigm to process massive datasets across distributed nodes.</p>
+                        <h2>2. Compiling the Production Scientific Stack (Lab 4)</h2>
+                        <p>Generic Linux distribution RPM packages are compiled for baseline x86-64 compatibility, sacrificing vectorization instructions like AVX-2, AVX-512, and FMA. Production HPC administrators compile domain-specific math and data libraries directly from source on shared storage (<code>/shared/apps/</code>).</p>
 
-                        <ul>
-                            <li><strong>Map Stage</strong>: Master node breaks input data into independent key-value chunks processed in parallel across worker nodes.</li>
-                            <li><strong>Shuffle / Sort Stage</strong>: Intermediate data is grouped by key across the private network.</li>
-                            <li><strong>Reduce Stage</strong>: Worker nodes aggregate grouped intermediate values into final output results.</li>
-                        </ul>
+                        <h3>2.1 The Dependency Hierarchy</h3>
+                        <p>Software packages must be compiled in strict hierarchical dependency order:</p>
+                        <ol>
+                            <li><strong>OpenBLAS</strong>: Base linear algebra (BLAS/LAPACK). Compiled with <code>DYNAMIC_ARCH=1 USE_OPENMP=1</code>. Dynamic architecture detection compiles optimized kernels for all major CPU microarchitectures, selecting the fastest vector units at runtime.</li>
+                            <li><strong>FFTW 3</strong>: Fast Fourier Transform library. Configured with <code>--enable-shared --enable-mpi</code>, wrapping discrete spectral transforms into distributed MPI communicators.</li>
+                            <li><strong>Parallel HDF5</strong>: Hierarchical Data Format for parallel I/O. Compiled with <code>CC=mpicc ./configure --enable-parallel --enable-shared</code>, routing dataset writes through collective MPI-IO.</li>
+                            <li><strong>ScaLAPACK</strong>: Distributed-memory dense linear algebra. Solves linear systems using 2D block-cyclic matrix distribution across MPI ranks. Configured via CMake explicitly pointing <code>-DBLAS_LIBRARIES</code> and <code>-DLAPACK_LIBRARIES</code> to your custom OpenBLAS.</li>
+                            <li><strong>PETSc</strong>: Portable, Extensible Toolkit for Scientific Computation. Provides parallel nonlinear and PDE solvers. Links Open MPI, OpenBLAS, ScaLAPACK, and HDF5 concurrently.</li>
+                        </ol>
+
+                        <div class="cyber-code-block">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">Compiler Flags &amp; Shared NFS Targets</span>
+                            </div>
+                            <pre><code class="language-bash"># OpenBLAS
+make -j2 DYNAMIC_ARCH=1 USE_OPENMP=1
+make PREFIX=/shared/apps/openblas install
+
+# FFTW 3 (Requires MPI module loaded)
+module load mpi/openmpi-x86_64
+./configure --enable-shared --enable-mpi --prefix=/shared/apps/fftw3
+make -j2 && make install
+
+# Parallel HDF5
+CC=mpicc ./configure --enable-parallel --enable-shared --prefix=/shared/apps/hdf5
+make -j2 && make install
+
+# ScaLAPACK (CMake linking to OpenBLAS)
+cmake .. -DCMAKE_INSTALL_PREFIX=/shared/apps/scalapack \
+         -DBUILD_SHARED_LIBS=ON \
+         -DLAPACK_LIBRARIES=/shared/apps/openblas/lib/libopenblas.so \
+         -DBLAS_LIBRARIES=/shared/apps/openblas/lib/libopenblas.so
+make -j2 && make install</code></pre>
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 3 -->
                     <section id="section-3">
-                        <h2>3. Fault Tolerance &amp; Checkpointing</h2>
-                        <p>When running long-duration simulations across multi-node clusters, hardware Mean Time Between Failures (MTBF) drops significantly. <strong>Checkpointing</strong> periodically saves execution state to non-volatile storage:</p>
+                        <h2>3. Lmod Environment Modules &amp; Centralized mpi4python (Lab 4)</h2>
+                        
+                        <h3>3.1 Dynamic Lmod Lua Modules</h3>
+                        <p>Static environment variable manipulation in <code>/etc/profile.d/</code> leads to dynamic linker collisions. <strong>Lmod</strong> mutates shell paths on a per-session basis via declarative Lua modulefiles stored in <code>/shared/modulefiles/</code>.</p>
+                        <p>Each Lua file must prepend runtime directories:</p>
+                        <div class="cyber-code-block">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">Sample: /shared/modulefiles/openblas/0.3.26.lua</span>
+                            </div>
+                            <pre><code class="language-lua">local base = "/shared/apps/openblas"
+prepend_path("PATH", base .. "/bin")
+prepend_path("LD_LIBRARY_PATH", base .. "/lib")
+prepend_path("C_INCLUDE_PATH", base .. "/include")
+setenv("OPENBLAS_DIR", base)</code></pre>
+                        </div>
 
-                        <table>
-                            <thead><tr><th>Level</th><th>Mechanism</th><th>Example Framework</th></tr></thead>
-                            <tbody>
-                                <tr><td><strong>Application-Level</strong></td><td>Programmer explicitly writes data structures to disk at fixed loop steps.</td><td>HDF5 / NetCDF checkpoint files.</td></tr>
-                                <tr><td><strong>System-Level</strong></td><td>OS transparently dumps process memory space to disk.</td><td>BLCR (Berkeley Lab Checkpoint/Restart), DMTCP.</td></tr>
-                            </tbody>
-                        </table>
+                        <h3>3.2 Centralized Python Environment &amp; mpi4py</h3>
+                        <p>Instead of fragmented local Python user directories (<code>~/.local</code>), a cluster requires a single source of truth on the shared NFS mount (<code>/shared/apps/python-hpc-env</code>):</p>
+                        <ol>
+                            <li>Instantiate the virtual environment: <code>python3 -m venv /shared/apps/python-hpc-env</code>.</li>
+                            <li>Direct pip compilation via <code>site.cfg</code> to force NumPy to link against your optimized OpenBLAS library rather than slow system fallbacks.</li>
+                            <li>Compile NumPy using <code>pip install --no-binary :all: numpy==1.26.4</code> and confirm linking with <code>python3 -c "import numpy; numpy.show_config()"</code>.</li>
+                            <li>Compile <strong><code>mpi4python</code> (mpi4py)</strong> against the cluster's Open MPI headers, enabling high-performance parallel message passing directly in Python.</li>
+                            <li>Provide <code>/shared/modulefiles/python-hpc/1.0.lua</code> to inject the virtual environment and its optimized libraries across all nodes.</li>
+                        </ol>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 4 -->
                     <section id="section-4">
-                        <h2>4. The Exascale Horizon &amp; Beyond</h2>
-                        <p>Exascale supercomputing ($> 10^{18}$ FLOPS) presents three major engineering challenges: <strong>Power Efficiency</strong> ($< 20 \text{ MW}$ power envelopes), <strong>Memory Bandwidth</strong> (HBM3/CXL interconnects), and <strong>Heterogeneous Hardware Acceleration</strong>.</p>
+                        <h2>4. Cluster Performance Benchmarking &amp; Linpack Tuning (Lab 6)</h2>
+                        <p>Cluster performance evaluation centers on High-Performance Linpack (HPL), the benchmark governing the global Top 500 list of supercomputers. HPL measures the rate of execution of dense linear systems (<em>Ax</em> = <em>b</em>) using LU decomposition with partial pivoting.</p>
+
+                        <h3>4.1 Theoretical Peak (<em>R</em><sub>peak</sub>) vs Sustained (<em>R</em><sub>max</sub>)</h3>
+                        <p>To evaluate efficiency, compute the theoretical upper bound of hardware floating-point operations:</p>
+                        $$R_{peak} = \text{Nodes} \times \frac{\text{CPUs}}{\text{Node}} \times \text{Clock Frequency (GHz)} \times \frac{\text{FLOPs}}{\text{Cycle}}$$
+                        <p class="font-mono text-xs bg-slate-100 dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700"><em>R</em><sub>peak</sub> = 4 &times; 2 &times; 2.4 &times; 4 = 76.8 GFLOPS</p>
+                        <p>The <strong>Cluster Efficiency (<em>E</em>)</strong> represents the percentage of theoretical capability achieved in practice:</p>
+                        $$E = \left(\frac{R_{max}}{R_{peak}}\right) \times 100\%$$
+
+                        <h3>4.2 Tuning HPL.dat Parameters</h3>
+                        <ul>
+                            <li><strong>Problem Size (<em>N</em>)</strong>: Determines matrix dimensions. Sizing <em>N</em> to consume 80% of aggregate physical RAM is essential to keep the CPU execution units saturated while preventing disk swapping:
+                            $$\text{Memory (GB)} = \frac{N^2 \times 8 \text{ bytes}}{1024^3} \implies N \approx \sqrt{\frac{\text{Target RAM (Bytes)}}{8}}$$
+                            For 4 compute nodes with 2 GB RAM each (~6 GB usable total), setting <em>N</em> &asymp; 25,000 achieves near-optimal memory footprint.</li>
+                            <li><strong>Block Size (<em>NB</em>)</strong>: Governs cache block-cyclic decomposition. Optimal range is 128 &le; <em>NB</em> &le; 256.</li>
+                            <li><strong>Process Grid (<em>P</em> &times; <em>Q</em>)</strong>: <em>P</em> &times; <em>Q</em> must equal the total number of Slurm MPI tasks (8 ranks: 4 nodes &times; 2 tasks/node). Standard tuning favors <em>P</em> &le; <em>Q</em> with <em>Q</em> approximately 2 &times; <em>P</em> (e.g., <em>P</em>=2, <em>Q</em>=4).</li>
+                        </ul>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 5 -->
                     <section id="section-5">
-                        <h2>5. Capstone Project Architecture Verification Checklist</h2>
+                        <h2>5. Distributed MPI Parallel Programming (Chapter 8 Workbook)</h2>
+                        <p>Distributed-memory architectures do not share physical RAM; processes communicate by passing messages over the network using Message Passing Interface (MPI) primitives.</p>
 
+                        <h3>5.1 Communication Primitives Comparison</h3>
+                        <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-800 my-4">
+                            <thead class="bg-slate-100 dark:bg-slate-800">
+                                <tr>
+                                    <th class="p-2 border-b">Primitive</th>
+                                    <th class="p-2 border-b">Type</th>
+                                    <th class="p-2 border-b">Scope</th>
+                                    <th class="p-2 border-b">Primary Function</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Send / MPI_Recv</td>
+                                    <td class="p-2">Point-to-Point</td>
+                                    <td class="p-2">Rank-to-Rank</td>
+                                    <td class="p-2">Transmits data buffer directly to specific destination rank with matching tag.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Barrier</td>
+                                    <td class="p-2">Synchronization</td>
+                                    <td class="p-2">Communicator</td>
+                                    <td class="p-2">Blocks all processes until every rank in the communicator reaches this call.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Bcast</td>
+                                    <td class="p-2">Collective</td>
+                                    <td class="p-2">One-to-All</td>
+                                    <td class="p-2">Broadcasts identical buffer from root rank to all other ranks.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Scatter</td>
+                                    <td class="p-2">Collective</td>
+                                    <td class="p-2">One-to-All</td>
+                                    <td class="p-2">Partitions an array on root into equal contiguous chunks, distributing one chunk per rank.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Gather</td>
+                                    <td class="p-2">Collective</td>
+                                    <td class="p-2">All-to-One</td>
+                                    <td class="p-2">Collects local arrays from all ranks into a single contiguous array on the root rank.</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Allgather</td>
+                                    <td class="p-2">Collective</td>
+                                    <td class="p-2">All-to-All</td>
+                                    <td class="p-2">Collects local data from all ranks and delivers the complete dataset to EVERY rank (no root parameter).</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-mono text-sky-500">MPI_Reduce</td>
+                                    <td class="p-2">Collective</td>
+                                    <td class="p-2">All-to-One</td>
+                                    <td class="p-2">Aggregates distributed partial values to root using an associative operator (<code>MPI_SUM</code>, <code>MPI_MIN</code>, <code>MPI_MAX</code>).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>5.2 Common MPI Pitfalls</h3>
+                        <ul>
+                            <li><strong>Deadlock</strong>: Calling blocking <code>MPI_Send</code> on two nodes simultaneously waiting for reciprocal <code>MPI_Recv</code> calls, or mismatching message tags.</li>
+                            <li><strong>Buffer Sizing in Scatter/Gather</strong>: The <code>sendcount</code> and <code>recvcount</code> parameters refer to the number of elements sent/received <em>per process</em>, NOT the global total count.</li>
+                            <li><strong>Slurm Allocation Requirements</strong>: Attempting to invoke <code>mpirun</code> outside an allocated Slurm partition causes "not enough slots available" errors. Always execute via <code>srun</code> or inside an active <code>salloc</code> session.</li>
+                        </ul>
+                    </section>
+
+                    <hr class="my-10 border-slate-200 dark:border-slate-800">
+
+                    <!-- SECTION 6 -->
+                    <section id="section-6">
+                        <h2>6. Live Demo &amp; Algorithm Execution Playbook</h2>
+                        <p>During the live assessment, the lecturer will test your group's operational agility by providing an unannounced computational challenge. Use this reference playbook during your demonstration:</p>
+
+                        <h3>6.1 Rapid Ingestion &amp; Compilation Playbook</h3>
+                        <div class="cyber-code-block">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">Compilation &amp; Slurm Submission Cheatsheet</span>
+                            </div>
+                            <pre><code class="language-bash"># Case 1: C + OpenBLAS Matrix Math
+module load mpi/openmpi-x86_64 openblas
+mpicc /shared/challenge_code.c -o /shared/challenge_bin -lopenblas
+srun -N 4 -n 4 /shared/challenge_bin
+
+# Case 2: C + FFTW 3 Parallel Fourier Transform
+module load mpi/openmpi-x86_64 fftw3
+mpicc /shared/fft_test.c -o /shared/fft_test -lfftw3_mpi -lfftw3 -lm
+srun -N 4 -n 4 /shared/fft_test
+
+# Case 3: C + Parallel HDF5
+module load mpi/openmpi-x86_64 hdf5
+h5pcc /shared/hdf5_test.c -o /shared/hdf5_test
+srun -N 4 -n 4 /shared/hdf5_test
+
+# Case 4: Python + mpi4py + NumPy (Linked to OpenBLAS)
+module load python-hpc
+srun -N 4 -n 8 python3 /shared/parallel_pipeline.py
+
+# Case 5: Pure MPI Collective Code (Ch 8)
+module load mpi/openmpi-x86_64
+mpicc -O3 /shared/mpi_collective.c -o /shared/mpi_collective
+srun -N 4 --ntasks-per-node=2 /shared/mpi_collective</code></pre>
+                        </div>
+
+                        <h3>6.2 Demonstration Protocol Checklist</h3>
                         <ol>
-                            <li><strong>Provisioning</strong>: Deploy 5-node cluster via automated Vagrantfile on subnet <code>192.168.57.0/24</code>.</li>
-                            <li><strong>Orchestration</strong>: Configure Slurm Workload Manager queues across nodes (<code>slurmctld</code>, <code>slurmd</code>).</li>
-                            <li><strong>Software Stack</strong>: Build Lmod environment modules with OpenBLAS, FFTW3, HDF5, ScaLAPACK, and <code>mpi4py</code>.</li>
-                            <li><strong>Telemetry</strong>: Setup Prometheus scraping Node Exporter with a Grafana dashboard.</li>
-                            <li><strong>Verification</strong>: Submit a multi-node parallel job via Slurm <code>srun -N4 hostname</code> and verify execution.</li>
+                            <li>Ensure both partners are logged into the cluster and have active terminal tabs ready.</li>
+                            <li>Confirm <code>sinfo</code> displays 4 idle nodes and <code>pdsh -R ssh -g compute hostname</code> responds instantaneously.</li>
+                            <li>When the lecturer delivers the source code, copy it directly to <code>/shared/</code> so all nodes have immediate access.</li>
+                            <li>Identify the mathematical or I/O library required and execute <code>module load &lt;library&gt;</code>.</li>
+                            <li>Compile the binary using the wrapper (<code>mpicc</code>, <code>h5pcc</code>) and link the matching library flags.</li>
+                            <li>Dispatch via Slurm requesting 4 nodes: <code>srun -N 4 -n 4 &lt;binary&gt;</code> or <code>sbatch submit_job.sh</code>.</li>
+                            <li>Verbally explain the rank output, reduction aggregation, and how Lmod resolved dynamic libraries across nodes.</li>
                         </ol>
                     </section>
 

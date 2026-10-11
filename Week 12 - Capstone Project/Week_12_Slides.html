@@ -58,7 +58,7 @@
     </script>
     <script>
         window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -73,6 +73,10 @@
                 <span>Back to Student Notes</span>
             </a>
             <div class="flex items-center space-x-4">
+                <a href="Week_12_Lab_Capstone_Guide.html" class="text-xs font-bold text-amber-500 hover:text-amber-600 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                    <span>Project Brief</span>
+                </a>
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
                     <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     <span>Course Home</span>
@@ -100,87 +104,191 @@
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-6">
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 12 Presentation Deck: Capstone Project Deployment</h1>
-                    <span class="text-xs font-semibold text-indigo-500 mt-1">Automated 5-Node Infrastructure & Scientific Stack</span>
+                    <span class="text-xs font-semibold text-indigo-500 mt-1">HPC Synthesis, Scientific Stack &amp; Live Algorithm Demonstration</span>
                 </div>
             </div>
 
+            <!-- Slide 1 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-amber-500">Slide 1</span>
+                    <span class="text-xs font-bold text-slate-400">Curriculum Synthesis & Scope</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Capstone Project: The Grand Synthesis</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>Team Structure</strong>: Students collaborate in <strong>pairs (groups of 2)</strong>.</li>
+                    <li><strong>Curriculum Focus</strong>: Exclusively covers competencies from:
+                        <ul class="mt-1 space-y-1">
+                            <li><strong>Lab 1 & Lab 2</strong>: Multi-node virtualization, network topology, Chrony, NFS, Munge & Slurm.</li>
+                            <li><strong>Lab 3</strong>: Open MPI 4.1.x, PMIx scheduler integration, and wrapper compilers.</li>
+                            <li><strong>Lab 4</strong>: Building the Scientific Software Stack from source & Lmod environment modules.</li>
+                            <li><strong>Lab 6</strong>: HPC Cluster Benchmarking with High-Performance Linpack (HPL).</li>
+                            <li><strong>Chapter 8 Workbook</strong>: Distributed-Memory Parallel Programming with MPI.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Evaluation Format</strong>: Live demonstration per group to the lecturer including an <strong>On-The-Fly Algorithm Challenge</strong> and individual oral defense.</li>
+                </ul>
+            </div>
 
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_12_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-        </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 12</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 12: Capstone Project - Slides</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
-</div>
+            <!-- Slide 2 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-sky-500">Slide 2</span>
+                    <span class="text-xs font-bold text-slate-400">Infrastructure Foundation</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Starting Baseline (Provided to Students)</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>Pre-Configured Infrastructure</strong>: The lecturer provides a working 5-node Rocky Linux 9.6 cluster.</li>
+                    <li><strong>Topology</strong>: 1 Controller (<code>master</code>: 4GB RAM, 2 CPUs) + 4 Compute Workers (<code>compute01-04</code>: 2GB RAM, 2 CPUs each).</li>
+                    <li><strong>Active Services</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li>Chrony time synchronization (<code>server master iburst</code>).</li>
+                            <li>Private subnet <code>192.168.56.0/24</code> with complete <code>/etc/hosts</code> mapping.</li>
+                            <li>NFS exported <code>/shared</code> directory mounted across all nodes.</li>
+                            <li>Munge cryptographic key authentication active and authorized.</li>
+                            <li>Slurm Workload Manager active: <code>slurmctld</code> on master, <code>slurmd</code> on workers in healthy <code>IDLE</code> state.</li>
+                            <li>Open MPI 4.1.x runtime and <code>mpicc</code> compiler wrappers integrated with Slurm.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-<h1>Week 12 Slides: The Capstone Project</h1>
-<h2>Slide 1: The Journey</h2>
-<ul>
-<li><strong>Weeks 1-2</strong>: Design &amp; Hardware (Architecture).</li>
-<li><strong>Weeks 3-4</strong>: Provisioning (Warewulf) &amp; Scheduling (Slurm).</li>
-<li><strong>Weeks 5-7</strong>: Compute (OpenMP, MPI, Benchmarking).</li>
-<li><strong>Weeks 8</strong>: Storage (NFS, BeeGFS, I/O Benchmarking).</li>
-<li><strong>Week 9</strong>: Accelerators (GPU).</li>
-<li><strong>Week 10</strong>: Applications (CFD, Bio).</li>
-<li><strong>Week 11</strong>: Monitoring (Prometheus, Grafana).</li>
-<li><strong>Week 12</strong>: <strong>Integration</strong>.</li>
-</ul>
-<h2>Slide 2: The Final Challenge</h2>
-<ul>
-<li><strong>Goal</strong>: Demonstrate a functional Mini-Cluster.</li>
-<li><strong>Requirement</strong>: All systems must talk to each other.<ul>
-<li>Network -&gt; Provisioning -&gt; Scheduler -&gt; Storage -&gt; App -&gt; Monitor.</li>
-</ul>
-</li>
-<li><strong>The Pass Condition</strong>:<ul>
-<li>A successful OpenFOAM run script handled by Slurm.</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 3: Troubleshooting Strategy</h2>
-<ul>
-<li><strong>Layer 1: Physical (Virtual)</strong><ul>
-<li>Are the nodes on? Can you ping them?</li>
-</ul>
-</li>
-<li><strong>Layer 2: Provisioning</strong><ul>
-<li>Did they boot the correct image? (<code>wwctl node list</code>)</li>
-</ul>
-</li>
-<li><strong>Layer 3: Middleware</strong><ul>
-<li>Is Slurm happy? (<code>sinfo</code>)</li>
-<li>Is BeeGFS mounted? (<code>df -h</code>)</li>
-</ul>
-</li>
-<li><strong>Layer 4: Application</strong><ul>
-<li>Did you load the module?</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 4: Grading Rubric</h2>
-<ul>
-<li><strong>Infrastructure (25%)</strong>: <code>wwctl</code> shows nodes fully provisioned.</li>
-<li><strong>Monitoring (25%)</strong>: Grafana Dashboard showing live cluster data.</li>
-<li><strong>Programming (50%)</strong>:<ul>
-<li>Successful <code>sbatch</code> submission.</li>
-<li>Parallel Code (Matrix Mult/Sort) executes correctly.</li>
-<li>Execution time scales/reports correctly.</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 5: Good Luck!</h2>
-<ul>
-<li>This course was not about memorizing commands.</li>
-<li>It was about understanding how massive systems are built from small pieces.</li>
-<li>Welcome to the world of HPC.</li>
-</ul>
-        
+            <!-- Slide 3 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-indigo-500">Slide 3</span>
+                    <span class="text-xs font-bold text-slate-400">Milestone 1 — Scientific Software</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Compiling the Scientific Stack (Lab 4)</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li>All packages compiled from source under <code>/shared/apps/</code> and propagated cluster-wide:</li>
+                    <li><strong>OpenBLAS</strong>: Optimized BLAS/LAPACK compiled with <code>DYNAMIC_ARCH=1 USE_OPENMP=1</code>.</li>
+                    <li><strong>FFTW 3</strong>: Fast Fourier Transforms configured with <code>--enable-shared --enable-mpi</code>.</li>
+                    <li><strong>Parallel HDF5</strong>: Hierarchical parallel I/O compiled using <code>CC=mpicc --enable-parallel</code>.</li>
+                    <li><strong>ScaLAPACK</strong>: Distributed dense linear algebra built using CMake linked explicitly to custom OpenBLAS.</li>
+                    <li><strong>PETSc</strong>: Portable PDE solver toolkit linking OpenBLAS, ScaLAPACK, Parallel HDF5, and Open MPI.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-emerald-500">Slide 4</span>
+                    <span class="text-xs font-bold text-slate-400">Milestone 2 — Lmod & Python</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Lmod Modules & Centralized mpi4python (Lab 4)</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>Lmod Lua Modulefiles</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li>Located in <code>/shared/modulefiles/&lt;library&gt;/&lt;version&gt;.lua</code>.</li>
+                            <li>Prepends binary paths, dynamic linkers (<code>LD_LIBRARY_PATH</code>), and header search trees.</li>
+                            <li>Tested via <code>module use /shared/modulefiles && module avail</code>.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Centralized Python HPC Environment</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li>Deployed under <code>/shared/apps/python-hpc-env</code>.</li>
+                            <li><code>site.cfg</code> directs pip to compile NumPy bound to your custom OpenBLAS.</li>
+                            <li><strong><code>mpi4python</code> (mpi4py)</strong> compiled and configured to enable distributed Python across cluster nodes.</li>
+                            <li>Controlled via unified Lmod module <code>python-hpc/1.0.lua</code>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-amber-500">Slide 5</span>
+                    <span class="text-xs font-bold text-slate-400">Milestone 3 — Benchmarking</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">High-Performance Linpack Benchmarking (Lab 6)</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>HPL Compilation</strong>: Compile <code>xhpl</code> linking custom OpenBLAS and Open MPI.</li>
+                    <li><strong>HPL.dat Parameter Tuning</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li><strong>Problem Size (<em>N</em>)</strong>: Tuned to occupy ~80% of aggregate compute RAM (e.g., <em>N</em> &asymp; 25,000) to prevent disk swap.</li>
+                            <li><strong>Block Size (<em>NB</em>)</strong>: Cache-aligned block cyclic distribution (<em>NB</em> = 128).</li>
+                            <li><strong>Process Grid (<em>P</em> &times; <em>Q</em>)</strong>: Configured as <em>P</em>=2, <em>Q</em>=4 matching 8 Slurm tasks (4 nodes &times; 2 tasks/node).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Metrics Evaluation</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li>Theoretical Peak: <em>R</em><sub>peak</sub> = 4 &times; 2 &times; 2.4 &times; 4 = 76.8 GFLOPS.</li>
+                            <li>Sustained Peak (<em>R</em><sub>max</sub>) parsed from HPL output table.</li>
+                            <li>Cluster Efficiency: <em>E</em> = (<em>R</em><sub>max</sub> / <em>R</em><sub>peak</sub>) &times; 100%.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Slide 6 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-purple-400">Slide 6</span>
+                    <span class="text-xs font-bold text-slate-400">Milestone 4 — MPI Programming</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Distributed MPI Programming (Chapter 8)</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>Point-to-Point</strong>: <code>MPI_Send()</code> and <code>MPI_Recv()</code> with ranks, tags, and status.</li>
+                    <li><strong>Synchronization</strong>: <code>MPI_Barrier()</code> and host querying (<code>MPI_Get_processor_name()</code>).</li>
+                    <li><strong>Collectives</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li><code>MPI_Bcast()</code>: Root broadcasts scalar/array to all active ranks.</li>
+                            <li><code>MPI_Scatter()</code>: Partitions global array on root into equal segments per rank.</li>
+                            <li><code>MPI_Gather()</code>: Gathers local results from all ranks back into an array on root.</li>
+                            <li><code>MPI_Allgather()</code>: Gathers local data and delivers the complete dataset to all ranks.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Reductions</strong>: <code>MPI_Reduce()</code> using reduction operators (<code>MPI_SUM</code>, <code>MPI_MIN</code>, <code>MPI_MAX</code>).</li>
+                    <li><strong>Synthesized Pipeline</strong>: Multi-stage distributed weather data analysis and Monte Carlo Pi estimation.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 7 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-rose-500">Slide 7</span>
+                    <span class="text-xs font-bold text-slate-400">The Live Demo Challenge</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Live Assessment: The "On-The-Fly" Challenge</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>The Protocol</strong>: Student pairs demonstrate their cluster live to the lecturer.</li>
+                    <li><strong>The Surprise Challenge</strong>:
+                        <ul class="mt-1 space-y-1">
+                            <li>The lecturer presents an <strong>unannounced algorithm / source code</strong> on the spot.</li>
+                            <li>The algorithm is based on <strong>ANY of the installed libraries</strong>:
+                                <br>&bull; OpenBLAS matrix calculation (<code>cblas_dgemm</code>)
+                                <br>&bull; FFTW 3 parallel Fourier transform
+                                <br>&bull; Parallel HDF5 distributed I/O write/read
+                                <br>&bull; ScaLAPACK distributed matrix solver
+                                <br>&bull; PETSc parallel solver
+                                <br>&bull; Python <code>mpi4py</code> / NumPy distributed pipeline
+                                <br>&bull; Chapter 8 MPI collective primitives
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>Action Required</strong>: Save code to <code>/shared/</code>, load Lmod modules, compile/execute with wrappers, dispatch across 4 compute nodes via Slurm, and explain output.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 8 -->
+            <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
+                    <span class="text-xs font-black uppercase tracking-wider text-amber-500">Slide 8</span>
+                    <span class="text-xs font-bold text-slate-400">Evaluation Rubric</span>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Grading Rubric & Oral Defense (100 Marks)</h2>
+                <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
+                    <li><strong>1. Baseline Infrastructure Health (10 Marks)</strong>: <code>sinfo</code> healthy, all compute nodes IDLE, NFS mounts active, base Open MPI verified.</li>
+                    <li><strong>2. Scientific Software Stack Compilation (25 Marks)</strong>: OpenBLAS, FFTW3, HDF5, ScaLAPACK, and PETSc compiled from source under <code>/shared/apps/</code>.</li>
+                    <li><strong>3. Lmod Environment Modules (10 Marks)</strong>: Clean Lua modulefiles active in <code>/shared/modulefiles/</code> loading on remote worker nodes.</li>
+                    <li><strong>4. Centralized Python & mpi4py (15 Marks)</strong>: Shared venv, NumPy linked to custom OpenBLAS, <code>mpi4py</code> operational across compute nodes.</li>
+                    <li><strong>5. HPL Benchmarking & Efficiency (15 Marks)</strong>: HPL compiled, tuned, and executed via Slurm; <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency calculated.</li>
+                    <li><strong>6. Live On-The-Fly Algorithm Execution (15 Marks)</strong>: Successful compilation, Slurm submission, execution, and explanation of the mystery algorithm.</li>
+                    <li><strong>7. Individual Oral Defense (10 Marks)</strong>: Individual technical examination on architecture, linking, and MPI communication patterns.</li>
+                </ul>
+            </div>
 
         </article>
     </main>

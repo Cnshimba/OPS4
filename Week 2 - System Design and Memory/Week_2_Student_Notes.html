@@ -169,54 +169,48 @@
                             <span>Learning Outcomes (NQF Level 7)</span>
                         </div>
                         <ol class="space-y-1.5 text-sm m-0 pl-4">
-                            <li><strong>Evaluate</strong> the architectural principles of Beowulf commodity clusters versus monolithic supercomputers.</li>
-                            <li><strong>Analyze</strong> node role separation (Head/Login Node, Compute Nodes, Storage Node, Management SMS).</li>
-                            <li><strong>Differentiate</strong> Symmetric Multi-Processing (SMP) from Non-Uniform Memory Access (NUMA) systems.</li>
-                            <li><strong>Compare</strong> network latency and bandwidth across Bus, Ring, Mesh, Torus, and Fat Tree topologies.</li>
-                            <li><strong>Assess</strong> the OpenHPC software stack components (Warewulf, Slurm, Lmod, Spack).</li>
+                            <li>Evaluate the architectural principles of Beowulf commodity clusters versus monolithic supercomputers.</li>
+                            <li>Analyze node role separation (Head/Login Node, Compute Nodes, Storage Node, Management SMS).</li>
+                            <li>Differentiate Symmetric Multi-Processing (SMP) from Non-Uniform Memory Access (NUMA) systems.</li>
+                            <li>Compare network latency and bandwidth across Bus, Ring, Mesh, Torus, and Fat Tree topologies.</li>
+                            <li>Assess the OpenHPC software stack components (Warewulf, Slurm, Lmod, Spack).</li>
                         </ol>
                     </div>
-
                     <!-- SECTION 1 -->
                     <section id="section-1">
                         <h2>1. Cluster Organization</h2>
                         
                         <h3>1.1 The Beowulf Revolution</h3>
-                        <p>Supercomputing was historically dominated by exotic, multimillion-dollar proprietary mainframes built by Cray or IBM. In 1994, NASA researchers Thomas Sterling and Donald Becker transformed parallel computing by constructing <strong>Beowulf</strong> — a 16-node cluster built entirely from mass-market, commodity off-the-shelf (COTS) PCs connected over standard Ethernet using Linux.</p>
+                        <p>For decades, supercomputing was the exclusive domain of multi-million-dollar proprietary mainframes manufactured by vendors such as Cray and IBM. These specialized vector systems relied on expensive, custom silicon dies and custom liquid-cooling infrastructure, placing high-performance computing beyond the financial reach of most academic and industrial institutions.</p>
+
+                        <p>In 1994, NASA researchers Thomas Sterling and Donald Becker fundamentally disrupted the field of parallel computing by constructing Beowulf—a 16-node cluster built entirely from mass-market, commodity off-the-shelf (COTS) personal computers connected over standard Ethernet networks running the open-source Linux operating system. Sterling and Becker demonstrated that pooling inexpensive, standardized PC hardware using open-source clustering software could deliver supercomputing-level performance at a tiny fraction of the cost. Today, over 90% of the systems on the global Top500 supercomputer list are Linux-based commodity clusters built directly on the architectural principles of the Beowulf revolution.</p>
 
                         <h3>1.2 Anatomy of a Beowulf Cluster</h3>
-                        <p>Modern enterprise HPC clusters use a strictly tiered node layout to isolate high-throughput compute traffic from external administrative networks.</p>
+                        <p>Modern enterprise HPC clusters enforce a strictly tiered physical and logical node separation to isolate high-bandwidth computational traffic from external management networks and unauthorized user access.</p>
 
                         <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
-                            <img class="max-w-full h-auto max-h-[400px] mx-auto rounded-xl shadow-md" alt="Beowulf Cluster Architecture" src="../images/beowulf_architecture_vut.png" />
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Beowulf Cluster Architecture" src="../images/beowulf_architecture_vut.png" />
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 1: Standard Beowulf Architecture — separating public access from private compute interconnects.</p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-sky-500 text-sm m-0 mb-1">🖥️ Login Node (Master/Head)</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">The front entry point. Users log in via SSH to edit code and submit Slurm job scripts. Heavy computational tasks are strictly forbidden on the login node.</p>
-                            </div>
-                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-indigo-500 text-sm m-0 mb-1">⚡ Compute Nodes</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">High-density workhorse servers sitting in server racks, executing parallel MPI and OpenMP tasks in isolated environments without direct public internet exposure.</p>
-                            </div>
-                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-amber-500 text-sm m-0 mb-1">🌐 High-Speed Interconnect</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Dedicated low-latency fabric (InfiniBand or 100GbE RoCE) enabling low-overhead inter-node message passing between compute processes.</p>
-                            </div>
-                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-emerald-500 text-sm m-0 mb-1">💾 Storage Node</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Enterprise shared storage exporting NFS or parallel filesystems (Lustre/BeeGFS) so all compute nodes access a unified home directory.</p>
-                            </div>
-                        </div>
+                        <p>A production Beowulf cluster organizes hardware components into dedicated functional roles:</p>
+
+                        <p>The Login Node (Master/Head Node) serves as the primary external gateway into the cluster. It features dual network interfaces—one connected to the public campus network and one connected to the internal cluster management fabric. Users log in via SSH to edit source code, compile software binaries, and submit batch job scripts to the workload manager. Computational processing is strictly prohibited on the login node to maintain system responsiveness for all cluster tenants.</p>
+
+                        <p>The Compute Nodes constitute the core workhorse server ranks housed in high-density server racks. These machines operate headless and diskless, booting stateless Linux operating system images directly into system RAM over the network. They execute parallel MPI and OpenMP tasks in complete isolation without direct public internet exposure.</p>
+
+                        <p>The High-Speed Interconnect acts as the nervous system of the cluster, linking compute nodes over dedicated, low-latency network fabrics such as InfiniBand (HDR/NDR) or 100GbE RoCE. This fabric supports Direct Memory Access (RDMA), enabling compute processes on separate physical servers to exchange boundary data with sub-microsecond latencies.</p>
+
+                        <p>The Storage Node delivers centralized high-performance file access to all nodes across the cluster. Utilizing Parallel File Systems (such as Lustre or BeeGFS) or Network File System (NFS) exports, the storage node provides a unified home directory and scratch workspace accessible concurrently from any compute node.</p>
 
                         <h3>1.3 Symmetric Multi-Processing (SMP) vs NUMA</h3>
-                        <p>Individual multi-socket compute nodes operate as <strong>Symmetric Multi-Processing (SMP)</strong> machines where multiple CPU sockets share a common physical RAM space. However, due to memory bus limitations, modern multi-socket servers use a <strong>Non-Uniform Memory Access (NUMA)</strong> architecture.</p>
+                        <p>At the single-server level, modern compute nodes contain multiple processor sockets to maximize core density. Historically, multi-processor systems used a Symmetric Multi-Processing (SMP) architecture, where all CPU sockets connected to a single centralized main memory via a shared system bus, providing equal memory access latency across all cores.</p>
+
+                        <p>As CPU core counts expanded exponentially, the shared SMP bus created severe memory bus saturation. Modern multi-socket servers resolve this bottleneck using a Non-Uniform Memory Access (NUMA) architecture. In NUMA systems, physical memory is partitioned into distinct local domains, each wired directly to a specific CPU socket's integrated memory controller. Sockets communicate with each other over high-speed point-to-point interconnects (such as AMD Infinity Fabric or Intel Ultra Path Interconnect - UPI).</p>
 
                         <div class="cyber-callout cyber-callout-info">
-                            <p class="m-0 font-bold text-sky-500">💡 NUMA Performance Implication</p>
-                            <p class="m-0 text-xs mt-1">In a NUMA system, a CPU accesses memory attached to its local memory controller significantly faster than memory attached to a remote CPU socket. Unaligned threads incur cross-socket interconnect penalties.</p>
+                            <p class="m-0 font-bold text-sky-500"> NUMA Microarchitectural Optimization</p>
+                            <p class="m-0 text-xs mt-1">Accessing memory attached to a CPU core's local NUMA domain requires ~50 nanoseconds, whereas fetching data from a remote NUMA domain attached to a different physical socket incurs a ~100 nanosecond cross-socket interconnect penalty. HPC workload schedulers use process pinning (such as <code>numactl</code> and Slurm <code>--cpu-bind</code>) to keep execution threads strictly bound to their local memory controllers.</p>
                         </div>
                     </section>
 
@@ -227,17 +221,29 @@
                         <h2>2. Interconnect Topologies</h2>
                         
                         <h3>2.1 Latency vs Bandwidth</h3>
-                        <p>Cluster interconnect networks are evaluated along two primary performance dimensions:</p>
-                        <ul>
-                            <li><strong>Bandwidth</strong>: The data transfer capacity across the channel (e.g., 200 Gbps HDR InfiniBand). Crucial for bulk data transfers and checkpointing.</li>
-                            <li><strong>Latency</strong>: The round-trip time required to transmit a minimal packet from sender to receiver (e.g., 0.6 microseconds). Critical for fine-grained MPI message synchronization.</li>
-                        </ul>
+                        <p>Evaluating cluster network performance requires distinguishing between two fundamental network metrics: Bandwidth and Latency.</p>
+
+                        <p>Bandwidth measures the raw data volume throughput capacity of a network interface over time (expressed in Gigabits per second, e.g., 200 Gbps HDR InfiniBand). High bandwidth is essential for transferring massive scientific datasets, loading container images, and writing parallel I/O checkpoints.</p>
+
+                        <p>Latency measures the total round-trip time required to transmit a minimal network packet from sender to receiver (expressed in microseconds, e.g., 0.6 $\mu$s in InfiniBand). In tightly coupled MPI scientific applications—where thousands of compute ranks must synchronize boundary data at every timestep—network latency directly governs application speed. A low-latency network minimizes process stall cycles during inter-node barrier synchronizations.</p>
 
                         <h3>2.2 Network Topologies</h3>
+                        <p>Physical switch layout and cabling topology determine how scalability, bisection bandwidth, and routing costs scale as cluster node counts expand.</p>
+
                         <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
-                            <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl shadow-md" alt="Network Topologies Comparison" src="../images/network_topologies_hpc.png" />
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Network Topologies Comparison" src="../images/network_topologies_vut.png" />
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 2: Common HPC Network Topologies — from simple Mesh to non-blocking Fat Tree switches.</p>
                         </div>
+
+                        <p>Bus Topology connects all nodes to a single physical communication wire. While low cost, it suffers from severe contention as node counts grow, rendering it obsolete for HPC.</p>
+
+                        <p>Ring Topology connects each compute node to two immediate physical neighbors in a closed loop. Data packets travel sequentially from node to node. While simple, the maximum network hop count scales linearly $O(N)$, creating latency bottlenecks in large clusters.</p>
+
+                        <p>2D / 3D Mesh Topology arranges nodes in a multi-dimensional grid where each node connects to its direct Cartesian neighbors (North, South, East, West, Up, Down). Mesh topologies excel at stencil-based domain decomposition in physical fluid and weather simulations, but communication across distant diagonal nodes requires multiple switch hops.</p>
+
+                        <p>2D / 3D Torus Topology enhances the mesh architecture by wrapping boundary edge links back to connect opposite edge nodes. This wrap-around cabling halves the maximum network diameter and eliminates edge congestion bottlenecks.</p>
+
+                        <p>Fat Tree Topology represents the gold standard for enterprise supercomputers. Unlike traditional hierarchical networks that narrow bandwidth towards root core switches, a Fat Tree broadens cable count towards the top of the tree. This guarantees full <em>non-blocking bisection bandwidth</em>, enabling any compute node to communicate with any other compute node at full wire speed simultaneously without oversubscription.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
@@ -245,38 +251,41 @@
                     <!-- SECTION 3 -->
                     <section id="section-3">
                         <h2>3. The OpenHPC Software Stack</h2>
-                        <p>Deploying a production HPC cluster requires a cohesive software ecosystem. <strong>OpenHPC</strong> provides a standardized, community-driven repository of pre-packaged HPC components.</p>
 
-                        <div class="space-y-4 my-6">
-                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-sky-500 text-sm m-0">1. Provisioning Layer: Warewulf</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mt-1">Warewulf manages stateless node images (VNFS). Compute nodes boot directly over the network via PXE/iPXE, loading OS images into RAM.</p>
-                            </div>
-                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-indigo-500 text-sm m-0">2. Resource Manager: Slurm</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mt-1">Slurm orchestrates workload queues, allocates compute nodes to jobs, and enforces resource isolation using Linux cgroups.</p>
-                            </div>
-                            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-                                <h4 class="font-bold text-amber-500 text-sm m-0">3. User Environment: Lmod Modules</h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mt-1">Lmod environment modules allow users to load dynamic toolchains (e.g. <code>module load gcc/12.2 openmpi/4.1.4</code>) without breaking default environment paths.</p>
-                            </div>
+                        <h3>3.1 OpenHPC Architecture &amp; Ecosystem</h3>
+                        <p>Building a functional HPC cluster requires compiling, configuring, and integrating dozens of specialized open-source software tools. OpenHPC is a Linux Foundation collaborative project that provides a validated, community-driven repository of pre-packaged HPC software components built for enterprise Linux distributions (such as Rocky Linux and RHEL).</p>
+
+                        <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="OpenHPC Reference Architecture" src="../images/openhpc_architecture_vut.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 3: OpenHPC Reference Architecture — Strict network isolation between public management and high-speed data interconnects.</p>
                         </div>
+
+                        <h3>3.2 Foundational Stack Layers</h3>
+                        <p>The OpenHPC framework organizes cluster software into four core operational layers:</p>
+
+                        <p>The Provisioning Layer (Warewulf 4) manages diskless compute node images. Compute nodes boot over the network using PXE/iPXE, pulling OCI container-format operating system images directly into system RAM upon power-on.</p>
+
+                        <p>The Resource Management Layer (Slurm) acts as the central cluster orchestrator. Slurm queues user job requests, allocates physical compute nodes based on fair-share policies, and enforces strict cgroup hardware isolation across running tasks.</p>
+
+                        <p>The Environment Management Layer (Lmod) provides dynamic environment modules. Lmod allows users to dynamically modify their shell environment (e.g. <code>module load gcc/12.2 openmpi/4.1.4</code>), enabling multiple compiler toolchains and MPI libraries to coexist without path collisions.</p>
+
+                        <p>The Package Management Layer (Spack) automates building scientific libraries directly from source code, enabling researchers to compile optimized binaries tailored to specific CPU microarchitectures (such as AVX-512 vector targets).</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 4 -->
                     <section id="section-4">
-                        <h2>4. Summary &amp; Next Steps</h2>
-                        <p>This week covered the transition from single-node microarchitecture to multi-node cluster design. We evaluated Beowulf node roles, low-latency interconnect topologies like Fat Trees, and the OpenHPC deployment stack.</p>
+                        <h2>4. Summary &amp; Self-Assessment</h2>
+                        <p>In Week 2, we transitioned from single-node computer architecture to multi-node cluster system design. We analyzed Beowulf commodity cluster tiering, evaluated NUMA memory controller locality penalties, surveyed low-latency interconnect topologies like Fat Trees, and examined the OpenHPC software deployment stack.</p>
 
                         <div class="p-5 my-6 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs leading-relaxed">
                             <strong class="text-sky-500 text-sm block mb-2">Checklist: Test Your Knowledge</strong>
-                            <ul class="space-y-1 m-0 pl-4">
-                                <li>Can you draw the three major network zones in a cluster (Public, Private, BMC)?</li>
-                                <li>Do you understand why the <strong>Login Node</strong> is the only machine touching the internet?</li>
-                                <li>Why do we prefer "Stateless" diskless booting for compute nodes?</li>
-                                <li>Why does OpenHPC insist on a separate "BMC Network" for management?</li>
+                            <ul class="space-y-1.5 m-0 pl-4">
+                                <li>Can you draw the three major network zones in an HPC cluster (Public Gateway, Private Compute, Out-of-Band BMC)?</li>
+                                <li>Why is computational workload execution strictly forbidden on the Login Node?</li>
+                                <li>What microarchitectural penalty occurs when a NUMA CPU core accesses remote socket memory?</li>
+                                <li>Why does a Fat Tree topology provide non-blocking bisection bandwidth across thousand-node clusters?</li>
                             </ul>
                         </div>
                     </section>

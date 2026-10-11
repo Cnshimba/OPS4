@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 5 Student Notes — Benchmarking and Tuning (EIOPS4A)</title>
+    <title>Week 5 Student Notes — Benchmarking &amp; Performance Tuning (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -61,7 +61,7 @@
     <script>hljs.highlightAll();</script>
     <script>
         window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -76,7 +76,7 @@
                     05
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 5: Benchmarking and Tuning</span>
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 5: Benchmarking &amp; Performance Tuning</span>
                     <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
             </a>
@@ -86,7 +86,7 @@
                     Lab 5 Guide
                 </a>
                 <a href="Week_5_Quiz.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-amber-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
-                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     <span>Quiz 5</span>
                 </a>
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
@@ -102,7 +102,7 @@
     <main class="container mx-auto px-4 max-w-7xl">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Left Sticky Sidebar (Table of Contents & Meta) -->
+            <!-- Left Sticky Sidebar (Table of Contents &amp; Meta) -->
             <aside class="hidden lg:block lg:col-span-3 sticky top-24 space-y-6">
                 
                 <!-- Quick Navigation Box -->
@@ -112,14 +112,12 @@
                         <span>On This Page</span>
                     </div>
                     <nav class="space-y-1.5 text-xs font-medium">
-                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Foundations of Shared-Memory Programming</a>
-                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. The Fork-Join Execution Model (Chapter 7)</a>
-                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. Core Directives &amp; Worksharing Constructs</a>
-                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Data Scoping &amp; Variable Memory Rules</a>
-                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Race Conditions, Reductions &amp; Synchronization</a>
-                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. OpenMP Loop Scheduling Strategies</a>
-                        <a href="#section-7" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">7. Environmental Controls &amp; Thread Affinity</a>
-                        <a href="#section-8" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">8. Summary</a>
+                        <a href="#section-1" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">1. Benchmarking Principles &amp; Metrics</a>
+                        <a href="#section-2" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">2. Standard HPC Benchmarks (HPL, HPCG, STREAM)</a>
+                        <a href="#section-3" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">3. The Roofline Performance Model</a>
+                        <a href="#section-4" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">4. Performance Profiling &amp; Analysis Tools</a>
+                        <a href="#section-5" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">5. Compiler Optimizations &amp; Vectorization</a>
+                        <a href="#section-6" class="block py-1 px-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-sky-500/10 hover:text-sky-500 transition-colors no-underline">6. Summary &amp; Self-Assessment</a>
                     </nav>
                 </div>
 
@@ -131,11 +129,11 @@
                     </div>
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
                         <span class="text-slate-400 font-semibold">Reading Time</span>
-                        <span class="font-bold text-slate-700 dark:text-slate-300">~25 Minutes</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">~30 Minutes</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-slate-400 font-semibold">Slides Ref</span>
-                        <span class="font-bold text-amber-500">Ch. 8 & 9</span>
+                        <span class="font-bold text-amber-500">Ch. 8 &amp; 9</span>
                     </div>
                     <div class="pt-2">
                         <a href="Week_5_Lab_Benchmarking.html" class="w-full text-center py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-colors no-underline shadow-md shadow-sky-500/20 flex items-center justify-center">
@@ -156,277 +154,235 @@
                         <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
                             <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-sky-500/20 mb-1">
                                 <span class="text-xl font-black text-white tracking-tight">05</span>
-                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WEEK 05</span>
                         </div>
                         <div class="flex-1 flex flex-col justify-center p-6">
-                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Benchmarking and Tuning</h1>
-                            <span class="text-sm font-semibold text-sky-500 mt-1">High Performance Linpack (HPL), STREAM & Performance Optimization (Ch. 8 & 9)</span>
+                            <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Benchmarking &amp; Performance Tuning</h1>
+                            <span class="text-sm font-semibold text-sky-500 mt-1">HPL, HPCG, STREAM, Roofline Modeling &amp; Code Optimization (Ch. 8 &amp; 9)</span>
                         </div>
                     </div>
 
-                    
-
-                    
-
-                    
-
-
-
-                    <!-- SECTION 1 -->
-                    
-                        
+                    <!-- Learning Outcomes Card -->
+                    <div class="p-6 mb-8 rounded-2xl border border-sky-500/30 bg-sky-500/5 dark:bg-sky-500/10 text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center space-x-2 text-sky-500 font-bold text-sm mb-3 uppercase tracking-wider">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 0 117.072 0l-.548 5.478a1 1 0 01-1.636 0L9.663 17z"></path></svg>
+                            <span>Learning Outcomes (NQF Level 7)</span>
+                        </div>
+                        <ol class="space-y-1.5 text-sm m-0 pl-4">
+                            <li>Differentiate between microbenchmarks, synthetic suites, and production application workloads in HPC evaluation.</li>
+                            <li>Calculate theoretical peak performance ($R_{peak}$) and contrast it with achieved Linpack performance ($R_{max}$) to determine cluster efficiency ratios.</li>
+                            <li>Analyze standard HPC benchmarks: High Performance LINPACK (HPL), High Performance Conjugate Gradients (HPCG), and STREAM memory bandwidth tests.</li>
+                            <li>Construct and evaluate Roofline Performance Models using Operational Intensity (FLOPs / Byte) to classify memory-bound versus compute-bound code.</li>
+                            <li>Apply performance profiling utilities (gprof, perf, Valgrind, TAU) and compiler optimization flags (-O3, -march=native, -ftree-vectorize).</li>
+                        </ol>
+                    </div>
 
                     <!-- SECTION 1 -->
                     <section id="section-1">
-                        <h2>1. Foundations of Shared-Memory Programming</h2>
-                        <p>Having explored multi-core SMP and NUMA hardware mechanics in Week 4, we now examine software engineering methodologies for parallelizing code across shared-memory CPUs. <strong>OpenMP (Open Multi-Processing)</strong> is the multi-vendor industry standard API for shared-memory multithreading in C, C++, and Fortran.</p>
-<p>Unlike explicit low-level threading libraries (such as POSIX Threads / Pthreads), which require manual thread creation, stack management, mutex locking, and joins, OpenMP uses high-level, compiler-directed annotations (pragmas) to incrementally convert sequential programs into multithreaded applications.</p>
-                    
+                        <h2>1. Benchmarking Principles &amp; Performance Metrics</h2>
+                        
+                        <h3>1.1 The Role of Benchmarking in Supercomputing</h3>
+                        <p>High Performance Computing systems require continuous performance evaluation during architectural design, hardware procurement, software optimization, and cluster acceptance testing. Benchmarking provides quantitative measurements to compare hardware microarchitectures, validate network interconnect latency, and identify performance bottlenecks.</p>
 
-                    
+                        <h3>1.2 Taxonomies of HPC Benchmarks</h3>
+                        <ul>
+                            <li>Microbenchmarks: Isolated synthetic programs measuring a single specific hardware subsystem, such as memory bus bandwidth (STREAM) or point-to-point network latency (MPI Ping-Pong).</li>
+                            <li>Synthetic Benchmark Suites: Standardized suites designed to simulate dense linear algebra solve rates, such as High Performance LINPACK (HPL) used for the Top500 supercomputer rankings.</li>
+                            <li>Application Benchmarks: Full production scientific domain codes (such as NAMD, WRF, VASP, or OpenFOAM) evaluated under realistic computational inputs.</li>
+                        </ul>
 
-                    <!-- SECTION 2 -->
+                        <h3>1.3 Core Performance Metrics: Rpeak &amp; Rmax</h3>
+                        <p>Theoretical Peak Performance ($R_{peak}$) represents the absolute upper mathematical bound of double-precision floating-point operations per second that physical CPU hardware can execute under ideal clock frequencies:</p>
+
+                        <div class="my-4 text-center">
+                            $$R_{peak} = \text{Total Sockets} \times \text{Cores per Socket} \times \text{Clock Frequency (GHz)} \times \text{FLOPs per Cycle}$$
+                        </div>
+
+                        <p>Achieved Performance ($R_{max}$) represents the actual floating-point throughput accomplished during execution of the High Performance LINPACK (HPL) benchmark solving dense linear systems ($Ax = b$). System Efficiency Ratio is defined as:</p>
+
+                        <div class="my-4 text-center">
+                            $$\text{Efficiency Ratio } (E) = \frac{R_{max}}{R_{peak}} \times 100\%$$
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 2 -->
                     <section id="section-2">
-                        <h2>2. The Fork-Join Execution Model (Chapter 7)</h2>
-                        <p>OpenMP execution strictly follows the <strong>Fork-Join Execution Model</strong>:</p>
+                        <h2>2. Standard HPC Benchmarks (HPL, HPCG, STREAM)</h2>
+                        
+                        <h3>2.1 High Performance LINPACK (HPL)</h3>
+                        <p>HPL measures compute-heavy dense linear algebra operations using double-precision Gaussian elimination with partial pivoting. Because HPL achieves high data reuse in L1/L2 caches via General Matrix Multiply (GEMM) routines, it approaches theoretical peak floating-point limits ($R_{peak}$ efficiency typically between 60% and 85%).</p>
 
-<ol>
-    <li><strong>Sequential Execution (Master Thread)</strong>: The application begins as a single sequential thread (Thread ID 0).</li>
-    <li><strong>Forking Phase</strong>: When the master thread encounters an OpenMP parallel directive (e.g., <code>#pragma omp parallel</code>), it forks a team of worker threads.</li>
-    <li><strong>Parallel Work Execution</strong>: Statements inside the parallel region are executed concurrently by all threads in the team.</li>
-    <li><strong>Implicit Barrier &amp; Join Phase</strong>: At the closing brace of the parallel region, worker threads synchronize at an implicit barrier and join back into the single master thread.</li>
-</ol>
-                    
+                        <h3>2.2 High Performance Conjugate Gradients (HPCG)</h3>
+                        <p>While HPL rewards dense compute throughput, modern scientific applications spend significant time doing sparse matrix vector operations and irregular memory lookups. The HPCG benchmark evaluates sparse linear system solves using iterative conjugate gradient algorithms with a symmetric Gauss-Seidel preconditioner. Because HPCG is memory-bandwidth bound, efficiency ratios on top supercomputers typically range between 1% and 5% of $R_{peak}$.</p>
 
-                    
+                        <h3>2.3 The STREAM Memory Bandwidth Benchmark</h3>
+                        <p>STREAM measures sustainable main memory bandwidth (GB/s) across four fundamental vector operations operating on large arrays exceeding L3 cache capacity:</p>
 
-                    <!-- SECTION 3 -->
+                        <div class="overflow-x-auto my-6">
+                            <table class="w-full text-xs text-left border-collapse border border-slate-200 dark:border-slate-800">
+                                <thead>
+                                    <tr class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Kernel Name</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Kernel Code Statement</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">Bytes Transferred per Iteration</th>
+                                        <th class="p-3 border border-slate-200 dark:border-slate-700">FLOPs per Iteration</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">COPY</td>
+                                        <td class="p-3 font-mono border border-slate-200 dark:border-slate-800">a[i] = b[i];</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">16 Bytes (Read b, Write a)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">0 FLOPs</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">SCALE</td>
+                                        <td class="p-3 font-mono border border-slate-200 dark:border-slate-800">a[i] = q * b[i];</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">16 Bytes (Read b, Write a)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">1 FLOP (Multiply)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">ADD</td>
+                                        <td class="p-3 font-mono border border-slate-200 dark:border-slate-800">a[i] = b[i] + c[i];</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">24 Bytes (Read b, Read c, Write a)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">1 FLOP (Add)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-sky-500 border border-slate-200 dark:border-slate-800">TRIAD</td>
+                                        <td class="p-3 font-mono border border-slate-200 dark:border-slate-800">a[i] = b[i] + q * c[i];</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">24 Bytes (Read b, Read c, Write a)</td>
+                                        <td class="p-3 border border-slate-200 dark:border-slate-800">2 FLOPs (FMA)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 3 -->
                     <section id="section-3">
-                        <h2>3. Core Directives &amp; Worksharing Constructs</h2>
-                        <h3>3.1 Parallel Region Construct</h3>
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-c">#include &lt;omp.h&gt;
-#include &lt;stdio.h&gt;
+                        <h2>3. The Roofline Performance Model</h2>
+                        <p>The Roofline Model visually relates floating-point computational throughput ($P$, in GFLOPs/s) to hardware main memory bandwidth ($B$, in GB/s) via a fundamental metric called Operational Intensity ($I$):</p>
 
-int main() {
-    // Programmatically set worker thread count
-    omp_set_num_threads(4);
+                        <div class="my-4 text-center">
+                            $$\text{Operational Intensity } (I) = \frac{\text{Total Floating Point Operations (FLOPs)}}{\text{Total Memory Bytes Transferred (DRAM Bytes)}}$$
+                        </div>
 
-    #pragma omp parallel
-    {
-        int tid = omp_get_thread_num();
-        int num_threads = omp_get_num_threads();
-        printf("Hello from OpenMP Thread %d of %d\n", tid, num_threads);
-    }
-    return 0;
-}</code></pre>
-</div>
+                        <p>The attainable performance boundary is governed by the minimum of two hardware ceilings:</p>
 
-<h3>3.2 Loop Worksharing Construct (<code>#pragma omp parallel for</code>)</h3>
-<p>In scientific computing, loop worksharing is the most frequent parallelization technique:</p>
+                        <div class="my-4 text-center">
+                            $$P_{\text{attainable}} = \min\left(P_{\text{peak}}, \, I \times B_{\text{memory}}\right)$$
+                        </div>
 
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-c">#define N 10000000
-double a[N], b[N], c[N];
+                        <p>The transition threshold between the Memory-Bound regime and the Compute-Bound regime occurs at the Ridge Point ($	ext{OI}_{ridge} = rac{P_{peak}}{B_{memory}}$):</p>
 
-// Parallelize loop iterations across the thread team
-#pragma omp parallel for schedule(static)
-for (int i = 0; i &lt; N; i++) {
-    c[i] = a[i] + b[i];
-}</code></pre>
-</div>
-                    
-
-                    
-
-                    <!-- SECTION 4 -->
+                        <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Roofline Model Diagram" src="images/roofline_model_diagram.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 5.1: The Roofline Performance Model mapping Memory-Bound vs Compute-Bound operational intensity regimes.</p>
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 4 -->
                     <section id="section-4">
-                        <h2>4. Data Scoping &amp; Variable Memory Rules</h2>
-                        <p>Because all OpenMP threads access the same physical memory space, programmers must explicitly declare variable scoping rules:</p>
+                        <h2>4. Performance Profiling &amp; Analysis Tools</h2>
+                        
+                        <p>Optimizing software performance requires identifying CPU hot-spots, cache miss bottlenecks, and memory leak issues using specialized Linux profiling suites:</p>
 
-<table>
-    <thead><tr><th>Scoping Clause</th><th>Memory Allocation Rule</th><th>Typical Scientific Application</th></tr></thead>
-    <tbody>
-        <tr><td><code>shared(var)</code></td><td>Single memory address shared across all threads. Default for pre-existing variables.</td><td>Read-only input arrays, global configuration matrices.</td></tr>
-        <tr><td><code>private(var)</code></td><td>Each thread allocates an uninitialized local copy on its private stack. Original variable is unchanged.</td><td>Loop index variables (<code>i</code>, <code>j</code>), temporary local registers.</td></tr>
-        <tr><td><code>firstprivate(var)</code></td><td>Each thread allocates a local copy initialized with the master thread's pre-region value.</td><td>Constant scale parameters needed in local calculations.</td></tr>
-        <tr><td><code>lastprivate(var)</code></td><td>The thread executing the final logical loop iteration copies its value back to the master variable.</td><td>Tracking the last computed state after loop exit.</td></tr>
-    </tbody>
-</table>
-                    
+                        <div class="space-y-4 my-6">
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-sky-500 text-sm m-0 mb-1">Linux perf (Hardware Performance Counters)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Interrogates CPU hardware performance counters to sample instruction execution, L1/L3 cache misses, and branch mispredictions without code instrumentation:</p>
+                                <pre><code class="language-bash"># Record performance counters for executable
+perf stat -e cycles,instructions,cache-misses,L1-dcache-load-misses ./my_app
 
-                    
+# Record call-graph profile for flamegraph visualization
+perf record -g ./my_app
+perf report</code></pre>
+                            </div>
 
-                    <!-- SECTION 5 -->
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-indigo-500 text-sm m-0 mb-1">GNU Profiler (gprof)</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Requires compilation with <code>-pg</code> flags to insert sampling instrumentation hooks into call trees:</p>
+                                <pre><code class="language-bash">gcc -O2 -pg -o my_app main.c
+./my_app
+gprof my_app gmon.out > profile_analysis.txt</code></pre>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                                <h4 class="font-bold text-amber-500 text-sm m-0 mb-1">Valgrind &amp; Callgrind</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 m-0">Simulates execution on a synthetic CPU to detect memory leaks (Memcheck) and trace function call trees (Callgrind):</p>
+                                <pre><code class="language-bash">valgrind --tool=callgrind ./my_app
+kcachegrind callgrind.out.&lt;pid&gt;</code></pre>
+                            </div>
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 5 -->
                     <section id="section-5">
-                        <h2>5. Race Conditions, Reductions &amp; Synchronization</h2>
-                        <h3>5.1 Data Race Conditions</h3>
-<p>A **Data Race Condition** occurs when two or more threads attempt to read and write to the same shared memory location simultaneously without synchronization. Data races produce non-deterministic calculations.</p>
+                        <h2>5. Compiler Optimizations &amp; Vectorization</h2>
+                        <p>Modern compilers automatically transform high-level C/C++ loops into vector AVX-512 / SVE instructions when passed optimization directives:</p>
 
-<h3>5.2 Reduction Clause</h3>
-<p>To safely compute global sums, products, or min/max values without race conditions or lock overhead, OpenMP provides reductions. Each thread accumulates into a private accumulator, which is combined at the join barrier:</p>
-
-<div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-c">double global_pi_sum = 0.0;
-double h = 1.0 / (double)N;
-
-#pragma omp parallel for reduction(+:global_pi_sum) private(x)
-for (int i = 0; i &lt; N; i++) {
-    double x = (i + 0.5) * h;
-    global_pi_sum += 4.0 / (1.0 + x * x);
-}
-double pi = global_pi_sum * h;</code></pre>
-</div>
-
-<h3>5.3 Synchronization Constructs</h3>
-<table>
-    <thead><tr><th>Construct</th><th>Syntax</th><th>Behavior &amp; Performance Impact</th></tr></thead>
-    <tbody>
-        <tr><td><strong>Critical Section</strong></td><td><code>#pragma omp critical</code></td><td>Serializes thread execution. Only one thread executes the block at a time. High overhead.</td></tr>
-        <tr><td><strong>Atomic Update</strong></td><td><code>#pragma omp atomic</code></td><td>Leverages CPU hardware atomic instructions for single memory updates (<code>x += 1</code>). Low overhead.</td></tr>
-        <tr><td><strong>Barrier</strong></td><td><code>#pragma omp barrier</code></td><td>Forces all threads to pause until every thread arrives at the barrier point.</td></tr>
-        <tr><td><strong>Single Execution</strong></td><td><code>#pragma omp single</code></td><td>Enforces that only one thread in the team executes the block (ideal for I/O calls).</td></tr>
-    </tbody>
-</table>
-                    
-
-                    
-
-                    <!-- SECTION 6 -->
+                        <div class="cyber-code-block my-6">
+                            <div class="cyber-code-header">
+                                <div class="cyber-code-dots">
+                                    <span class="cyber-dot dot-red"></span>
+                                    <span class="cyber-dot dot-yellow"></span>
+                                    <span class="cyber-dot dot-green"></span>
+                                </div>
+                                <span class="text-xs font-mono text-slate-400">GCC Production Optimization Flag Suite</span>
+                            </div>
+                            <pre><code class="language-bash"># Compile with level 3 optimization, native SIMD vectorization, and fast math
+gcc -O3 -march=native -mtune=native -ffast-math -ftree-vectorize \
+    -fopt-info-vec-optimized -o matrix_solv matrix_solv.c</code></pre>
+                        </div>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 6 -->
                     <section id="section-6">
-                        <h2>6. OpenMP Loop Scheduling Strategies</h2>
-                        <table>
-    <thead><tr><th>Schedule Type</th><th>Syntax Example</th><th>Algorithmic Behavior &amp; Workload Fit</th></tr></thead>
-    <tbody>
-        <tr><td><strong>Static</strong></td><td><code>schedule(static, 64)</code></td><td>Divides loop iterations into fixed chunks assigned round-robin at loop start. Lowest overhead; ideal for balanced regular loops.</td></tr>
-        <tr><td><strong>Dynamic</strong></td><td><code>schedule(dynamic, 16)</code></td><td>Threads grab chunk allocations dynamically from a shared queue when idle. Higher overhead; ideal for irregular/unbalanced workloads.</td></tr>
-        <tr><td><strong>Guided</strong></td><td><code>schedule(guided, 16)</code></td><td>Chunk size starts large and decreases exponentially to balance load while minimizing queue contention.</td></tr>
-    </tbody>
-</table>
-                    
+                        <h2>6. Summary &amp; Self-Assessment</h2>
+                        <p>Benchmarking and tuning provide the empirical feedback loop for supercomputing optimization. Understanding Rpeak/Rmax efficiency, STREAM bandwidth limits, Roofline operational intensity, and profiling tools enables engineers to extract maximum performance from modern server hardware.</p>
 
-                    
-
-                    <!-- SECTION 7 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 7 -->
-                    <section id="section-7">
-                        <h2>7. Environmental Controls &amp; Thread Affinity</h2>
-                        <div class="cyber-code-block">
-    <div class="cyber-code-header">
-        <div class="cyber-code-dots">
-            <span class="cyber-dot dot-red"></span>
-            <span class="cyber-dot dot-yellow"></span>
-            <span class="cyber-dot dot-green"></span>
-        </div>
-        <span class="text-xs font-mono text-slate-400">Terminal</span>
-    </div>
-    <pre><code class="language-bash"># Set environment thread count
-export OMP_NUM_THREADS=16
-
-# Configure loop scheduling policy externally
-export OMP_SCHEDULE="guided,32"
-
-# Bind OpenMP threads to physical CPU cores (prevents cross-NUMA migration)
-export OMP_PROC_BIND=close
-export OMP_PLACES=cores
-
-# Set stack size limit for OpenMP threads
-export OMP_STACKSIZE=64M</code></pre>
-</div>
-                    
-
-                    
-
-                    <!-- SECTION 8 -->
-                    </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
-
-                    <!-- SECTION 8 -->
-                    <section id="section-8">
-                        <h2>8. Summary</h2>
-                        <p>OpenMP provides an intuitive, high-performance API for shared-memory multithreading. Next week, in Week 6, we examine **Distributed-Memory Programming with MPI** to scale code across multi-node supercomputing clusters.</p>
-
-
-                    </section>
-
-                    <!-- Quiz Link Widget -->
-                    
-    
+                        <div class="p-5 my-6 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs leading-relaxed">
+                            <strong class="text-sky-500 text-sm block mb-2">Checklist: Test Your Knowledge</strong>
+                            <ul class="space-y-1.5 m-0 pl-4">
+                                <li>How is theoretical peak performance ($R_{peak}$) calculated for a multi-core CPU node?</li>
+                                <li>Why does HPCG yield a lower efficiency ratio than HPL on Top500 supercomputers?</li>
+                                <li>What is the formula for Operational Intensity in the Roofline Model?</li>
+                                <li>What information does `perf stat` collect from CPU hardware performance counters?</li>
+                            </ul>
+                        </div>
                     </section>
 
                     <!-- Quiz Link Widget -->
                     <div class="mt-12 p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white border border-sky-500/30 text-center space-y-4 shadow-2xl">
                         <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 font-bold text-xs">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H9 5a2 2 0 012-2h2a2 2 0 012-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             <span>Knowledge Check</span>
                         </div>
                         <h3 class="text-2xl font-black text-white m-0">Test Your Knowledge</h3>
                         <p class="text-xs text-slate-300 max-w-xl mx-auto m-0 leading-relaxed">Ready to test your understanding of Week 5 concepts? Take the interactive quiz to reinforce key ideas.</p>
                         <a href="Week_5_Quiz.html" class="inline-flex items-center px-8 py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-black text-xs transition-all no-underline shadow-lg shadow-sky-500/30 hover:scale-105">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             Take Week 5 Quiz Now
                         </a>
                     </div>
-                </div>
-</div>
+
                 </article>
-</main>
+            </div>
+
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">

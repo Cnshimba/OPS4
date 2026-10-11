@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 5 Quiz: Benchmarking & Performance Tuning (EIOPS4A)</title>
+    <title>Week 5 Quiz: Benchmarking &amp; Performance Tuning (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -59,13 +59,23 @@
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
 
-    <!-- Top Navigation Bar -->
+    <!-- Top Navigation Bar with Sticky Progress Header -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
         <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
             <a href="Week_5_Student_Notes.html" class="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">
                 <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 <span>Back to Student Notes</span>
             </a>
+            
+            <!-- Live Progress Counter in Navbar -->
+            <div class="hidden md:flex items-center space-x-3 text-xs font-bold">
+                <span class="text-slate-500 dark:text-slate-400">Progress:</span>
+                <span id="nav-progress-text" class="text-sky-500 font-mono font-black">Question 1 of 25</span>
+                <div class="w-32 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div id="nav-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
             <div class="flex items-center space-x-4">
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-amber-500/50 transition-colors">
@@ -80,7 +90,7 @@
     <main class="container mx-auto px-4 max-w-4xl">
         
         <!-- Hero Header Card -->
-        <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-6 overflow-hidden">
             <div class="w-32 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 border-2 border-sky-400 flex flex-col items-center justify-center shadow-lg shadow-amber-500/20 mb-1">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
@@ -88,22 +98,38 @@
                 <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">QUIZ 05</span>
             </div>
             <div class="flex-1 flex flex-col justify-center p-6">
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 5 Quiz: Benchmarking & Performance Tuning</h1>
-                <span class="text-xs font-semibold text-amber-500 mt-1">HPL, Linpack, STREAM & Microarchitecture Optimization</span>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 5 Quiz: Benchmarking &amp; Performance Tuning</h1>
+                <span class="text-xs font-semibold text-amber-500 mt-1">25 Questions — Single Question Flow (HPL, HPCG, STREAM, Roofline Modeling &amp; Profiling)</span>
             </div>
         </div>
 
-        <!-- Quiz Container -->
+        <!-- Question Jump Pagination Grid -->
+        <div id="jump-grid-container" class="p-4 mb-6 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-center gap-1.5">
+            <!-- Question Jump Pills injected via JS -->
+        </div>
+
+        <!-- Quiz Container (Renders 1 active question card) -->
         <div id="quiz-container" class="space-y-6">
-            <!-- Questions injected via JS -->
+            <!-- Active Question Card injected via JS -->
         </div>
 
         <!-- Results Card Container -->
-        <div id="results-container" class="hidden mt-10 p-8 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl border border-sky-500/30 text-center space-y-6">
-            <h2 class="text-3xl font-black text-white m-0">Quiz Complete!</h2>
-            <p class="text-lg text-slate-300 m-0">You scored <span id="score-display" class="font-black text-sky-400 text-2xl">0</span> out of <span id="total-display" class="font-bold text-white text-2xl">0</span>.</p>
-            <button onclick="location.reload()" class="px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-black text-sm transition-all shadow-lg shadow-amber-500/30">
-                Retry Quiz
+        <div id="results-container" class="hidden mt-10 p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl border border-sky-500/30 text-center space-y-6">
+            <h2 class="text-3xl font-black text-white m-0">Quiz Assessment Complete!</h2>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 py-4">
+                <div class="w-32 h-32 rounded-full border-4 border-sky-400 flex flex-col items-center justify-center bg-slate-800/80 shadow-xl">
+                    <span id="score-percentage" class="text-3xl font-black text-sky-400">0%</span>
+                    <span id="score-ratio" class="text-xs text-slate-400 font-bold">0 / 25</span>
+                </div>
+                <div class="text-left space-y-2 max-w-md">
+                    <div id="mastery-badge" class="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30">
+                        Performance Verdict
+                    </div>
+                    <p id="mastery-message" class="text-sm text-slate-300 m-0 leading-relaxed">Detailed score breakdown and recommendations will appear here.</p>
+                </div>
+            </div>
+            <button onclick="location.reload()" class="px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-black text-sm transition-all shadow-lg shadow-amber-500/30">
+                Retry Week 5 Quiz
             </button>
         </div>
 
@@ -112,252 +138,477 @@
     <script>
         const questions = [
             {
-                        "question": "What is the purpose of the High Performance Linpack (HPL) benchmark?",
-                        "options": [
-                                    "To measure memory bandwidth.",
-                                    "To measure disk I/O performance.",
-                                    "To measure the peak floating-point computing power of a cluster.",
-                                    "To test network latency."
-                        ],
-                        "correct": 2,
-                        "explanation": "HPL solves a dense linear system of equations to measure the floating-point execution rate (FLOPs) of a cluster, and is the standard used for the Top500 list."
+                "question": "What is the primary definition of Theoretical Peak Performance (Rpeak) in supercomputing?",
+                "options": [
+                    "The maximum measured FLOPS achieved during a Linpack benchmark run.",
+                    "The absolute upper mathematical bound of FLOPS hardware can execute under ideal clock frequencies and vector execution pipelines.",
+                    "The bandwidth of the network interconnect.",
+                    "The storage capacity of main memory RAM."
+                ],
+                "correct": 1,
+                "explanation": "Rpeak is calculated by multiplying sockets * cores * clock speed * FLOPs per cycle, representing ideal theoretical maximum speed."
             },
             {
-                        "question": "What does STREAM benchmark specifically measure?",
-                        "options": [
-                                    "Sustainable memory bandwidth.",
-                                    "CPU clock speed.",
-                                    "Storage read/write speeds.",
-                                    "Network bisection bandwidth."
-                        ],
-                        "correct": 0,
-                        "explanation": "STREAM is the industry standard for measuring sustained memory bandwidth (in GB/s) for simple vector kernels."
+                "question": "What does Achieved Performance (Rmax) measure?",
+                "options": [
+                    "The actual floating-point throughput achieved during execution of the High Performance LINPACK (HPL) benchmark.",
+                    "The capacity of disk storage arrays.",
+                    "The number of users logged into the system.",
+                    "The power consumption of CPU fans."
+                ],
+                "correct": 0,
+                "explanation": "Rmax is the actual achieved FLOPS rating obtained on the HPL dense matrix benchmark used for Top500 supercomputer rankings."
             },
             {
-                        "question": "Why is profiling important before attempting to optimize code?",
-                        "options": [
-                                    "It increases the compilation speed.",
-                                    "It identifies the 'hotspots' where the program spends the most time.",
-                                    "It automatically parallelizes the code.",
-                                    "It reduces the memory footprint."
-                        ],
-                        "correct": 1,
-                        "explanation": "Profiling reveals where the application actually spends its time, allowing you to focus optimization efforts on the bottlenecks that matter most (Amdahl's Law)."
+                "question": "How is the System Efficiency Ratio calculated in HPC benchmarking?",
+                "options": [
+                    "Efficiency Ratio = (Rmax / Rpeak) * 100%",
+                    "Efficiency Ratio = Rpeak - Rmax",
+                    "Efficiency Ratio = (Rpeak / Rmax) * 100%",
+                    "Efficiency Ratio = Memory Bandwidth / Clock Speed"
+                ],
+                "correct": 0,
+                "explanation": "Efficiency Ratio is the percentage ratio of actual achieved Linpack performance (Rmax) compared to theoretical hardware peak (Rpeak)."
             },
             {
-                        "question": "What is the difference between GFLOPS and TFLOPS?",
-                        "options": [
-                                    "GFLOPS is memory speed, TFLOPS is disk speed.",
-                                    "GFLOPS is billions of FLOPs, TFLOPS is trillions of FLOPs.",
-                                    "GFLOPS is for CPUs, TFLOPS is for GPUs.",
-                                    "There is no difference."
-                        ],
-                        "correct": 1,
-                        "explanation": "GigaFLOPS (10^9) represents billions of operations per second, while TeraFLOPS (10^12) represents trillions."
+                "question": "Why does High Performance LINPACK (HPL) achieve high efficiency ratios (typically 60% to 85%) on Top500 systems?",
+                "options": [
+                    "Because it operates entirely on mechanical hard drives.",
+                    "Because dense matrix multiplication (GEMM) provides high temporal and spatial cache reuse, maximizing vector pipeline utilization.",
+                    "Because HPL skips floating-point calculations.",
+                    "Because HPL runs only on GPUs."
+                ],
+                "correct": 1,
+                "explanation": "HPL uses dense linear algebra routines with high data reuse in L1/L2 caches, allowing floating-point pipelines to execute near theoretical max."
             },
             {
-                        "question": "What is 'Strong Scaling'?",
-                        "options": [
-                                    "Increasing the problem size while keeping the number of processors constant.",
-                                    "Keeping the overall problem size fixed while increasing the number of processors.",
-                                    "Using stronger, faster processors.",
-                                    "Scaling the network bandwidth."
-                        ],
-                        "correct": 1,
-                        "explanation": "Strong scaling measures how the time to solve a fixed-size problem decreases as more processors are added."
+                "question": "Why does the High Performance Conjugate Gradients (HPCG) benchmark yield much lower efficiency ratios (1% to 5%) than HPL?",
+                "options": [
+                    "Because HPCG solves sparse linear systems with irregular memory access patterns, making it strictly memory-bandwidth bound.",
+                    "Because HPCG is written in Python.",
+                    "Because HPCG does not use parallel nodes.",
+                    "Because HPCG requires disk formatting."
+                ],
+                "correct": 0,
+                "explanation": "HPCG simulates real-world sparse matrix calculations with low data reuse, exposing memory bus bandwidth and latency bottlenecks."
             },
             {
-                        "question": "What is 'Weak Scaling'?",
-                        "options": [
-                                    "Using older, slower processors.",
-                                    "Keeping the problem size fixed while reducing processors.",
-                                    "Increasing the problem size proportionally as the number of processors increases.",
-                                    "Decreasing the memory bandwidth."
-                        ],
-                        "correct": 2,
-                        "explanation": "Weak scaling measures efficiency when the workload per processor is kept constant, meaning the total problem size grows as you add nodes."
+                "question": "Which benchmark is specifically designed to measure sustainable main memory bandwidth (GB/s)?",
+                "options": [
+                    "HPL",
+                    "STREAM",
+                    "SPEC CPU",
+                    "IOR"
+                ],
+                "correct": 1,
+                "explanation": "STREAM is the industry standard microbenchmark measuring main memory bus bandwidth across synthetic vector kernels."
             },
             {
-                        "question": "According to Amdahl's Law, if 10% of a program is serial, what is the maximum theoretical speedup regardless of how many cores you use?",
-                        "options": [
-                                    "10x",
-                                    "100x",
-                                    "Infinite",
-                                    "2x"
-                        ],
-                        "correct": 0,
-                        "explanation": "Amdahl's Law states Speedup = 1 / (Serial Fraction). 1 / 0.10 = 10. You can never achieve more than a 10x speedup."
+                "question": "What four vector kernels comprise the standard STREAM memory benchmark?",
+                "options": [
+                    "Copy, Scale, Add, Triad",
+                    "Read, Write, Delete, Format",
+                    "Push, Pop, Shift, Rotate",
+                    "Compile, Link, Execute, Debug"
+                ],
+                "correct": 0,
+                "explanation": "STREAM evaluates main memory bandwidth using four synthetic vector operations: Copy, Scale, Add, and Triad."
             },
             {
-                        "question": "How does Gustafson's Law change the perspective of Amdahl's Law?",
-                        "options": [
-                                    "It proves Amdahl wrong.",
-                                    "It argues that as we get more processors, we don't solve the same problem faster; we solve a much larger problem in the same amount of time.",
-                                    "It states that serial code doesn't exist.",
-                                    "It focuses purely on GPU acceleration."
-                        ],
-                        "correct": 1,
-                        "explanation": "Gustafson's Law relates to weak scaling, recognizing that researchers scale up the size of their simulations when given more computing power, reducing the impact of the serial portion."
+                "question": "In the STREAM benchmark, how many main memory bytes are transferred per iteration in the Add kernel (a[i] = b[i] + c[i]) for 64-bit double precision floats?",
+                "options": [
+                    "8 Bytes",
+                    "16 Bytes",
+                    "24 Bytes (Read b, Read c, Write a)",
+                    "32 Bytes"
+                ],
+                "correct": 2,
+                "explanation": "The Add kernel reads two 8-byte double precision arrays (b and c) and writes one 8-byte array (a), totaling 24 bytes per iteration."
             },
             {
-                        "question": "What is the primary cause of a 'cache miss'?",
-                        "options": [
-                                    "The CPU clock speed is too fast.",
-                                    "The data the CPU needs is not in the fast cache, forcing it to wait for a fetch from slower main memory.",
-                                    "The program has a syntax error.",
-                                    "The network cable is unplugged."
-                        ],
-                        "correct": 1,
-                        "explanation": "Cache misses occur when data is not found in the L1/L2/L3 cache, resulting in significant CPU stall times while data is retrieved from RAM."
+                "question": "What mathematical formula defines Operational Intensity (I) in the Roofline Model?",
+                "options": [
+                    "Operational Intensity = Total FLOPs / Total Memory Bytes Transferred",
+                    "Operational Intensity = Memory Bandwidth * Clock Speed",
+                    "Operational Intensity = Total Memory Bytes / Total FLOPs",
+                    "Operational Intensity = Rmax / Rpeak"
+                ],
+                "correct": 0,
+                "explanation": "Operational Intensity (I) is the ratio of floating-point operations executed per byte of main memory data transferred."
             },
             {
-                        "question": "What does a compiler optimization flag like `-O3` do?",
-                        "options": [
-                                    "It deletes the source code.",
-                                    "It applies aggressive automatic optimizations (like loop unrolling and vectorization) to make the executable run faster.",
-                                    "It forces the code to run sequentially.",
-                                    "It turns off all warnings."
-                        ],
-                        "correct": 1,
-                        "explanation": "Compiler optimization flags instruct the compiler to spend more time analyzing the code to generate highly optimized, faster machine code."
+                "question": "In a Roofline Performance Model diagram, what boundary determines maximum performance when Operational Intensity is below the Ridge Point?",
+                "options": [
+                    "Peak Computational Roof",
+                    "Memory Bandwidth Roof (Attainable Performance = Operational Intensity * Memory Bandwidth)",
+                    "Disk Storage Capacity Roof",
+                    "Network Latency Roof"
+                ],
+                "correct": 1,
+                "explanation": "Below the Ridge Point, code performance is constrained by main memory bus bandwidth (Memory-Bound regime)."
             },
             {
-                        "question": "What is the 'Roofline Model'?",
-                        "options": [
-                                    "A model for cluster cooling efficiency.",
-                                    "A visual performance model that relates processor performance to off-chip memory traffic.",
-                                    "A method for physical server rack layout.",
-                                    "A pricing model for cloud HPC."
-                        ],
-                        "correct": 1,
-                        "explanation": "The Roofline model shows whether an application is compute-bound (limited by the CPU's peak FLOPS) or memory-bound (limited by memory bandwidth)."
+                "question": "How is the Ridge Point on a Roofline Model diagram defined?",
+                "options": [
+                    "Ridge Point = Peak FLOPS / Memory Bandwidth",
+                    "Ridge Point = Memory Bandwidth / Peak FLOPS",
+                    "Ridge Point = Rmax * Rpeak",
+                    "Ridge Point = Total Nodes / Total Cores"
+                ],
+                "correct": 0,
+                "explanation": "The Ridge Point is the operational intensity threshold where the memory bandwidth slope intersects peak hardware floating-point capacity."
             },
             {
-                        "question": "What is HPCG (High Performance Conjugate Gradients)?",
-                        "options": [
-                                    "A new type of graphics card.",
-                                    "A benchmark designed to complement HPL by measuring memory bandwidth and irregular data access, which better represents modern scientific codes.",
-                                    "A compiler flag.",
-                                    "A file system."
-                        ],
-                        "correct": 1,
-                        "explanation": "HPCG is a modern benchmark that stresses memory and network latency, providing a more realistic performance metric for memory-bound applications than HPL."
+                "question": "If an application algorithm has an Operational Intensity of 0.1 FLOPs/Byte, how is it classified under the Roofline Model?",
+                "options": [
+                    "Compute-Bound",
+                    "Memory-Bound",
+                    "Network-Bound",
+                    "I/O-Bound"
+                ],
+                "correct": 1,
+                "explanation": "An operational intensity of 0.1 FLOPs/Byte is very low, placing the workload deep in the sloped Memory-Bound region."
             },
             {
-                        "question": "What is 'OS Jitter' (or OS Noise) in HPC?",
-                        "options": [
-                                    "Vibrations in the server rack.",
-                                    "Small interruptions caused by background operating system tasks that can severely desynchronize tightly coupled parallel applications.",
-                                    "Static on the network cables.",
-                                    "Random crashes of the Slurm daemon."
-                        ],
-                        "correct": 1,
-                        "explanation": "OS Jitter refers to the microsecond delays caused by OS interrupts (like cron jobs or network polling). In a cluster with thousands of nodes, these tiny delays compound and drastically reduce performance."
+                "question": "Which benchmark evaluates parallel file system storage bandwidth and metadata operations in HPC clusters?",
+                "options": [
+                    "IOR and mdtest",
+                    "HPL",
+                    "STREAM",
+                    "gprof"
+                ],
+                "correct": 0,
+                "explanation": "IOR measures parallel storage read/write bandwidth, while mdtest measures parallel metadata file creation/deletion operations."
             },
             {
-                        "question": "What does it mean if an application is 'Memory Bound'?",
-                        "options": [
-                                    "It uses too much hard drive space.",
-                                    "Its performance is limited by how fast data can be delivered from RAM to the CPU, not by the CPU's calculating speed.",
-                                    "It has a memory leak and will crash.",
-                                    "It can only run on a single node."
-                        ],
-                        "correct": 1,
-                        "explanation": "A memory-bound application spends most of its time waiting for data to arrive from memory because the CPU processes data faster than the RAM can supply it."
+                "question": "What is the primary role of the Linux perf utility?",
+                "options": [
+                    "To collect CPU hardware performance counter events (cache misses, instructions, cycles, branch mispredictions).",
+                    "To format NVMe storage drives.",
+                    "To manage Slurm job queues.",
+                    "To edit C source code."
+                ],
+                "correct": 0,
+                "explanation": "perf stat accesses CPU hardware performance counters to measure architectural events without code modification."
             },
             {
-                        "question": "What does it mean if an application is 'Compute Bound'?",
-                        "options": [
-                                    "It is tied to a specific computer.",
-                                    "Its performance is limited by the speed of the CPU's arithmetic logic units (FLOPS), not by memory delivery.",
-                                    "It requires a calculator.",
-                                    "It cannot use GPUs."
-                        ],
-                        "correct": 1,
-                        "explanation": "A compute-bound application has plenty of data available in cache/registers and is purely limited by how fast the CPU can crunch the numbers."
+                "question": "What compilation flag is required to instrument C/C++ code for profiling with the GNU Profiler (gprof)?",
+                "options": [
+                    "-pg",
+                    "-O3",
+                    "-Wall",
+                    "-shared"
+                ],
+                "correct": 0,
+                "explanation": "Compiling with -pg inserts profiling call-graph instrumentation hooks into the generated binary for gprof analysis."
+            },
+            {
+                "question": "What is a major disadvantage of executing applications under Valgrind (Memcheck/Callgrind)?",
+                "options": [
+                    "It incurs a 20x to 50x execution slowdown because it runs code on a synthetic CPU emulation layer.",
+                    "It modifies source code files automatically.",
+                    "It requires root administrative privileges.",
+                    "It deletes output files upon completion."
+                ],
+                "correct": 0,
+                "explanation": "Valgrind emulates CPU execution to trace memory leaks and call graphs, suffering significant runtime overhead."
+            },
+            {
+                "question": "What information does a Flamegraph provide when analyzing profile data from perf or Callgrind?",
+                "options": [
+                    "A visual stack trace hierarchy where horizontal bar width corresponds to total CPU execution time spent in each function.",
+                    "A graph of network router temperatures.",
+                    "A chart of hard drive storage usage.",
+                    "A list of logged-in cluster users."
+                ],
+                "correct": 0,
+                "explanation": "Flamegraphs visualize call stacks where bar width represents proportional CPU time spent in functions."
+            },
+            {
+                "question": "What does the GCC compiler optimization flag -O3 enable?",
+                "options": [
+                    "Aggressive optimizations including loop vectorization, function inlining, and predictive branch tuning.",
+                    "Debugging symbols for gdb.",
+                    "Single-threaded CPU execution mode.",
+                    "Automatic code documentation generation."
+                ],
+                "correct": 0,
+                "explanation": "-O3 enables high-level compiler optimizations such as loop unrolling, vectorization, and inline expansion."
+            },
+            {
+                "question": "What does the GCC flag -march=native accomplish during compilation?",
+                "options": [
+                    "It instructs the compiler to generate SIMD vector instructions specifically tailored to the host CPU architecture (e.g., AVX-512).",
+                    "It compiles the program for ARM processors only.",
+                    "It disables compiler optimizations.",
+                    "It links native Windows DLLs."
+                ],
+                "correct": 0,
+                "explanation": "-march=native enables instruction extensions (AVX2, AVX-512) matching the host processor running the compiler."
+            },
+            {
+                "question": "Why is auto-vectorization critical for modern HPC CPU performance?",
+                "options": [
+                    "It packs multiple data elements into wide SIMD vector registers (e.g. 512-bit AVX), executing operations in parallel per instruction cycle.",
+                    "It reduces disk storage usage.",
+                    "It converts C code into HTML code.",
+                    "It increases network Wi-Fi speeds."
+                ],
+                "correct": 0,
+                "explanation": "Vectorization utilizes SIMD registers (e.g. processing 8 double-precision floats at once in 512-bit registers), boosting FLOPS throughput."
+            },
+            {
+                "question": "What flag can be passed to GCC to inspect which loops were successfully auto-vectorized?",
+                "options": [
+                    "-fopt-info-vec-optimized",
+                    "-Wall",
+                    "-g",
+                    "-std=c99"
+                ],
+                "correct": 0,
+                "explanation": "-fopt-info-vec-optimized prints compiler diagnostic reports detailing which loops were vectorized."
+            },
+            {
+                "question": "How does loop unrolling improve execution performance in inner computational loops?",
+                "options": [
+                    "By replicating loop body statements to reduce branch instruction evaluation overhead and increase instruction-level parallelism.",
+                    "By deleting loop variables.",
+                    "By converting loops into recursive functions.",
+                    "By writing loop results to disk."
+                ],
+                "correct": 0,
+                "explanation": "Unrolling loops decreases loop index overhead and allows instruction pipelines to schedule multiple independent operations."
+            },
+            {
+                "question": "What compilation flag enables aggressive floating-point optimizations that may violate strict IEEE 754 precision compliance for speed?",
+                "options": [
+                    "-ffast-math",
+                    "-O0",
+                    "-fno-builtin",
+                    "-pedantic"
+                ],
+                "correct": 0,
+                "explanation": "-ffast-math allows floating-point reassociation and algebra simplifications, trading strict IEEE 754 compliance for speed."
+            },
+            {
+                "question": "In software tuning, what is a 'Hot Spot'?",
+                "options": [
+                    "A small section of source code (such as an inner loop) that accounts for the majority of overall program execution time.",
+                    "A physically overheating CPU socket.",
+                    "A wireless router access point.",
+                    "A corrupted sector on a hard drive."
+                ],
+                "correct": 0,
+                "explanation": "A hot spot is a function or loop where profiling reveals the majority of CPU cycles are spent."
+            },
+            {
+                "question": "According to Amdahl's Law, what limits the maximum speedup achievable by parallelizing a application?",
+                "options": [
+                    "The sequential (non-parallelizable) fraction of the program.",
+                    "The number of hard drives in the server.",
+                    "The size of the computer monitor.",
+                    "The speed of the network router."
+                ],
+                "correct": 0,
+                "explanation": "Amdahl's Law proves that maximum parallel speedup is fundamentally bottlenecked by the serial portion of code that cannot run in parallel."
             }
-];
+        ];
 
-        let score = 0;
-        let answeredQuestions = 0;
+        let currentQIndex = 0;
+        let userAnswers = [];
 
-        const quizContainer = document.getElementById('quiz-container');
+        function initQuiz() {
+            if (typeof questions !== 'undefined' && questions.length > 0) {
+                userAnswers = new Array(questions.length).fill(null);
+                renderQuizWizard();
+            }
+        }
 
-        questions.forEach((q, index) => {
-            const qDiv = document.createElement('div');
-            qDiv.className = 'bg-white dark:bg-slate-900/80 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 space-y-4';
-            
-            let optionsHtml = '';
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuiz);
+        } else {
+            initQuiz();
+        }
+
+        function renderQuizWizard() {
+            const container = document.getElementById('quiz-container');
+            const jumpContainer = document.getElementById('jump-grid-container');
+            container.innerHTML = '';
+            jumpContainer.innerHTML = '';
+
+            const totalQ = questions.length;
+
+            // Render Question Jump Pills
+            questions.forEach((_, idx) => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                pill.onclick = () => jumpToQuestion(idx);
+                
+                let pillStyle = 'w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center ';
+                if (idx === currentQIndex) {
+                    pillStyle += 'bg-sky-500 text-white shadow-md ring-2 ring-sky-400';
+                } else if (userAnswers[idx] !== null) {
+                    pillStyle += 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                } else {
+                    pillStyle += 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700';
+                }
+                pill.className = pillStyle;
+                pill.innerText = idx + 1;
+                jumpContainer.appendChild(pill);
+            });
+
+            // Render Active Question Card Only
+            const q = questions[currentQIndex];
+            const card = document.createElement('div');
+            card.className = 'p-6 md:p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6';
+
+            let optionsHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
             q.options.forEach((opt, optIndex) => {
-                optionsHtml += `
-                    <button class="option-btn w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-sky-500 dark:hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-sky-950/20 text-slate-800 dark:text-slate-200 font-medium text-sm transition-all duration-200 flex items-center justify-between" 
-                            onclick="checkAnswer(${index}, ${optIndex}, this)">
-                        <span>${opt}</span>
-                        <span class="status-icon ml-3 flex-shrink-0"></span>
-                    </button>
+                const isSelected = userAnswers[currentQIndex] === optIndex;
+                optionsHTML += `
+                    <div onclick="selectOption(${optIndex})" class="flex items-center space-x-3.5 p-4 rounded-2xl ${isSelected ? 'bg-sky-500/10 border-2 border-sky-500 shadow-md' : 'bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 hover:bg-sky-500/5 hover:border-sky-500/30'} cursor-pointer transition-all group">
+                        <input type="radio" name="current-q-option" value="${optIndex}" ${isSelected ? 'checked' : ''} class="w-4 h-4 text-sky-500 focus:ring-sky-500">
+                        <span class="w-7 h-7 rounded-lg ${isSelected ? 'bg-sky-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} font-bold text-xs flex items-center justify-center group-hover:bg-sky-500 group-hover:text-white transition-colors">${letters[optIndex]}</span>
+                        <span class="text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">${opt}</span>
+                    </div>
                 `;
             });
 
-            qDiv.innerHTML = `
-                <div class="flex items-start space-x-3">
-                    <span class="px-3 py-1 rounded-lg bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Q${index + 1}</span>
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white m-0 leading-snug">${q.question}</h3>
+            card.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Question ${currentQIndex + 1} of ${totalQ}</span>
+                        <span class="text-xs text-slate-400 font-medium">NQF Level 7 Assessment</span>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-slate-500">${userAnswers[currentQIndex] !== null ? ' Answered' : 'Pending'}</span>
                 </div>
-                <div class="options-container space-y-3 pt-2" id="options-${index}">
-                    ${optionsHtml}
-                </div>
-                <div id="explanation-${index}" class="explanation hidden mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
-                    <strong class="text-amber-500 block mb-1">Explanation:</strong>
-                    ${q.explanation}
+
+                <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white m-0 leading-snug">${q.question}</h3>
+                
+                <div class="space-y-3 pt-2">${optionsHTML}</div>
+
+                <!-- Navigation Controls Footer -->
+                <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-6 mt-6">
+                    <button type="button" onclick="prevQuestion()" ${currentQIndex === 0 ? 'disabled' : ''} class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 disabled:opacity-40 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous
+                    </button>
+
+                    ${currentQIndex === totalQ - 1 ? `
+                        <button type="button" onclick="checkAnswers()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs shadow-lg shadow-emerald-500/30 hover:scale-105 transition-all flex items-center">
+                            Submit Final Quiz
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                    ` : `
+                        <button type="button" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-sky-500 text-white font-bold text-xs hover:bg-sky-400 shadow-md shadow-sky-500/20 transition-all flex items-center">
+                            Next
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    `}
                 </div>
             `;
-            quizContainer.appendChild(qDiv);
-        });
 
-        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
-            const container = document.getElementById(`options-${questionIndex}`);
-            if (container.classList.contains('answered')) return;
-            
-            container.classList.add('answered');
-            const buttons = container.getElementsByTagName('button');
-            const correctIndex = questions[questionIndex].correct;
+            container.appendChild(card);
+            updateNavBarProgress();
+        }
 
-            if (selectedOptionIndex === correctIndex) {
-                buttonElement.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-400');
-                buttonElement.querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                score++;
-            } else {
-                buttonElement.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-400');
-                buttonElement.querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                
-                buttons[correctIndex].classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-400');
-                buttons[correctIndex].querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-            }
+        function selectOption(optIndex) {
+            userAnswers[currentQIndex] = optIndex;
+            renderQuizWizard();
+        }
 
-            for (let btn of buttons) {
-                btn.style.cursor = 'default';
-            }
+        function jumpToQuestion(idx) {
+            currentQIndex = idx;
+            renderQuizWizard();
+        }
 
-            document.getElementById(`explanation-${questionIndex}`).classList.remove('hidden');
-            
-            answeredQuestions++;
-            if (answeredQuestions === questions.length) {
-                setTimeout(showResults, 800);
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                renderQuizWizard();
             }
         }
 
-        function showResults() {
+        function nextQuestion() {
+            if (currentQIndex < questions.length - 1) {
+                currentQIndex++;
+                renderQuizWizard();
+            }
+        }
+
+        function updateNavBarProgress() {
+            const totalQ = questions.length;
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const pct = Math.round((answeredCount / totalQ) * 100);
+
+            if (document.getElementById('nav-progress-text')) {
+                document.getElementById('nav-progress-text').innerText = `Question ${currentQIndex + 1} of ${totalQ} (${answeredCount} Answered)`;
+            }
+            if (document.getElementById('nav-progress-bar')) {
+                document.getElementById('nav-progress-bar').style.width = `${pct}%`;
+            }
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const totalQ = questions.length;
+            const container = document.getElementById('quiz-container');
+            const jumpContainer = document.getElementById('jump-grid-container');
+            jumpContainer.innerHTML = '';
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const selected = userAnswers[index];
+                const isCorrect = selected === q.correct;
+                if (isCorrect) score++;
+
+                const card = document.createElement('div');
+                card.className = `p-6 rounded-2xl ${isCorrect ? 'bg-emerald-500/5 border border-emerald-500/30' : 'bg-rose-500/5 border border-rose-500/30'} space-y-3`;
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-6 h-6 rounded-md ${isCorrect ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'} font-bold text-xs flex items-center justify-center">${index + 1}</span>
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0">${q.question}</h4>
+                        </div>
+                        <span class="text-xs font-bold ${isCorrect ? 'text-emerald-500' : 'text-rose-500'}">${isCorrect ? ' Correct' : ' Incorrect'}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 pl-8">
+                        Your Answer: ${selected !== null ? q.options[selected] : 'Not Answered'}<br>
+                        Correct Answer: ${q.options[q.correct]}
+                    </p>
+                    <div class="pl-8 pt-1 text-xs font-semibold ${isCorrect ? 'text-emerald-500' : 'text-rose-500'} leading-relaxed">
+                        ${q.explanation}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            const pct = Math.round((score / totalQ) * 100);
+            document.getElementById('score-percentage').innerText = `${pct}%`;
+            document.getElementById('score-ratio').innerText = `${score} / ${totalQ}`;
+            
+            const badge = document.getElementById('mastery-badge');
+            const msg = document.getElementById('mastery-message');
+
+            if (pct >= 80) {
+                badge.innerText = 'Mastery Demonstrated (80%+ Target)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30';
+                msg.innerText = 'Outstanding work! You have achieved complete mastery of Benchmarking and Performance Tuning concepts.';
+            } else if (pct >= 60) {
+                badge.innerText = 'Good Competency (60%-79%)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 font-bold text-xs border border-sky-500/30';
+                msg.innerText = 'Solid performance! Review the Roofline Model and STREAM benchmark kernels to achieve full mastery.';
+            } else {
+                badge.innerText = 'Review Recommended (<60%)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xs border border-amber-500/30';
+                msg.innerText = 'Re-read Chapter 8 &amp; 9 student notes focusing on Rpeak calculations and profiling tools before retrying.';
+            }
+
             document.getElementById('results-container').classList.remove('hidden');
-            document.getElementById('score-display').textContent = score;
-            document.getElementById('total-display').textContent = questions.length;
-            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({ top: document.getElementById('results-container').offsetTop - 100, behavior: 'smooth' });
         }
     </script>
-
-    <!-- Footer -->
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
-        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
-    </footer>
-
 </body>
 </html>

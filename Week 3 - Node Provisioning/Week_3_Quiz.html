@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 3 Quiz: Node Provisioning & Warewulf (EIOPS4A)</title>
+    <title>Week 3 Quiz: Node Provisioning Strategies (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -59,13 +59,23 @@
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
 
-    <!-- Top Navigation Bar -->
+    <!-- Top Navigation Bar with Sticky Progress Header -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
         <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
             <a href="Week_3_Student_Notes.html" class="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">
                 <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 <span>Back to Student Notes</span>
             </a>
+            
+            <!-- Live Progress Counter in Navbar -->
+            <div class="hidden md:flex items-center space-x-3 text-xs font-bold">
+                <span class="text-slate-500 dark:text-slate-400">Progress:</span>
+                <span id="nav-progress-text" class="text-sky-500 font-mono font-black">Question 1 of 25</span>
+                <div class="w-32 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div id="nav-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
             <div class="flex items-center space-x-4">
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-amber-500/50 transition-colors">
@@ -80,7 +90,7 @@
     <main class="container mx-auto px-4 max-w-4xl">
         
         <!-- Hero Header Card -->
-        <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-6 overflow-hidden">
             <div class="w-32 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 border-2 border-sky-400 flex flex-col items-center justify-center shadow-lg shadow-amber-500/20 mb-1">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
@@ -88,22 +98,38 @@
                 <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">QUIZ 03</span>
             </div>
             <div class="flex-1 flex flex-col justify-center p-6">
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 3 Quiz: Node Provisioning & Warewulf</h1>
-                <span class="text-xs font-semibold text-amber-500 mt-1">Stateless Provisioning, VNFS & PXE Network Booting</span>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 3 Quiz: Node Provisioning Strategies</h1>
+                <span class="text-xs font-semibold text-amber-500 mt-1">25 Questions — Single Question Flow (Vagrant IaC, Warewulf 4 &amp; Strategy Selection)</span>
             </div>
         </div>
 
-        <!-- Quiz Container -->
+        <!-- Question Jump Pagination Grid -->
+        <div id="jump-grid-container" class="p-4 mb-6 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-center gap-1.5">
+            <!-- Question Jump Pills injected via JS -->
+        </div>
+
+        <!-- Quiz Container (Renders 1 active question card) -->
         <div id="quiz-container" class="space-y-6">
-            <!-- Questions injected via JS -->
+            <!-- Active Question Card injected via JS -->
         </div>
 
         <!-- Results Card Container -->
-        <div id="results-container" class="hidden mt-10 p-8 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl border border-sky-500/30 text-center space-y-6">
-            <h2 class="text-3xl font-black text-white m-0">Quiz Complete!</h2>
-            <p class="text-lg text-slate-300 m-0">You scored <span id="score-display" class="font-black text-sky-400 text-2xl">0</span> out of <span id="total-display" class="font-bold text-white text-2xl">0</span>.</p>
-            <button onclick="location.reload()" class="px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-black text-sm transition-all shadow-lg shadow-amber-500/30">
-                Retry Quiz
+        <div id="results-container" class="hidden mt-10 p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl border border-sky-500/30 text-center space-y-6">
+            <h2 class="text-3xl font-black text-white m-0">Quiz Assessment Complete!</h2>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 py-4">
+                <div class="w-32 h-32 rounded-full border-4 border-sky-400 flex flex-col items-center justify-center bg-slate-800/80 shadow-xl">
+                    <span id="score-percentage" class="text-3xl font-black text-sky-400">0%</span>
+                    <span id="score-ratio" class="text-xs text-slate-400 font-bold">0 / 25</span>
+                </div>
+                <div class="text-left space-y-2 max-w-md">
+                    <div id="mastery-badge" class="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30">
+                        Performance Verdict
+                    </div>
+                    <p id="mastery-message" class="text-sm text-slate-300 m-0 leading-relaxed">Detailed score breakdown and recommendations will appear here.</p>
+                </div>
+            </div>
+            <button onclick="location.reload()" class="px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-black text-sm transition-all shadow-lg shadow-amber-500/30">
+                Retry Week 3 Quiz
             </button>
         </div>
 
@@ -112,252 +138,477 @@
     <script>
         const questions = [
             {
-                        "question": "What does PXE stand for?",
-                        "options": [
-                                    "Preboot Execution Environment",
-                                    "Parallel XML Extractor",
-                                    "Primary X Server Environment",
-                                    "Processor Execution Engine"
-                        ],
-                        "correct": 0,
-                        "explanation": "PXE (Preboot Execution Environment) is an industry standard that allows computers to boot an operating system directly from the network instead of a local disk."
+                "question": "What is the fundamental definition of Node Provisioning in High Performance Computing?",
+                "options": [
+                    "Compiling parallel source code using GCC.",
+                    "The automated, repeatable pipeline of allocating computing hardware, instantiating operating systems, binding networks, and initializing cluster compute nodes.",
+                    "Generating random encryption keys for user passwords.",
+                    "Monitoring data center room temperature."
+                ],
+                "correct": 1,
+                "explanation": "Node Provisioning is the complete automated pipeline that takes raw hardware capacity and boots it into an operational operating system state ready for cluster workloads."
             },
             {
-                        "question": "What is the role of DHCP in the network boot process?",
-                        "options": [
-                                    "It transfers the operating system files.",
-                                    "It provides the booting node with an IP address and the location of the boot server.",
-                                    "It encrypts the boot image.",
-                                    "It formats the local hard drive."
-                        ],
-                        "correct": 1,
-                        "explanation": "DHCP (Dynamic Host Configuration Protocol) assigns an IP address to the node and provides the 'next-server' and boot filename required to start the PXE process."
+                "question": "Why is manual operating system installation (e.g. using interactive USB drives) impossible for large-scale HPC data centers?",
+                "options": [
+                    "Manual installation takes ~30 minutes per server; provisioning 500 nodes manually would consume over 250 hours of labor.",
+                    "USB drives are incompatible with Linux operating systems.",
+                    "Enterprise server motherboards do not have USB ports.",
+                    "Manual installations consume double the electricity."
+                ],
+                "correct": 0,
+                "explanation": "At scale, manual installation becomes a severe administrative bottleneck, consuming hundreds of hours and introducing human error."
             },
             {
-                        "question": "Which protocol is typically used to transfer the initial bootloader (like pxelinux or iPXE) during a network boot?",
-                        "options": [
-                                    "HTTP",
-                                    "FTP",
-                                    "TFTP",
-                                    "SSH"
-                        ],
-                        "correct": 2,
-                        "explanation": "TFTP (Trivial File Transfer Protocol) is a simple, UDP-based protocol used to transfer the small initial bootloader because it requires minimal implementation in the network card's firmware."
+                "question": "Why is 'Bit-for-Bit Consistency' essential across compute nodes in a parallel MPI simulation?",
+                "options": [
+                    "To prevent users from changing their login passwords.",
+                    "To ensure identical software libraries exist across all nodes, preventing floating-point simulation drift or non-reproducible scientific results.",
+                    "To force all nodes to share the exact same IP address.",
+                    "To disable hyperthreading across physical CPU sockets."
+                ],
+                "correct": 1,
+                "explanation": "Parallel scientific codes depend on identical linear algebra and vector libraries across all nodes to guarantee non-deterministic mathematical drift does not occur."
             },
             {
-                        "question": "What is a 'stateless' compute node?",
-                        "options": [
-                                    "A node that does not have an IP address.",
-                                    "A node that boots its OS entirely into RAM from the network, maintaining no persistent local OS state.",
-                                    "A node that cannot run MPI jobs.",
-                                    "A node that is powered off."
-                        ],
-                        "correct": 1,
-                        "explanation": "Stateless nodes run their OS from a RAM disk. Any changes made to the OS are lost upon reboot, ensuring the node always starts in a known, clean state."
+                "question": "How does Infrastructure as Code (IaC) differ from imperative shell scripts?",
+                "options": [
+                    "IaC is written in binary assembly code.",
+                    "IaC is declarative, allowing administrators to define the target end-state of the cluster while the orchestrator enforces it automatically.",
+                    "IaC requires physical tape drives to store configurations.",
+                    "Imperative scripts can only run on Windows operating systems."
+                ],
+                "correct": 1,
+                "explanation": "Declarative IaC specifies what the target infrastructure state should be (e.g. Vagrantfile DSL), rather than listing step-by-step imperative shell commands."
             },
             {
-                        "question": "What is the primary function of Warewulf?",
-                        "options": [
-                                    "To compile parallel code.",
-                                    "To schedule jobs on a cluster.",
-                                    "To provision and manage operating system images across a cluster of compute nodes.",
-                                    "To monitor network traffic."
-                        ],
-                        "correct": 2,
-                        "explanation": "Warewulf is an open-source cluster provisioning system that builds OS images and distributes them to compute nodes over the network."
+                "question": "What is the primary role of Vagrant in local cluster virtualization?",
+                "options": [
+                    "It acts as an abstraction wrapper on top of hypervisors (VirtualBox, KVM) to orchestrate multi-node environments declaratively.",
+                    "It compiles the Linux kernel from C source code.",
+                    "It physically manufactures motherboard silicon.",
+                    "It manages data center power distribution units."
+                ],
+                "correct": 0,
+                "explanation": "Vagrant provides a unified CLI and declarative Vagrantfile wrapper automating hypervisor creation of complex multi-VM topologies."
             },
             {
-                        "question": "What is a VNFS in the context of Warewulf?",
-                        "options": [
-                                    "Virtual Network Firewall System",
-                                    "Virtual Node File System - the encapsulated OS image deployed to nodes.",
-                                    "Volatile Node Failure State",
-                                    "Verified Network File Share"
-                        ],
-                        "correct": 1,
-                        "explanation": "The VNFS is the root filesystem image that Warewulf constructs and serves to the compute nodes during the boot process."
+                "question": "What critical files are packaged inside a standard Vagrant Box (.box tarball)?",
+                "options": [
+                    "Only a text file with user passwords.",
+                    "Pre-installed virtual disk image (.vmdk/.vdi), provider metadata.json, and default Vagrantfile parameters.",
+                    "Full source code for the VirtualBox C++ application.",
+                    "A single MP3 audio recording."
+                ],
+                "correct": 1,
+                "explanation": "A Vagrant Box archive contains a base OS virtual disk image, hypervisor metadata JSON, and initial configuration defaults."
             },
             {
-                        "question": "What is the purpose of a 'chroot' environment when building cluster images?",
-                        "options": [
-                                    "To change the root password.",
-                                    "To create an isolated directory tree that acts as a separate root filesystem, allowing you to install and configure software for the nodes without affecting the head node.",
-                                    "To compress the filesystem.",
-                                    "To encrypt the hard drive."
-                        ],
-                        "correct": 1,
-                        "explanation": "A chroot (change root) allows administrators to build and modify the OS image (the VNFS) in an isolated space on the head node before deploying it."
+                "question": "How does VirtualBox's Copy-on-Write linked clone mechanism accelerate Vagrant cluster deployment?",
+                "options": [
+                    "By deleting all virtual disk files after boot.",
+                    "By instantiating virtual disks almost instantaneously from a single cached base box without duplicating gigabytes of storage.",
+                    "By running all virtual machines entirely in CPU cache memory.",
+                    "By skipping operating system kernel initialization."
+                ],
+                "correct": 1,
+                "explanation": "Copy-on-Write linked clones reference a shared base image in ~/.vagrant.d/boxes/, allowing 5 virtual machines to launch in under 60 seconds."
             },
             {
-                        "question": "Why is iPXE often used instead of standard PXE?",
-                        "options": [
-                                    "It is older and more compatible.",
-                                    "It supports booting over HTTP, which is much faster and more reliable than TFTP.",
-                                    "It requires no DHCP server.",
-                                    "It only works on wireless networks."
-                        ],
-                        "correct": 1,
-                        "explanation": "iPXE extends traditional PXE capabilities, notably adding support for HTTP, which vastly speeds up the transfer of the large OS image compared to TFTP."
+                "question": "In a Vagrant cluster setup (Lab 1), what is the function of the NAT Network Adapter (eth0)?",
+                "options": [
+                    "It connects virtual nodes to the host's internet interface and establishes SSH port forwarding (127.0.0.1:2222 -> guest :22).",
+                    "It isolates compute nodes from host memory.",
+                    "It formats VirtualBox virtual disk drives.",
+                    "It broadcasts wireless Wi-Fi signals."
+                ],
+                "correct": 0,
+                "explanation": "The default NAT interface (eth0) provides guest VMs with outbound internet access and maps SSH ports for host command management."
             },
             {
-                        "question": "What is a major advantage of diskless booting (stateless provisioning)?",
-                        "options": [
-                                    "Nodes use more power.",
-                                    "Every node is guaranteed to run the exact same, synchronized software image.",
-                                    "It requires a hard drive in every node.",
-                                    "It is immune to network failures."
-                        ],
-                        "correct": 1,
-                        "explanation": "Because all nodes pull their OS from the same master image on the head node, software consistency across the cluster is absolutely guaranteed."
+                "question": "What is the operational purpose of the Host-Only Private Network adapter (eth1) in a Vagrant cluster?",
+                "options": [
+                    "To route traffic to the physical campus printer.",
+                    "To create an isolated virtual switch (vboxnet0) for static IP cluster communication (192.168.56.0/24) isolated from public LANs.",
+                    "To measure host CPU fan speeds.",
+                    "To format swap partitions automatically."
+                ],
+                "correct": 1,
+                "explanation": "Host-Only Private Networks bind virtual nodes together on a private virtual subnet, emulating an internal cluster interconnect without public LAN exposure."
             },
             {
-                        "question": "In a Warewulf cluster, what generates the `/etc/hosts` file on the compute nodes?",
-                        "options": [
-                                    "The user must manually write it on every node.",
-                                    "Warewulf dynamically generates it based on its internal node database.",
-                                    "It is downloaded from the internet.",
-                                    "It is copied from the Windows domain controller."
-                        ],
-                        "correct": 1,
-                        "explanation": "Warewulf acts as the source of truth and automatically generates cluster-wide configuration files like /etc/hosts using templates and its node database."
+                "question": "What capability does a Bridged Public Network adapter provide to a Vagrant virtual machine?",
+                "options": [
+                    "It allows external physical machines on the network to access the VM as if it were a separate physical server.",
+                    "It disables all incoming network traffic.",
+                    "It encrypts the host hard drive.",
+                    "It converts VirtualBox VMs into Docker containers."
+                ],
+                "correct": 0,
+                "explanation": "Bridged networking binds the virtual NIC directly to the physical host Ethernet card, assigning it a real IP on the physical network."
             },
             {
-                        "question": "What does the kernel payload do in the Warewulf boot process?",
-                        "options": [
-                                    "It compiles C code.",
-                                    "It provides the Linux kernel and initial RAM disk (initramfs) necessary to start the OS and mount the VNFS.",
-                                    "It schedules jobs.",
-                                    "It manages user passwords."
-                        ],
-                        "correct": 1,
-                        "explanation": "The kernel payload is the first piece of Linux executed by the bootloader; it initializes hardware and pulls down the rest of the OS image."
+                "question": "What is the 5th stage of Vagrant's 6-stage microarchitectural startup pipeline?",
+                "options": [
+                    "Linked Clone Creation",
+                    "SSH Guest Communicator Connection & Key Swap",
+                    "Virtual Disk Formatting",
+                    "Hypervisor Uninstallation"
+                ],
+                "correct": 1,
+                "explanation": "After virtual hardware and networks are bound, Vagrant establishes an SSH communicator connection to swap default keys and prepare for provisioning."
             },
             {
-                        "question": "How does Warewulf handle node-specific configurations (like hostnames or IP addresses) if all nodes use the same image?",
-                        "options": [
-                                    "It relies on users to set them after booting.",
-                                    "It uses 'Overlays'\u2014small, dynamically generated file archives applied over the base image at boot time.",
-                                    "It creates a completely separate 10GB image for every single node.",
-                                    "It doesn't; all nodes have the same hostname."
-                        ],
-                        "correct": 1,
-                        "explanation": "Warewulf uses overlays to inject node-specific files (like network configs or hostnames) into the stateless image right as the node boots."
+                "question": "Why does Vagrant replace the default insecure SSH key during initial boot?",
+                "options": [
+                    "To increase disk write speeds.",
+                    "To enforce SSH security by generating a random keypair unique to that VM instance.",
+                    "To prevent Linux from logging system events.",
+                    "Because default keys are incompatible with bash."
+                ],
+                "correct": 1,
+                "explanation": "Replacing default base box keys with a newly generated random keypair prevents unauthorized SSH access into instantiated virtual nodes."
             },
             {
-                        "question": "What is the primary identifier used by the DHCP server to recognize a specific bare-metal compute node?",
-                        "options": [
-                                    "Its CPU model.",
-                                    "Its MAC address.",
-                                    "Its hard drive serial number.",
-                                    "Its BIOS version."
-                        ],
-                        "correct": 1,
-                        "explanation": "The MAC address is a unique hardware identifier on the network card, used by DHCP and Warewulf to identify the node and assign its specific IP and image."
+                "question": "Why do physical supercomputers require Bare-Metal Provisioning instead of hypervisor virtualization?",
+                "options": [
+                    "Virtualization hypervisors incur a 3% to 8% CPU overhead and introduce network I/O latency penalties unacceptable for HPC.",
+                    "Physical servers cannot run hypervisor software.",
+                    "Bare-metal hardware does not require electricity.",
+                    "Virtualization prevents Linux from executing C code."
+                ],
+                "correct": 0,
+                "explanation": "Bare-metal execution provides 100% direct access to silicon and InfiniBand hardware, avoiding hypervisor CPU and latency penalties."
             },
             {
-                        "question": "If a stateless compute node reboots, what happens to temporary files written to `/tmp`?",
-                        "options": [
-                                    "They are saved to the head node.",
-                                    "They are preserved on the local hard drive.",
-                                    "They are permanently lost because the filesystem exists only in RAM.",
-                                    "They are emailed to the administrator."
-                        ],
-                        "correct": 2,
-                        "explanation": "Stateless nodes run in a RAM disk (tmpfs). A reboot wipes the memory, destroying any local modifications or temporary files."
+                "question": "What was a major limitation of legacy Warewulf 3 compared to modern Warewulf 4?",
+                "options": [
+                    "Warewulf 3 could not run on Linux.",
+                    "Warewulf 3 relied on Perl scripts and custom VNFS tarballs built from chroots, which were complex to maintain and version-control.",
+                    "Warewulf 3 required 100GB RAM per node.",
+                    "Warewulf 3 did not support network cables."
+                ],
+                "correct": 1,
+                "explanation": "Warewulf 3 used legacy Perl scripts and proprietary VNFS tarballs, whereas Warewulf 4 uses Go and modern OCI container images."
             },
             {
-                        "question": "Why must the head node have two network interfaces in a standard cluster design?",
-                        "options": [
-                                    "To double the internet speed.",
-                                    "One for the public external network, and one for the private internal cluster network.",
-                                    "One for Windows and one for Linux.",
-                                    "To provide a backup if one cable breaks."
-                        ],
-                        "correct": 1,
-                        "explanation": "The head node bridges the outside world (public IP) and the isolated compute nodes (private network), acting as a gateway and NAT router."
+                "question": "How are compute node operating system root filesystems defined in Warewulf 4?",
+                "options": [
+                    "Using OCI (Open Container Initiative) Containers built via standard Dockerfiles.",
+                    "Using raw Windows ISO files.",
+                    "Using ZIP archives emailed to compute nodes.",
+                    "Using uncompressed MS-DOS floppies."
+                ],
+                "correct": 0,
+                "explanation": "Warewulf 4 utilizes standard OCI container images (built via Docker/Apptainer Dockerfiles) as stateless compute node root filesystems."
+            },
+            {
+                "question": "What is the function of the Intelligent Platform Management Interface (IPMI) in Warewulf 4?",
+                "options": [
+                    "To format local NVMe drives.",
+                    "To perform out-of-band remote power management (power on, off, reset) via the server\'s Baseboard Management Controller (BMC).",
+                    "To compile MPI source code.",
+                    "To manage user email accounts."
+                ],
+                "correct": 1,
+                "explanation": "IPMI communicates over the out-of-band management network to power cycle physical server hardware remotely (`wwctl power on node[01-99]`)."
+            },
+            {
+                "question": "Which service does Warewulf 4 integrate to handle DHCP requests and static IP assignments?",
+                "options": [
+                    "dnsmasq",
+                    "nginx",
+                    "apache2",
+                    "bind9"
+                ],
+                "correct": 0,
+                "explanation": "Warewulf 4 integrates dnsmasq to match node MAC addresses, assign static IPs, and offer PXE bootloader file paths."
+            },
+            {
+                "question": "What protocol is used to transfer the initial stage-1 iPXE bootloader binary (ipxe.efi) to a bare-metal node?",
+                "options": [
+                    "TFTP (Trivial File Transfer Protocol)",
+                    "HTTPS",
+                    "SFTP",
+                    "BGP"
+                ],
+                "correct": 0,
+                "explanation": "TFTP is used during initial PXE phase to deliver the small stage-1 iPXE bootloader binary into physical node RAM."
+            },
+            {
+                "question": "Why does Warewulf 4 use HTTP instead of TFTP to transfer multi-gigabyte container rootfs images?",
+                "options": [
+                    "HTTP is a slower protocol.",
+                    "HTTP delivers multi-gigabit transfer speeds over high-speed networks, bypassing UDP-based TFTP transfer bottlenecks.",
+                    "TFTP cannot transfer files larger than 1 megabyte.",
+                    "HTTP does not require network routers."
+                ],
+                "correct": 1,
+                "explanation": "HTTP enables multi-gigabit transfer speeds when serving large compressed container images (`rootfs.img`) across data center switches."
+            },
+            {
+                "question": "What is the function of a Warewulf System Overlay?",
+                "options": [
+                    "It is injected into the initial RAM disk (initramfs) before kernel boot to configure fundamental files like /etc/fstab and network interfaces.",
+                    "It renames physical CPU chips.",
+                    "It installs desktop GUI wallpapers.",
+                    "It formatted local RAID arrays."
+                ],
+                "correct": 0,
+                "explanation": "System Overlays are packed into initramfs and unpacked during boot to configure foundational files like network parameters and fstab."
+            },
+            {
+                "question": "How does a Warewulf Runtime Overlay differ from a System Overlay?",
+                "options": [
+                    "Runtime Overlays are dynamically synced to live compute nodes in real time by the background wwclient daemon without rebooting.",
+                    "Runtime Overlays are stored on tape drives.",
+                    "Runtime Overlays only work on ARM processors.",
+                    "System Overlays require Windows Server."
+                ],
+                "correct": 0,
+                "explanation": "Runtime Overlays update live nodes continuously via wwclient (e.g. updating /etc/slurm/slurm.conf or user SSH keys without node reboots)."
+            },
+            {
+                "question": "What are the three core object types in Warewulf 4's object hierarchy?",
+                "options": [
+                    "Nodes, Profiles, and Overlays",
+                    "CPUs, RAM, and Hard Drives",
+                    "Users, Groups, and Passwords",
+                    "Routers, Switches, and Firewalls"
+                ],
+                "correct": 0,
+                "explanation": "Warewulf 4 manages infrastructure declaratively using Nodes (hardware specs), Profiles (shared templates), and Overlays (configuration templates)."
+            },
+            {
+                "question": "How does profile inheritance simplify cluster management in Warewulf 4?",
+                "options": [
+                    "Nodes automatically inherit container images and kernel settings from shared profiles, allowing 500 nodes to be updated via one command.",
+                    "It automatically buys new physical hardware.",
+                    "It forces all nodes to share a single CPU core.",
+                    "It disables Linux kernel security."
+                ],
+                "correct": 0,
+                "explanation": "Nodes assigned to a profile inherit container images and parameters, enabling cluster-wide updates by altering a single profile object."
+            },
+            {
+                "question": "In what scenario is Vagrant + VirtualBox the recommended provisioning strategy?",
+                "options": [
+                    "During local software development, Slurm configuration testing, and academic coursework on a single laptop.",
+                    "When building a Top500 supercomputer with 10,000 physical servers.",
+                    "When running multi-terabyte InfiniBand benchmarks.",
+                    "When operating a commercial data center server room."
+                ],
+                "correct": 0,
+                "explanation": "Vagrant and VirtualBox excel at local software prototyping and student lab environments where physical server hardware is unavailable."
+            },
+            {
+                "question": "What happens to a stateless compute node managed by Warewulf 4 when it is powered off or rebooted?",
+                "options": [
+                    "All transient RAM memory changes are wiped, and the node re-downloads the clean golden container image on next boot.",
+                    "The node\'s operating system is permanently corrupted.",
+                    "The master node must be re-installed.",
+                    "The compute node saves all files to a local hard drive."
+                ],
+                "correct": 0,
+                "explanation": "Stateless nodes run from RAM; rebooting wipes transient state and re-fetches a clean golden image, ensuring 100% reboot resilience."
             }
-];
+        ];
 
-        let score = 0;
-        let answeredQuestions = 0;
+        let currentQIndex = 0;
+        let userAnswers = [];
 
-        const quizContainer = document.getElementById('quiz-container');
+        function initQuiz() {
+            if (typeof questions !== 'undefined' && questions.length > 0) {
+                userAnswers = new Array(questions.length).fill(null);
+                renderQuizWizard();
+            }
+        }
 
-        questions.forEach((q, index) => {
-            const qDiv = document.createElement('div');
-            qDiv.className = 'bg-white dark:bg-slate-900/80 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 space-y-4';
-            
-            let optionsHtml = '';
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuiz);
+        } else {
+            initQuiz();
+        }
+
+        function renderQuizWizard() {
+            const container = document.getElementById('quiz-container');
+            const jumpContainer = document.getElementById('jump-grid-container');
+            container.innerHTML = '';
+            jumpContainer.innerHTML = '';
+
+            const totalQ = questions.length;
+
+            // Render Question Jump Pills
+            questions.forEach((_, idx) => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                pill.onclick = () => jumpToQuestion(idx);
+                
+                let pillStyle = 'w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center ';
+                if (idx === currentQIndex) {
+                    pillStyle += 'bg-sky-500 text-white shadow-md ring-2 ring-sky-400';
+                } else if (userAnswers[idx] !== null) {
+                    pillStyle += 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                } else {
+                    pillStyle += 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700';
+                }
+                pill.className = pillStyle;
+                pill.innerText = idx + 1;
+                jumpContainer.appendChild(pill);
+            });
+
+            // Render Active Question Card Only
+            const q = questions[currentQIndex];
+            const card = document.createElement('div');
+            card.className = 'p-6 md:p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6';
+
+            let optionsHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
             q.options.forEach((opt, optIndex) => {
-                optionsHtml += `
-                    <button class="option-btn w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-sky-500 dark:hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-sky-950/20 text-slate-800 dark:text-slate-200 font-medium text-sm transition-all duration-200 flex items-center justify-between" 
-                            onclick="checkAnswer(${index}, ${optIndex}, this)">
-                        <span>${opt}</span>
-                        <span class="status-icon ml-3 flex-shrink-0"></span>
-                    </button>
+                const isSelected = userAnswers[currentQIndex] === optIndex;
+                optionsHTML += `
+                    <div onclick="selectOption(${optIndex})" class="flex items-center space-x-3.5 p-4 rounded-2xl ${isSelected ? 'bg-sky-500/10 border-2 border-sky-500 shadow-md' : 'bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 hover:bg-sky-500/5 hover:border-sky-500/30'} cursor-pointer transition-all group">
+                        <input type="radio" name="current-q-option" value="${optIndex}" ${isSelected ? 'checked' : ''} class="w-4 h-4 text-sky-500 focus:ring-sky-500">
+                        <span class="w-7 h-7 rounded-lg ${isSelected ? 'bg-sky-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} font-bold text-xs flex items-center justify-center group-hover:bg-sky-500 group-hover:text-white transition-colors">${letters[optIndex]}</span>
+                        <span class="text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">${opt}</span>
+                    </div>
                 `;
             });
 
-            qDiv.innerHTML = `
-                <div class="flex items-start space-x-3">
-                    <span class="px-3 py-1 rounded-lg bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Q${index + 1}</span>
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white m-0 leading-snug">${q.question}</h3>
+            card.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Question ${currentQIndex + 1} of ${totalQ}</span>
+                        <span class="text-xs text-slate-400 font-medium">NQF Level 7 Assessment</span>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-slate-500">${userAnswers[currentQIndex] !== null ? '✓ Answered' : 'Pending'}</span>
                 </div>
-                <div class="options-container space-y-3 pt-2" id="options-${index}">
-                    ${optionsHtml}
-                </div>
-                <div id="explanation-${index}" class="explanation hidden mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
-                    <strong class="text-amber-500 block mb-1">Explanation:</strong>
-                    ${q.explanation}
+
+                <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white m-0 leading-snug">${q.question}</h3>
+                
+                <div class="space-y-3 pt-2">${optionsHTML}</div>
+
+                <!-- Navigation Controls Footer -->
+                <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-6 mt-6">
+                    <button type="button" onclick="prevQuestion()" ${currentQIndex === 0 ? 'disabled' : ''} class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 disabled:opacity-40 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous
+                    </button>
+
+                    ${currentQIndex === totalQ - 1 ? `
+                        <button type="button" onclick="checkAnswers()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs shadow-lg shadow-emerald-500/30 hover:scale-105 transition-all flex items-center">
+                            Submit Final Quiz
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                    ` : `
+                        <button type="button" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-sky-500 text-white font-bold text-xs hover:bg-sky-400 shadow-md shadow-sky-500/20 transition-all flex items-center">
+                            Next
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    `}
                 </div>
             `;
-            quizContainer.appendChild(qDiv);
-        });
 
-        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
-            const container = document.getElementById(`options-${questionIndex}`);
-            if (container.classList.contains('answered')) return;
-            
-            container.classList.add('answered');
-            const buttons = container.getElementsByTagName('button');
-            const correctIndex = questions[questionIndex].correct;
+            container.appendChild(card);
+            updateNavBarProgress();
+        }
 
-            if (selectedOptionIndex === correctIndex) {
-                buttonElement.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-400');
-                buttonElement.querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                score++;
-            } else {
-                buttonElement.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-400');
-                buttonElement.querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                
-                buttons[correctIndex].classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-400');
-                buttons[correctIndex].querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-            }
+        function selectOption(optIndex) {
+            userAnswers[currentQIndex] = optIndex;
+            renderQuizWizard();
+        }
 
-            for (let btn of buttons) {
-                btn.style.cursor = 'default';
-            }
+        function jumpToQuestion(idx) {
+            currentQIndex = idx;
+            renderQuizWizard();
+        }
 
-            document.getElementById(`explanation-${questionIndex}`).classList.remove('hidden');
-            
-            answeredQuestions++;
-            if (answeredQuestions === questions.length) {
-                setTimeout(showResults, 800);
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                renderQuizWizard();
             }
         }
 
-        function showResults() {
+        function nextQuestion() {
+            if (currentQIndex < questions.length - 1) {
+                currentQIndex++;
+                renderQuizWizard();
+            }
+        }
+
+        function updateNavBarProgress() {
+            const totalQ = questions.length;
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const pct = Math.round((answeredCount / totalQ) * 100);
+
+            if (document.getElementById('nav-progress-text')) {
+                document.getElementById('nav-progress-text').innerText = `Question ${currentQIndex + 1} of ${totalQ} (${answeredCount} Answered)`;
+            }
+            if (document.getElementById('nav-progress-bar')) {
+                document.getElementById('nav-progress-bar').style.width = `${pct}%`;
+            }
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const totalQ = questions.length;
+            const container = document.getElementById('quiz-container');
+            const jumpContainer = document.getElementById('jump-grid-container');
+            jumpContainer.innerHTML = '';
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const selected = userAnswers[index];
+                const isCorrect = selected === q.correct;
+                if (isCorrect) score++;
+
+                const card = document.createElement('div');
+                card.className = `p-6 rounded-2xl ${isCorrect ? 'bg-emerald-500/5 border border-emerald-500/30' : 'bg-rose-500/5 border border-rose-500/30'} space-y-3`;
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-6 h-6 rounded-md ${isCorrect ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'} font-bold text-xs flex items-center justify-center">${index + 1}</span>
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0">${q.question}</h4>
+                        </div>
+                        <span class="text-xs font-bold ${isCorrect ? 'text-emerald-500' : 'text-rose-500'}">${isCorrect ? '✓ Correct' : '✗ Incorrect'}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 pl-8">
+                        <strong>Your Answer:</strong> ${selected !== null ? q.options[selected] : 'Not Answered'}<br>
+                        <strong>Correct Answer:</strong> ${q.options[q.correct]}
+                    </p>
+                    <div class="pl-8 pt-1 text-xs font-semibold ${isCorrect ? 'text-emerald-500' : 'text-rose-500'} leading-relaxed">
+                        ${q.explanation}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            const pct = Math.round((score / totalQ) * 100);
+            document.getElementById('score-percentage').innerText = `${pct}%`;
+            document.getElementById('score-ratio').innerText = `${score} / ${totalQ}`;
+            
+            const badge = document.getElementById('mastery-badge');
+            const msg = document.getElementById('mastery-message');
+
+            if (pct >= 80) {
+                badge.innerText = 'Mastery Demonstrated (80%+ Target)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30';
+                msg.innerText = 'Outstanding work! You have achieved complete mastery of this module\'s concepts.';
+            } else if (pct >= 60) {
+                badge.innerText = 'Good Competency (60%-79%)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 font-bold text-xs border border-sky-500/30';
+                msg.innerText = 'Solid performance! Review the incorrect questions above to achieve full mastery.';
+            } else {
+                badge.innerText = 'Review Recommended (<60%)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xs border border-amber-500/30';
+                msg.innerText = 'Re-read the student notes for this week before retrying the assessment.';
+            }
+
             document.getElementById('results-container').classList.remove('hidden');
-            document.getElementById('score-display').textContent = score;
-            document.getElementById('total-display').textContent = questions.length;
-            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({ top: document.getElementById('results-container').offsetTop - 100, behavior: 'smooth' });
         }
     </script>
-
-    <!-- Footer -->
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
-        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
-    </footer>
-
 </body>
 </html>

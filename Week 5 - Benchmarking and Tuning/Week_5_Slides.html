@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 5 Presentation Deck: Benchmarking & Tuning — EIOPS4A</title>
+    <title>Week 5 Presentation Slides — Benchmarking &amp; Performance Tuning (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -56,27 +56,23 @@
             });
         });
     </script>
-    <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
 
     <!-- Top Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
-        <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-            <a href="Week_5_Student_Notes.html" class="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">
-                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>Back to Student Notes</span>
+        <div class="container mx-auto px-4 max-w-7xl h-16 flex items-center justify-between">
+            <a href="Week_5_Student_Notes.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+                    05
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 5 Slides: Benchmarking &amp; Tuning</span>
+                    <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
             </a>
             <div class="flex items-center space-x-4">
-                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
-                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span>Course Home</span>
-                </a>
+                <a href="Week_5_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">Back to Notes</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
                     <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -86,132 +82,44 @@
     </nav>
 
     <!-- Main Container -->
-    <main class="container mx-auto px-4 max-w-4xl">
-        <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
-
-            <!-- Hero Header Card -->
-            <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
-                <div class="w-36 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-600 border-2 border-amber-400 flex flex-col items-center justify-center shadow-lg shadow-indigo-500/20 mb-1">
-                        <span class="text-xl font-black text-white tracking-tight">05</span>
-                        <svg class="w-4 h-4 text-amber-300 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12H4z"></path></svg>
-                    </div>
-                    <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">SLIDES</span>
-                </div>
-                <div class="flex-1 flex flex-col justify-center p-6">
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 5 Presentation Deck: Benchmarking & Tuning</h1>
-                    <span class="text-xs font-semibold text-indigo-500 mt-1">HPL, Linpack, STREAM & Microarchitecture Optimization</span>
-                </div>
-            </div>
-
-
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_5_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-        </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 5</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 5: Benchmarking and Tuning - Slides</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
-</div>
-
-<h1>Week 7 Slides: HPC Benchmarking and Tuning</h1>
-<h2>Slide 1: Introduction to Benchmarking</h2>
-<ul>
-<li><strong>The Question</strong>: "How fast is my cluster?"</li>
-<li><strong>The Problem</strong>: "Fast" is subjective.</li>
-<li><strong>The Solution</strong>: Standardized Metrics.<ul>
-<li><strong>FLOPs</strong>: Compute Speed (Math).</li>
-<li><strong>Bandwidth</strong>: Data Movement Speed (Memory/Network).</li>
-<li><strong>Latency</strong>: Delay/Wait time.</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 2: The Memory Wall</h2>
-<ul>
-<li><strong>CPU Limitation</strong>: CPUs get faster every year (Moore's Law).</li>
-<li><strong>Memory Limitation</strong>: RAM speed grows much slower.</li>
-<li><strong>The Gap</strong>: The "Von Neumann Bottleneck".</li>
-<li><strong>Result</strong>: Most HPC codes are waiting for data, not calculating.<ul>
-<li><strong>Compute-Bound</strong>: Limited by math (Rare).</li>
-<li><strong>Memory-Bound</strong>: Limited by data fetch (Common).</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 3: The Roofline Model</h2>
-<ul>
-<li><strong>Visualizing Performance</strong>:<ul>
-<li><strong>X-Axis</strong>: Arithmetic Intensity (Math operations per Byte).</li>
-<li><strong>Y-Axis</strong>: Performance (GFLOPS).</li>
-</ul>
-</li>
-<li><strong>The Roofs</strong>:<ul>
-<li><strong>Flat Roof</strong>: Peak CPU Speed.</li>
-<li><strong>Slanted Roof</strong>: Peak Memory Bandwidth.</li>
-</ul>
-</li>
-<li><strong>Goal</strong>: Move your code UP (optimize) or RIGHT (increase intensity).</li>
-</ul>
-<h2>Slide 4: HPL (High Performance Linpack)</h2>
-<ul>
-<li><strong>The Standard</strong>: Used for the TOP500 list.</li>
-<li><strong>The Math</strong>: Solves $Ax = b$ (Dense Linear Algebra).</li>
-<li><strong>Characteristics</strong>:<ul>
-<li>$O(N^3)$ Ops on $O(N^2)$ Data.</li>
-<li>Very High Arithmetic Intensity.</li>
-<li><strong>Compute-Bound</strong>: Hits the "Flat Roof".</li>
-</ul>
-</li>
-<li><strong>Tuning</strong>: Adjust <code>N</code> (Size), <code>NB</code> (Block Size), <code>P x Q</code> (Grid).</li>
-</ul>
-<h2>Slide 5: STREAM Benchmark</h2>
-<ul>
-<li><strong>The Reality Check</strong>: HPL is unrealistic for many apps.</li>
-<li><strong>The Metric</strong>: Sustained Memory Bandwidth (GB/s).</li>
-<li><strong>Operations</strong>:<ol>
-<li><strong>Copy</strong>: <code>a = b</code></li>
-<li><strong>Scale</strong>: <code>a = q*b</code></li>
-<li><strong>Add</strong>: <code>a = b + c</code></li>
-<li><strong>Triad</strong>: <code>a = b + q*c</code> (Most important).</li>
-</ol>
-</li>
-</ul>
-<h2>Slide 6: Tuning Fundamentals</h2>
-<ul>
-<li><strong>Free Speed</strong>: Don't rewrite code immediately.</li>
-<li><strong>Compiler Flags</strong>:<ul>
-<li><code>-O0</code>: Debug (Slow).</li>
-<li><code>-O3</code>: Production (Fast).</li>
-<li><code>-march=native</code>: Use <em>this</em> CPU's special instructions (AVX).</li>
-</ul>
-</li>
-<li><strong>Libraries</strong>:<ul>
-<li>Use BLAS/LAPACK (MKL, OpenBLAS).</li>
-<li>Never write your own Matrix Multiply!</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 7: Lab Overview</h2>
-<ul>
-<li><strong>Tasks</strong>:<ol>
-<li><strong>Compiler Test</strong>: Measure time of <code>-O0</code> vs <code>-O3</code>.</li>
-<li><strong>Run STREAM</strong>: Find the memory limit of a node.</li>
-<li><strong>Run HPL</strong>: Find the GFLOPS limit of the cluster.</li>
-</ol>
-</li>
-</ul>
+    <main class="container mx-auto px-4 max-w-5xl space-y-8">
         
+        <!-- Slide 1 -->
+        <div class="p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Slide 1 of 4</span>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white m-0">Benchmarking Fundamentals: Rpeak vs. Rmax</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed m-0">Theoretical peak performance (Rpeak) represents the absolute upper mathematical bound of hardware floating-point speed. Achieved performance (Rmax) is measured using High Performance LINPACK (HPL), providing the efficiency ratio (Rmax / Rpeak).</p>
+        </div>
 
-        </article>
+        <!-- Slide 2 -->
+        <div class="p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Slide 2 of 4</span>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white m-0">Standard Benchmarks: HPL, HPCG &amp; STREAM</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed m-0">HPL measures dense linear algebra FLOP performance, HPCG evaluates sparse matrix conjugate gradient solves (memory bandwidth bound), and STREAM quantifies main memory bus bandwidth across Copy, Scale, Add, and Triad operations.</p>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Slide 3 of 4</span>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white m-0">The Roofline Performance Model</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed m-0">The Roofline model visually plots attainable performance against Operational Intensity (FLOPs / Byte Transferred), delineating Memory-Bound code from Compute-Bound code.</p>
+            <div class="my-4 text-center">
+                <img class="max-w-full h-auto max-h-[350px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Roofline Model Diagram" src="images/roofline_model_diagram.png" />
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Slide 4 of 4</span>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white m-0">Profiling &amp; Compiler Optimization Flags</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed m-0">Use Linux perf stat to sample hardware counters and GCC optimization flags (-O3 -march=native -ftree-vectorize) to enable SIMD vectorization and maximize instruction throughput.</p>
+        </div>
+
     </main>
 
     <!-- Footer -->
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 border-t border-slate-200 dark:border-slate-800">
-        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
+    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
+        Vaal University of Technology · Department of Electrical Engineering · EIOPS4A 2026
     </footer>
 
 </body>

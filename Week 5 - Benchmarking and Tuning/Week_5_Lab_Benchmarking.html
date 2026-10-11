@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 5 Workbook: HPL & STREAM Benchmarking — OPS4 Course (EIOPS4A)</title>
+    <title>Lab 5 Workbook: HPL &amp; STREAM Benchmarking — OPS4 Course (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -70,7 +70,7 @@
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 5 Workbook: HPL & STREAM Benchmarking</span>
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Lab 5 Workbook: HPL &amp; STREAM Benchmarking</span>
                     <span class="text-xs text-sky-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
                 </div>
             </a>
@@ -108,8 +108,8 @@
                     <span class="text-[10px] font-black text-sky-500 uppercase tracking-widest mt-1">LAB WORKBOOK</span>
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-6">
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 5 Workbook: HPL & STREAM Benchmarking</h1>
-                    <span class="text-xs font-semibold text-sky-500 mt-1">HPC Cluster Performance Measurement & Memory Tuning</span>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Lab 5 Workbook: HPL &amp; STREAM Benchmarking</h1>
+                    <span class="text-xs font-semibold text-sky-500 mt-1">HPC Cluster Performance Measurement &amp; Memory Tuning</span>
                 </div>
             </div>
 
@@ -117,12 +117,12 @@
 
 
 
-<p><strong>Subject:</strong> Operating Systems 4 (EIOPS4A) — Week 5: Shared-Memory Programming with OpenMP (Chapter 7)<br>
-<strong>Chapter Reference:</strong> Fork-Join model, thread variables, OpenMP directives, barriers, and critical sections</p>
+<p>Subject: Operating Systems 4 (EIOPS4A) — Week 5: Shared-Memory Programming with OpenMP (Chapter 7)<br>
+Chapter Reference: Fork-Join model, thread variables, OpenMP directives, barriers, and critical sections</p>
 
 <div class="cyber-callout cyber-callout-info not-prose">
-    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📋 Overview</p>
-    <p class="m-0 mt-1 text-sm">This laboratory shifts from cluster-level network nodes to single-node <strong>Symmetric Multiprocessing (SMP)</strong> architectures. Students implement shared-memory parallel programs using the <strong>OpenMP</strong> API — utilising compiler directives, runtime library routines, and environment variables to orchestrate lightweight threads within a single unified memory domain.</p>
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0"> Overview</p>
+    <p class="m-0 mt-1 text-sm">This laboratory shifts from cluster-level network nodes to single-node Symmetric Multiprocessing (SMP) architectures. Students implement shared-memory parallel programs using the OpenMP API — utilising compiler directives, runtime library routines, and environment variables to orchestrate lightweight threads within a single unified memory domain.</p>
 </div>
 
 <hr>
@@ -132,9 +132,9 @@
 <table>
     <thead><tr><th>Phase</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Master Thread</strong> (Sequential)</td><td>The program begins as a single thread. It executes sequentially until it encounters an OpenMP <code>#pragma omp parallel</code> directive.</td></tr>
-        <tr><td><strong>Fork</strong> (Parallel Regions)</td><td>The Master thread forks (creates) a team of concurrent worker threads. Each thread executes instructions simultaneously.</td></tr>
-        <tr><td><strong>Join</strong> (Synchronisation)</td><td>At the end of the parallel block, a barrier synchronisation is implicitly enforced. Worker threads terminate, leaving only the master to resume sequential execution.</td></tr>
+        <tr><td>Master Thread (Sequential)</td><td>The program begins as a single thread. It executes sequentially until it encounters an OpenMP <code>#pragma omp parallel</code> directive.</td></tr>
+        <tr><td>Fork (Parallel Regions)</td><td>The Master thread forks (creates) a team of concurrent worker threads. Each thread executes instructions simultaneously.</td></tr>
+        <tr><td>Join (Synchronisation)</td><td>At the end of the parallel block, a barrier synchronisation is implicitly enforced. Worker threads terminate, leaving only the master to resume sequential execution.</td></tr>
     </tbody>
 </table>
 
@@ -142,9 +142,9 @@
 <table>
     <thead><tr><th>Class</th><th>Description</th><th>Example</th></tr></thead>
     <tbody>
-        <tr><td><strong>SISD</strong></td><td>Single Instruction Single Data — standard single-threaded processors.</td><td>Sequential C programs</td></tr>
-        <tr><td><strong>SIMD</strong></td><td>Single Instruction Multiple Data — vector processors executing one instruction across a data vector.</td><td>CPU vectorisation, AVX</td></tr>
-        <tr><td><strong>MIMD</strong></td><td>Multiple Instruction Multiple Data — multi-core computers executing independent processor streams over different datasets. OpenMP and MPI are primary software examples.</td><td>OpenMP, MPI, GPU compute</td></tr>
+        <tr><td>SISD</td><td>Single Instruction Single Data — standard single-threaded processors.</td><td>Sequential C programs</td></tr>
+        <tr><td>SIMD</td><td>Single Instruction Multiple Data — vector processors executing one instruction across a data vector.</td><td>CPU vectorisation, AVX</td></tr>
+        <tr><td>MIMD</td><td>Multiple Instruction Multiple Data — multi-core computers executing independent processor streams over different datasets. OpenMP and MPI are primary software examples.</td><td>OpenMP, MPI, GPU compute</td></tr>
     </tbody>
 </table>
 
@@ -377,11 +377,11 @@ int main() {
 </div>
 
 <div class="cyber-callout cyber-callout-info not-prose">
-    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">📌 OpenMP Loop Scheduling</p>
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0"> OpenMP Loop Scheduling</p>
     <ul class="mt-2 mb-0 text-sm space-y-1">
-        <li><strong>static:</strong> Pre-allocates iterations evenly to each thread before execution (ideal for balanced loops).</li>
-        <li><strong>dynamic:</strong> Allocates chunks of iterations dynamically at runtime as threads become idle (ideal for unbalanced workloads).</li>
-        <li><strong>guided:</strong> Iteratively decreases chunk sizes to optimise tail latency.</li>
+        <li>static: Pre-allocates iterations evenly to each thread before execution (ideal for balanced loops).</li>
+        <li>dynamic: Allocates chunks of iterations dynamically at runtime as threads become idle (ideal for unbalanced workloads).</li>
+        <li>guided: Iteratively decreases chunk sizes to optimise tail latency.</li>
     </ul>
 </div>
 
@@ -471,7 +471,7 @@ int main() {
 </div>
 
 <div class="cyber-callout cyber-callout-info not-prose">
-    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0">⭐ Core Concept: Reductions are Highly Optimised</p>
+    <p class="font-semibold text-blue-800 dark:text-blue-300 m-0"> Core Concept: Reductions are Highly Optimised</p>
     <p class="m-0 mt-1 text-sm">The <code>critical</code> directive locks the sum variable across threads, causing execution to bottleneck. In contrast, the <code>reduction(+:variable)</code> clause allocates a local copy per thread, accumulating loop iterations in parallel before performing a highly optimised global merge at the join synchronisation barrier.</p>
 </div>
 
@@ -576,11 +576,11 @@ export OMP_NUM_THREADS=4
 <hr>
 <h2>Section 9: Review Questions</h2>
 <div class="cyber-callout cyber-callout-gold not-prose">
-    <p class="font-semibold text-amber-700 dark:text-amber-300 m-0">💡 Review Questions</p>
+    <p class="font-semibold text-amber-700 dark:text-amber-300 m-0"> Review Questions</p>
     <ol class="mt-2 mb-0 text-sm space-y-2">
-        <li><strong>Q1:</strong> Explain how OpenMP pragmas allow developers to incrementally parallelise existing sequential C code.</li>
-        <li><strong>Q2:</strong> What is a race condition in OpenMP, and how do critical sections or reduction clauses mitigate it?</li>
-        <li><strong>Q3:</strong> What is the purpose of the <code>collapse(2)</code> clause in nested loop parallelisation?</li>
+        <li>Q1: Explain how OpenMP pragmas allow developers to incrementally parallelise existing sequential C code.</li>
+        <li>Q2: What is a race condition in OpenMP, and how do critical sections or reduction clauses mitigate it?</li>
+        <li>Q3: What is the purpose of the <code>collapse(2)</code> clause in nested loop parallelisation?</li>
     </ol>
 </div>
 

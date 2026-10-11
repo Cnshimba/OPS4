@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 4 Presentation Deck: Resource Management & Slurm — EIOPS4A</title>
+    <title>Week 4 Slides — Resource Management &amp; Job Scheduling (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -56,27 +56,27 @@
             });
         });
     </script>
-    <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
-
-    <!-- Top Navigation Bar -->
+    
+    <!-- Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
         <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-            <a href="Week_4_Student_Notes.html" class="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">
-                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>Back to Student Notes</span>
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-sky-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                    04
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 4 Slides: Resource Management &amp; Slurm</span>
+                    <span class="text-xs text-indigo-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
             </a>
             <div class="flex items-center space-x-4">
-                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
-                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span>Course Home</span>
+                <a href="Week_4_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
                 </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
                     <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -85,8 +85,8 @@
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <main class="container mx-auto px-4 max-w-4xl">
+    <!-- Presentation Canvas -->
+    <main class="container mx-auto px-4 max-w-5xl">
         <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
 
             <!-- Hero Header Card -->
@@ -99,111 +99,33 @@
                     <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">SLIDES</span>
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-6">
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 4 Presentation Deck: Resource Management & Slurm</h1>
-                    <span class="text-xs font-semibold text-indigo-500 mt-1">Job Scheduling, Priority Queues & Cgroups Control</span>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 4 Presentation Deck: Resource Management &amp; Slurm Scheduling</h1>
+                    <span class="text-xs font-semibold text-indigo-500 mt-1">SMP, NUMA Architectures, Slurm Daemons &amp; Cgroups Enforcements</span>
                 </div>
             </div>
 
+            <h2>Slide 1: Single-Node Multiprocessing (SMP &amp; NUMA)</h2>
+            <ul>
+                <li>Symmetric Multiprocessing (SMP): Multiple identical sockets sharing main RAM under one kernel.</li>
+                <li>NUMA Nodes: Split memory controllers per CPU socket. Local RAM access (~60 ns) vs Remote RAM access (~140 ns).</li>
+                <li>False Sharing: Cache line bouncing across cores caused by independent variables residing on the same 64-byte line. Solution: C++17 `alignas(64)`.</li>
+            </ul>
 
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_4_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-        </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 4</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 4: Resource Management - Slides</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
-</div>
+            <h2>Slide 2: Slurm Workload Manager Architecture</h2>
+            <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Slurm Architecture Diagram" src="images/slurm_architecture_diagram.png" />
+            </div>
+            <ul>
+                <li>slurmctld: Central controller managing queues, node states, and job allocations.</li>
+                <li>slurmd: Compute node daemon executing tasks and enforcing Cgroup CPU/RAM limits.</li>
+                <li>slurmdbd: Database daemon tracking historical accounting and fair-share usage in MySQL.</li>
+            </ul>
 
-<h1>Week 4 Slides: Resource Management with Slurm</h1>
-<h2>Slide 1: The Role of a Resource Manager</h2>
-<ul>
-<li><strong>The Problem</strong>: A supercomputer is a shared resource.<ul>
-<li>100 Researchers.</li>
-<li>Limited CPUs/RAM.</li>
-<li>What happens if everyone logs in at once? (Crash/OOM).</li>
-</ul>
-</li>
-<li><strong>The Solution</strong>: A Resource Manager (Kernel for the Cluster).<ul>
-<li><strong>Accounting</strong>: Tracks available resources real-time.</li>
-<li><strong>Scheduling</strong>: Decides WHO runs WHERE and WHEN.</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 2: Scheduling Algorithms</h2>
-<ul>
-<li><strong>FIFO (First-In, First-Out)</strong>:<ul>
-<li>Simple queue.</li>
-<li><strong>Problem</strong>: A small job gets stuck behind a massive job ("Blocking").</li>
-</ul>
-</li>
-<li><strong>Backfill Scheduling</strong>:<ul>
-<li>The Scheduler "Looks Ahead".</li>
-<li>If a large job is waiting for resources, the scheduler fills the empty gaps with small jobs that can finish early.</li>
-<li><strong>Analogy</strong>: Tetris (Filling the gaps to maximize score/utilization).</li>
-</ul>
-</li>
-<li><strong>Fairshare</strong>:<ul>
-<li>Ensures users get what they paid for (50% investment = 50% priority).</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 3: Slurm Architecture</h2>
-<ul>
-<li><strong>Slurm</strong>: Simple Linux Utility for Resource Management.<ul>
-<li>Standard on Top500 supercomputers.</li>
-</ul>
-</li>
-<li><strong>Components</strong>:<ul>
-<li><strong>slurmctld</strong> (Controller): The Brain (Master Node). Decisions &amp; Queues.</li>
-<li><strong>slurmd</strong> (Daemon): The Worker (Compute Nodes). Executes jobs.</li>
-<li><strong>slurmdbd</strong> (Database): The Memory. History &amp; Usage accounting.</li>
-</ul>
-</li>
-<li><strong>Auth</strong>: <strong>Munge</strong> keys ensure trust between all nodes.</li>
-</ul>
-<h2>Slide 4: Key Commands</h2>
-<ul>
-<li><strong>View State</strong>:<ul>
-<li><code>sinfo</code>: View Partitions and Node States (idle, alloc, drain).</li>
-<li><code>squeue</code>: View the Job Queue (Running vs Pending).</li>
-</ul>
-</li>
-<li><strong>Submit Work</strong>:<ul>
-<li><code>sbatch script.sh</code>: Submit a non-interactive script.</li>
-<li><code>salloc</code>: Request an interactive shell.</li>
-</ul>
-</li>
-<li><strong>Control</strong>:<ul>
-<li><code>scancel &lt;jobid&gt;</code>: Kill a job.</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 5: The Job Lifecycle</h2>
-<ol>
-<li><strong>Pending (PD)</strong>: User submits. Job waits for priority/resources.</li>
-<li><strong>Allocated</strong>: Scheduler grants resources.</li>
-<li><strong>Running (R)</strong>: <code>slurmd</code> starts the process on the compute node.</li>
-<li><strong>Completed (CD)</strong>: Process exits (success).</li>
-<li><strong>Failed (F)</strong>: Process crashes (non-zero exit code).</li>
-</ol>
-<h2>Slide 6: Lab Overview</h2>
-<ul>
-<li><strong>Goal</strong>: Install Slurm on our Warewulf Cluster.</li>
-<li><strong>Steps</strong>:<ol>
-<li>Install <strong>Munge</strong> (Key exchange).</li>
-<li>Install <strong>slurmctld</strong> on Master.</li>
-<li>Inject <strong>slurmd</strong> into the Compute Node Image (since nodes are stateless!).</li>
-<li>Reboot &amp; Verify <code>sinfo</code>.</li>
-<li>Run "Hello World" on the cluster.</li>
-</ol>
-</li>
-</ul>
-        
+            <h2>Slide 3: Slurm Job Submission &amp; Queuing</h2>
+            <ul>
+                <li>Client Commands: `sbatch` (batch submission), `srun` (parallel step launch), `squeue` (queue inspection), `scancel` (job cancellation), `sinfo` (node state summary).</li>
+                <li>Scheduling Policies: First-In First-Out (FIFO) with Backfill Scheduling and Fair-Share Priority Scoring.</li>
+            </ul>
 
         </article>
     </main>

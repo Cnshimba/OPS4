@@ -104,22 +104,6 @@
                 </div>
             </div>
 
-
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_2_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-        </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 2</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 2: System Design and Memory - Slides</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
-</div>
-
-<h1>Week 2 Slides: System Design and Networking</h1>
 <h2>Slide 1: The Beowulf Revolution</h2>
 <ul>
 <li><strong>The Problem</strong>: Supercomputers were expensive and proprietary (Cray/IBM).</li>
@@ -132,6 +116,9 @@
 <li><strong>Result</strong>: 90% of Top500 systems today are Linux Clusters.</li>
 </ul>
 <h2>Slide 2: Cluster Anatomy</h2>
+<div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+    <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Beowulf Cluster Architecture" src="../images/beowulf_architecture_vut.png" />
+</div>
 <ul>
 <li><strong>Master Node</strong>: The Gateway. Users login here. Runs Scheduler &amp; Provisioning.</li>
 <li><strong>Compute Nodes</strong>: The Workers. Headless, Diskless.</li>
@@ -139,6 +126,9 @@
 <li><strong>Storage Node</strong>: Centralized Data (NFS/Lustre).</li>
 </ul>
 <h2>Slide 3: Network Topologies</h2>
+<div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+    <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Network Topologies Comparison" src="../images/network_topologies_vut.png" />
+</div>
 <ul>
 <li><strong>Goal</strong>: Connect 1,000 nodes without bottlenecks.</li>
 <li><strong>Fat Tree</strong>:<ul>
@@ -155,6 +145,9 @@
 </li>
 </ul>
 <h2>Slide 4: Critical Services (The Lab)</h2>
+<div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+    <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="OpenHPC Reference Architecture" src="../images/openhpc_architecture_vut.png" />
+</div>
 <p>To make a node boot without a disk, we need:</p>
 <ol>
     <li><strong>DHCP</strong>: Assigns an IP address to the node.</li>

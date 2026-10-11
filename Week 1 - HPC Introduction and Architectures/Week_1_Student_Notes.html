@@ -166,13 +166,13 @@
                             <span>Learning Outcomes (NQF Level 7)</span>
                         </div>
                         <ol class="space-y-1.5 text-sm m-0 pl-4">
-                            <li><strong>Critique</strong> the definition of High Performance Computing relative to standard IT infrastructure in complex environments.</li>
-                            <li><strong>Evaluate</strong> the role and impact of the South African HPC ecosystem (CHPC, DIRISA, SANReN) on regional research.</li>
-                            <li><strong>Analyze</strong> cluster performance using FLOPS and interpret top-tier benchmarking standards (Top500).</li>
-                            <li><strong>Contrast and evaluate</strong> the Von Neumann and Harvard architectures in the context of modern supercomputing.</li>
-                            <li><strong>Formulate</strong> strategies to mitigate the Memory Wall problem using advanced cache hierarchies.</li>
-                            <li><strong>Classify</strong> parallel computing systems critically using Flynn's Taxonomy.</li>
-                            <li><strong>Apply and analyze</strong> Amdahl's Law and Gustafson's Law to predict parallel speedup bounds.</li>
+                            <li>Critique the definition of High Performance Computing relative to standard IT infrastructure in complex environments.</li>
+                            <li>Evaluate the role and impact of the South African HPC ecosystem (CHPC, DIRISA, SANReN) on regional research.</li>
+                            <li>Analyze cluster performance using FLOPS and interpret top-tier benchmarking standards (Top500).</li>
+                            <li>Contrast and evaluate the Von Neumann and Harvard architectures in the context of modern supercomputing.</li>
+                            <li>Formulate strategies to mitigate the Memory Wall problem using advanced cache hierarchies.</li>
+                            <li>Classify parallel computing systems critically using Flynn's Taxonomy.</li>
+                            <li>Apply and analyze Amdahl's Law and Gustafson's Law to predict parallel speedup bounds.</li>
                         </ol>
                     </div>
 
@@ -182,21 +182,21 @@
                         <p>Let's get one thing straight from the start: High Performance Computing isn't just about having "fast computers." It's the science and engineering of pooling computing power together — hundreds or thousands of machines working as one — to tackle problems that no single desktop or server could ever handle alone (Sterling et al., 2018).</p>
                         
                         <h3>1.1 The Need for Speed (and Scale)</h3>
-                        <p>In everyday IT, we tend to think about throughput: how many web requests can a server handle per second? HPC flips the question. Here, what matters is <strong>Speedup</strong> — how much faster can we solve a <em>single, massive</em> problem by splitting the work across multiple processors?</p>
+                        <p>In everyday IT, we tend to think about throughput: how many web requests can a server handle per second? HPC flips the question. Here, what matters is Speedup — how much faster can we solve a <em>single, massive</em> problem by splitting the work across multiple processors?</p>
                         
                         <p>The real world makes the case better than any textbook. Training large AI models like GPT takes thousands of GPUs crunching through petabytes of text in parallel. In medicine, assembling a complete human genome and hunting for cancer mutations requires raw computational muscle that a single workstation simply can't provide. On the Johannesburg Stock Exchange (JSE), high-frequency trading algorithms analyse market data in microseconds. And right here at home, the South African Weather Service (SAWS) runs daily weather simulations — solving Navier-Stokes equations across a grid covering the entire country — to issue storm warnings.</p>
 
                         <h3>1.2 Local Context: The South African Cyberinfrastructure Ecosystem</h3>
-                        <p>You might think supercomputing is a first-world luxury, but South Africa actually hosts the most advanced research computing infrastructure on the continent. It's all coordinated under the <strong>National Integrated Cyber Infrastructure System (NICIS)</strong>, which stands on three pillars (CHPC, 2024):</p>
+                        <p>You might think supercomputing is a first-world luxury, but South Africa actually hosts the most advanced research computing infrastructure on the continent. It's all coordinated under the National Integrated Cyber Infrastructure System (NICIS), which stands on three pillars (CHPC, 2024):</p>
 
                         <ul>
-                            <li><strong>CHPC (Centre for High Performance Computing)</strong>: Located in Cape Town. Their flagship system, <em>Lengau</em>, is one of the fastest supercomputers in the Southern Hemisphere and is available to SA universities — including VUT.</li>
-                            <li><strong>DIRISA (Data Intensive Research Infrastructure of South Africa)</strong>: Handles long-term storage and curation of massive scientific datasets (such as radio astronomy from the Karoo).</li>
-                            <li><strong>SANReN (South African National Research Network)</strong>: High-speed 100Gbps fibre backbone moving terabytes between campuses and national supercomputing facilities without bottlenecks.</li>
+                            <li>CHPC (Centre for High Performance Computing): Located in Cape Town. Their flagship system, <em>Lengau</em>, is one of the fastest supercomputers in the Southern Hemisphere and is available to SA universities — including VUT.</li>
+                            <li>DIRISA (Data Intensive Research Infrastructure of South Africa): Handles long-term storage and curation of massive scientific datasets (such as radio astronomy from the Karoo).</li>
+                            <li>SANReN (South African National Research Network): High-speed 100Gbps fibre backbone moving terabytes between campuses and national supercomputing facilities without bottlenecks.</li>
                         </ul>
 
                         <h3>1.3 Measuring Performance: The FLOP</h3>
-                        <p>In scientific computing — where workloads are mathematical — performance is measured in <strong>Floating Point Operations Per Second (FLOPS)</strong>:</p>
+                        <p>In scientific computing — where workloads are mathematical — performance is measured in Floating Point Operations Per Second (FLOPS):</p>
 
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 my-6 text-center">
                             <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
@@ -218,26 +218,28 @@
                         </div>
 
                         <h3>1.4 The Top500 List</h3>
-                        <p>Every six months, the global supercomputing community publishes the <a href="https://www.top500.org" target="_blank" class="text-sky-500 font-bold">Top500 list</a>, ranking the world's 500 most powerful supercomputers using the <strong>High Performance Linpack (HPL)</strong> dense matrix benchmark.</p>
+                        <p>Every six months, the global supercomputing community publishes the <a href="https://www.top500.org" target="_blank" class="text-sky-500 font-bold">Top500 list</a>, ranking the world's 500 most powerful supercomputers using the High Performance Linpack (HPL) dense matrix benchmark.</p>
                     </section>
-
-                    <hr class="my-10 border-slate-200 dark:border-slate-800">
 
                     <!-- SECTION 2 -->
                     <section id="section-2">
                         <h2>2. System Architecture</h2>
-                        <p>Nearly every modern computer follows the <strong>Von Neumann Architecture</strong> proposed in 1945.</p>
+                        <p>To understand the computational challenges of modern supercomputing, we must first analyze the fundamental computer architectures that govern processor hardware design. Virtually all digital computers constructed over the past eight decades trace their heritage back to the seminal stored-program models developed in the 1940s.</p>
 
                         <h3>2.1 The Von Neumann Model &amp; Bottleneck</h3>
-                        <p>In a Von Neumann computer, instructions and data reside together in main RAM and travel across a single shared system bus. Because CPU clock cycles run exponentially faster than the memory bus bandwidth, the processor experiences the <strong>Von Neumann Bottleneck</strong>, sitting idle while waiting for RAM data.</p>
+                        <p>In 1945, mathematician John von Neumann proposed an architectural framework where both executable program instructions and raw dataset values share a single physical main memory unit (RAM). In a pure Von Neumann architecture, a shared system bus—comprising address lines, data lines, and control signals—acts as the single highway connecting the Central Processing Unit (CPU) to main memory and peripheral I/O devices.</p>
 
                         <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
-                            <img class="max-w-full h-auto max-h-[350px] mx-auto rounded-xl shadow-md" alt="Von Neumann Architecture Diagram" src="../images/von_neumann_architecture.png" />
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Von Neumann Architecture Diagram" src="../images/von_neumann_architecture.png" />
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 1: The Von Neumann Architecture — a shared bus connects CPU, Memory, and I/O.</p>
                         </div>
 
-                        <h3>2.2 The Harvard Architecture</h3>
-                        <p>The Harvard Architecture provides separate physical buses for instructions and data. Modern server processors (AMD EPYC, Intel Xeon) use a <strong>Modified Harvard Architecture</strong> internally — keeping separate L1 Instruction (L1i) and L1 Data (L1d) caches while presenting a unified memory space.</p>
+                        <p>While elegant and simple to program, this shared bus design induces a severe physical constraint known as the Von Neumann Bottleneck. Because instructions and data must travel over the exact same physical wires, the CPU cannot read an instruction opcode and access a data operand simultaneously. As microprocessor clock frequencies accelerated exponentially into the gigahertz realm over recent decades, memory bus throughput lagged behind. Consequently, high-performance CPU cores spend a substantial percentage of their operational clock cycles in a stalled state, waiting for data to travel over the congested memory bus.</p>
+
+                        <h3>2.2 The Harvard Architecture &amp; Modern Hybrid Implementations</h3>
+                        <p>Developed for the Harvard Mark I electromechanical computer, the Harvard Architecture directly resolves bus contention by physically segregating instruction memory from data memory. By providing separate, dedicated address and data buses for instructions and data, a Harvard processor can simultaneously read an instruction from instruction memory and perform a read or write operation on data memory within a single clock cycle.</p>
+
+                        <p>In modern High Performance Computing, pure Harvard architectures are rarely deployed for primary main memory due to the complexity of managing rigid, separate memory banks. Instead, enterprise server microprocessors—such as AMD EPYC and Intel Xeon CPUs—implement a Modified Harvard Architecture. Externally, the operating system views a single, unified main memory (DRAM) address space for programmatic simplicity. Internally on the silicon die, however, the CPU core maintains physically distinct L1 Instruction (L1i) and L1 Data (L1d) caches. This hybrid design delivers simultaneous instruction fetching and data processing at core clock speeds while preserving the flexibility of a unified system memory model.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
@@ -246,22 +248,28 @@
                     <section id="section-3">
                         <h2>3. The Memory Wall and Caching</h2>
 
-                        <h3>3.1 The Memory Wall</h3>
-                        <p>Over the last 40 years, CPU speed grew exponentially while DRAM latency improved linearly. This gap is the <strong>Memory Wall</strong>. A 4GHz CPU core executes a cycle in 0.25ns, but fetching from DRAM takes ~100ns (a 400-cycle stall penalty).</p>
+                        <h3>3.1 The Memory Wall Problem</h3>
+                        <p>For more than three decades, microprocessor raw performance scaled exponentially in accordance with Moore's Law and Dennard Scaling, increasing by approximately 55% per year. In contrast, Dynamic Random-Access Memory (DRAM) access latencies improved at a far slower rate of less than 7% annually. This widening performance gap between execution speed and memory retrieval speed is formally termed the Memory Wall.</p>
 
                         <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
-                            <img class="max-w-full h-auto max-h-[350px] mx-auto rounded-xl shadow-md" alt="The Memory Wall Graph" src="../images/memory_wall.png" />
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="The Memory Wall Graph" src="../images/memory_wall.png" />
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 2: The Memory Wall — widening gap between CPU clock rate and DRAM access speed.</p>
                         </div>
 
-                        <h3>3.2 Solution: Cache Hierarchies &amp; Locality</h3>
-                        <p>Caching relies on <strong>Temporal Locality</strong> (reusing recently accessed data) and <strong>Spatial Locality</strong> (accessing adjacent memory addresses).</p>
+                        <p>To grasp the severity of the Memory Wall in HPC workloads, consider a modern CPU core operating at a 4.0 GHz clock frequency. Each execution clock cycle completes in a mere 0.25 nanoseconds. However, requesting a data line from main DRAM memory requires approximately 80 to 100 nanoseconds. Without intermediate caching mechanisms, the CPU core would idle for roughly 350 to 400 clock cycles on every single memory miss. In large-scale scientific simulations involving billions of floating-point matrix transformations, this delay completely degrades theoretical CPU performance.</p>
 
-                        <ul class="space-y-1">
-                            <li><strong>L1 Cache</strong>: 32KB–64KB per core, ultra-fast (~1ns latency).</li>
-                            <li><strong>L2 Cache</strong>: 512KB–1MB private per core (~3ns latency).</li>
-                            <li><strong>L3 LLC Cache</strong>: 32MB–1GB shared across core complexes (~12ns latency).</li>
-                        </ul>
+                        <h3>3.2 Solution: Cache Hierarchies &amp; Locality Principles</h3>
+                        <p>To overcome the Memory Wall, modern computer architects employ multi-tiered cache hierarchies designed around the fundamental software principles of locality:</p>
+
+                        <p>Temporal Locality dictates that data or instructions accessed at one point in time are highly likely to be accessed again in the immediate future (e.g., variables inside iterative <code>for</code> loops or frequently invoked subroutine instructions). Spatial Locality dictates that when a specific memory address is accessed, adjacent memory locations are highly likely to be accessed soon (e.g., traversing consecutive elements of a contiguous array or matrix row).</p>
+
+                        <p>Processor architects exploit these locality principles by placing small, ultra-fast Static RAM (SRAM) cache layers between the execution cores and main DRAM memory:</p>
+
+                        <p>The Level 1 (L1) Cache sits directly inside the execution pipeline of each individual core. Operating at full CPU clock frequency, it is split into dedicated L1 Instruction (L1i) and L1 Data (L1d) caches (typically 32 KB to 64 KB each) delivering access latencies of 1.0 to 1.5 nanoseconds (3 to 4 clock cycles).</p>
+
+                        <p>The Level 2 (L2) Cache serves as a larger, dedicated fallback buffer private to each individual core (typically 512 KB to 1 MB per core). Operating with access latencies of 3 to 4 nanoseconds (12 to 14 clock cycles), the L2 cache catches requests that miss L1 before they hit shared interconnects.</p>
+
+                        <p>The Level 3 (L3) Last-Level Cache (LLC) is shared across a cluster of cores on a silicon complex (CCX/CCD). Modern HPC processors feature massive L3 caches ranging from 32 MB to over 1 GB (utilizing 3D vertical stacking technologies). Operating at 10 to 15 nanoseconds (40 to 50 clock cycles), the L3 cache intercepts off-chip requests, preserving precious main memory bandwidth for inter-node MPI operations.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
@@ -270,27 +278,33 @@
                     <section id="section-4">
                         <h2>4. Processor Architecture &amp; Flynn's Taxonomy</h2>
 
-                        <h3>4.1 Flynn's Taxonomy</h3>
-                        <p>Flynn's Taxonomy classifies parallel computers based on instruction and data streams:</p>
+                        <h3>4.1 Flynn's Taxonomy of Parallel Architectures</h3>
+                        <p>In 1966, computer architect Michael J. Flynn introduced a formal classification scheme for computer architectures based on the number of concurrent instruction streams and data streams processed by the hardware.</p>
 
                         <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
-                            <img class="max-w-full h-auto max-h-[350px] mx-auto rounded-xl shadow-md" alt="Flynn's Taxonomy" src="../images/flynn_taxonomy.png" />
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 3: Flynn's Taxonomy — SISD, SIMD (vectorization/GPU), and MIMD (clusters).</p>
+                            <img class="max-w-full h-auto max-h-[420px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Flynn's Taxonomy" src="../images/flynn_taxonomy.png" />
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 m-0 italic">Figure 3: Flynn's Taxonomy — SISD, SIMD (vectorization/GPU), MISD, and MIMD (clusters).</p>
                         </div>
 
-                        <ul>
-                            <li><strong>SISD</strong>: Single Instruction, Single Data (legacy single-core CPU).</li>
-                            <li><strong>SIMD</strong>: Single Instruction, Multiple Data (AVX-512 vector units &amp; GPUs).</li>
-                            <li><strong>MIMD</strong>: Multiple Instruction, Multiple Data (multi-node supercomputer clusters).</li>
-                        </ul>
+                        <p>Single Instruction, Single Data (SISD) describes traditional single-core scalar computers. A single processor executes a single sequential instruction stream acting on a single data stream in main memory. Classic single-core x86 systems fit this category.</p>
+
+                        <p>Single Instruction, Multiple Data (SIMD) describes architectures where a single instruction stream operates simultaneously across multiple distinct data elements in parallel. SIMD forms the mathematical engine of modern HPC, powering CPU vector execution units (AVX-512, ARM SVE) and Graphics Processing Units (GPUs), where thousands of arithmetic lanes execute identical matrix operations across broad data arrays in parallel.</p>
+
+                        <p>Multiple Instruction, Single Data (MISD) describes systems where multiple distinct instruction streams operate simultaneously on a single shared data stream. Although rare in general scientific computing, MISD is utilized in mission-critical, fault-tolerant environments—such as flight control systems, nuclear reactor safeguards, and space systems—where redundant execution paths process identical sensor data to verify hardware consensus.</p>
+
+                        <p>Multiple Instruction, Multiple Data (MIMD) represents the dominant architecture of modern supercomputers and HPC clusters. In a MIMD system, multiple independent processors or compute nodes simultaneously execute distinct instruction streams on distinct data sets. MIMD divides into two primary paradigms: <em>Shared-Memory MIMD</em> (multi-socket NUMA servers running multi-threaded OpenMP applications) and <em>Distributed-Memory MIMD</em> (multi-node clusters coordinating computational ranks via MPI over high-speed InfiniBand interconnects).</p>
 
                         <h3>4.2 Amdahl's Law vs Gustafson's Law</h3>
 
-                        <p><strong>Amdahl's Law (Strong Scaling)</strong> defines theoretical speedup $S$ capped by serial fraction $(1-p)$:</p>
-                        $$ S = \frac{1}{(1-p) + \frac{p}{s}} $$
+                        <p>Predicting parallel performance gains requires understanding the mathematical laws governing speedup limits under different scaling conditions.</p>
 
-                        <p><strong>Gustafson's Law (Weak Scaling)</strong> models expanding problem sizes on supercomputers:</p>
-                        $$ S_p = p + (1-p)s $$
+                        <p>Amdahl's Law (Strong Scaling) evaluates speedup when solving a fixed problem size ($W$) across an increasing number of processor cores ($N$). If a fraction $(1-p)$ of an algorithm is inherently serial and cannot be parallelized, Amdahl's Law establishes a strict mathematical upper bound on total speedup $S$:</p>
+                        $$ S = \frac{1}{(1-p) + \frac{p}{N}} $$
+                        <p>Even if an infinite number of processors ($N \to \infty$) are applied, the maximum attainable speedup can never exceed $\frac{1}{1-p}$. For example, if just 5% of a program is strictly serial ($1-p = 0.05$), the maximum theoretical speedup is capped at 20$\times$, regardless of whether 100 or 100,000 CPU cores are deployed.</p>
+
+                        <p>Gustafson-Barsis's Law (Weak Scaling) addresses Amdahl's limitation by recognizing that in real-world HPC scientific applications, researchers do not keep the problem size fixed when given a larger supercomputer. Instead, as processor counts expand, the problem size is expanded proportionally to occupy the available parallel hardware and memory. Gustafson's Law models scaled speedup $S_p$ under constant execution time:</p>
+                        $$ S_p = N - (1-p)(N-1) = s + pN $$
+                        <p>Gustafson's Law demonstrates that for large-scale scientific problems where the parallel workload grows alongside processor availability, massive supercomputers containing tens of thousands of cores achieve near-linear parallel speedup.</p>
                     </section>
 
                     <hr class="my-10 border-slate-200 dark:border-slate-800">
@@ -298,13 +312,7 @@
                     <!-- SECTION 5 -->
                     <section id="section-5">
                         <h2>5. Career Pathways &amp; Self-Assessment</h2>
-                        <p>HPC skills prepare students for careers as <strong>HPC Systems Engineers</strong>, <strong>Cloud Infrastructure Architects</strong>, <strong>Site Reliability Engineers (SRE)</strong>, and <strong>Research Software Engineers (RSE)</strong>.</p>
-
-                        </section>
-
-                    <!-- Quiz Link Widget -->
-                        
-    
+                        <p>Mastering High Performance Computing fundamentals prepares students for high-impact engineering careers across the tech industry. Specialized HPC roles include HPC Systems Engineers (designing supercomputing clusters and InfiniBand fabrics), Cloud Infrastructure Architects (building scalable cloud compute pools), Site Reliability Engineers (SRE) (ensuring large-scale system availability), and Research Software Engineers (RSE) (optimizing scientific code for national supercomputing facilities).</p>
                     </section>
 
                     <!-- Quiz Link Widget -->
@@ -320,10 +328,10 @@
                             Take Week 1 Quiz Now
                         </a>
                     </div>
-                </div>
-</div>
                 </article>
-</main>
+            </div>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">

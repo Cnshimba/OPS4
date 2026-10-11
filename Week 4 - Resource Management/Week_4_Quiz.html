@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 4 Quiz: Resource Management & Slurm (EIOPS4A)</title>
+    <title>Week 4 Quiz: Resource Management &amp; Slurm Scheduling (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -59,13 +59,23 @@
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
 
-    <!-- Top Navigation Bar -->
+    <!-- Top Navigation Bar with Sticky Progress Header -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
         <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
             <a href="Week_4_Student_Notes.html" class="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">
                 <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 <span>Back to Student Notes</span>
             </a>
+            
+            <!-- Live Progress Counter in Navbar -->
+            <div class="hidden md:flex items-center space-x-3 text-xs font-bold">
+                <span class="text-slate-500 dark:text-slate-400">Progress:</span>
+                <span id="nav-progress-text" class="text-sky-500 font-mono font-black">Question 1 of 25</span>
+                <div class="w-32 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div id="nav-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
             <div class="flex items-center space-x-4">
                 <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-amber-500/50 transition-colors">
@@ -80,7 +90,7 @@
     <main class="container mx-auto px-4 max-w-4xl">
         
         <!-- Hero Header Card -->
-        <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-8 overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm mb-6 overflow-hidden">
             <div class="w-32 flex-shrink-0 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/80 p-6">
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 border-2 border-sky-400 flex flex-col items-center justify-center shadow-lg shadow-amber-500/20 mb-1">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
@@ -88,22 +98,38 @@
                 <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">QUIZ 04</span>
             </div>
             <div class="flex-1 flex flex-col justify-center p-6">
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 4 Quiz: Resource Management & Slurm</h1>
-                <span class="text-xs font-semibold text-amber-500 mt-1">Job Scheduling, Priority Queues & Control Groups</span>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 4 Quiz: Resource Management &amp; Slurm Scheduling</h1>
+                <span class="text-xs font-semibold text-amber-500 mt-1">25 Questions — Single Question Flow (NUMA Architecture, Slurm Daemons &amp; Commands)</span>
             </div>
         </div>
 
-        <!-- Quiz Container -->
+        <!-- Question Jump Pagination Grid -->
+        <div id="jump-grid-container" class="p-4 mb-6 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-center gap-1.5">
+            <!-- Question Jump Pills injected via JS -->
+        </div>
+
+        <!-- Quiz Container (Renders 1 active question card) -->
         <div id="quiz-container" class="space-y-6">
-            <!-- Questions injected via JS -->
+            <!-- Active Question Card injected via JS -->
         </div>
 
         <!-- Results Card Container -->
-        <div id="results-container" class="hidden mt-10 p-8 bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl border border-sky-500/30 text-center space-y-6">
-            <h2 class="text-3xl font-black text-white m-0">Quiz Complete!</h2>
-            <p class="text-lg text-slate-300 m-0">You scored <span id="score-display" class="font-black text-sky-400 text-2xl">0</span> out of <span id="total-display" class="font-bold text-white text-2xl">0</span>.</p>
-            <button onclick="location.reload()" class="px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-black text-sm transition-all shadow-lg shadow-amber-500/30">
-                Retry Quiz
+        <div id="results-container" class="hidden mt-10 p-8 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl border border-sky-500/30 text-center space-y-6">
+            <h2 class="text-3xl font-black text-white m-0">Quiz Assessment Complete!</h2>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 py-4">
+                <div class="w-32 h-32 rounded-full border-4 border-sky-400 flex flex-col items-center justify-center bg-slate-800/80 shadow-xl">
+                    <span id="score-percentage" class="text-3xl font-black text-sky-400">0%</span>
+                    <span id="score-ratio" class="text-xs text-slate-400 font-bold">0 / 25</span>
+                </div>
+                <div class="text-left space-y-2 max-w-md">
+                    <div id="mastery-badge" class="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30">
+                        Performance Verdict
+                    </div>
+                    <p id="mastery-message" class="text-sm text-slate-300 m-0 leading-relaxed">Detailed score breakdown and recommendations will appear here.</p>
+                </div>
+            </div>
+            <button onclick="location.reload()" class="px-8 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-black text-sm transition-all shadow-lg shadow-amber-500/30">
+                Retry Week 4 Quiz
             </button>
         </div>
 
@@ -112,252 +138,477 @@
     <script>
         const questions = [
             {
-                        "question": "What is the primary purpose of a resource manager/job scheduler like Slurm?",
-                        "options": [
-                                    "To provision operating systems.",
-                                    "To compile C code automatically.",
-                                    "To arbitrate access to cluster resources, ensuring fair usage and efficient packing of jobs.",
-                                    "To manage user passwords."
-                        ],
-                        "correct": 2,
-                        "explanation": "Slurm manages the queue of user jobs, allocating compute nodes and starting tasks based on policies, priorities, and resource availability."
+                "question": "What is a Symmetric Multiprocessor (SMP) system?",
+                "options": [
+                    "A cluster of 1,000 independent servers connected by InfiniBand.",
+                    "A single system possessing two or more identical physical processor sockets connected to a common, shared main RAM memory governed by one OS kernel.",
+                    "A graphics card with thousands of CUDA cores.",
+                    "A network router managing IP allocations."
+                ],
+                "correct": 1,
+                "explanation": "SMP architectures feature multiple physical processor sockets accessing a common shared memory space under a single operating system kernel."
             },
             {
-                        "question": "What does a 'Partition' represent in Slurm?",
-                        "options": [
-                                    "A division of a hard drive.",
-                                    "A logical grouping of compute nodes, often functioning as a specific queue with distinct limits and access controls.",
-                                    "A segmented network VLAN.",
-                                    "A slice of a CPU core."
-                        ],
-                        "correct": 1,
-                        "explanation": "Partitions in Slurm group nodes together (e.g., 'debug', 'gpu', 'batch') and define job limits like maximum runtime or node count."
+                "question": "In a Non-Uniform Memory Access (NUMA) architecture, why does a remote memory access suffer higher latency than a local access?",
+                "options": [
+                    "Because remote memory operates at a lower clock frequency.",
+                    "Because data requests must traverse inter-socket interconnects (e.g. Infinity Fabric, UPI) to reach foreign memory controllers.",
+                    "Because remote memory is stored on mechanical hard drives.",
+                    "Because remote RAM requires manual password authentication."
+                ],
+                "correct": 1,
+                "explanation": "NUMA split memory controllers per CPU socket; fetching data from a foreign socket requires traversing inter-socket links, suffering up to 2.5x higher latency."
             },
             {
-                        "question": "Which command is used to submit a batch script to Slurm?",
-                        "options": [
-                                    "srun",
-                                    "sbatch",
-                                    "squeue",
-                                    "sinfo"
-                        ],
-                        "correct": 1,
-                        "explanation": "The 'sbatch' command parses a submission script, allocates resources, and runs the script in the background when resources become available."
+                "question": "What is the typical access latency difference between a local NUMA memory read and a remote NUMA memory read?",
+                "options": [
+                    "Local RAM access is ~60 ns versus ~140 ns for remote RAM access (a 1.5x to 2.5x latency penalty).",
+                    "Local RAM takes 1 second versus 10 seconds for remote RAM.",
+                    "There is no difference in access latency.",
+                    "Remote RAM access is faster than local RAM access."
+                ],
+                "correct": 0,
+                "explanation": "Local memory reads take ~60 ns, while remote socket memory reads suffer up to 2.5x higher latency (~140 ns) due to interconnect traversal."
             },
             {
-                        "question": "How does 'srun' differ from 'sbatch'?",
-                        "options": [
-                                    "srun is used for compiling, sbatch is for running.",
-                                    "srun submits a background job, sbatch runs interactively.",
-                                    "srun executes a command in real-time, often interactively or as a step within a batch script, while sbatch submits a script for later execution.",
-                                    "There is no difference."
-                        ],
-                        "correct": 2,
-                        "explanation": "srun launches parallel tasks in real-time across allocated resources, whereas sbatch puts a script into the queue to run unattended."
+                "question": "What hardware phenomenon causes 'False Sharing' between CPU cores?",
+                "options": [
+                    "Two cores sharing the exact same instruction pointer.",
+                    "Independent threads on separate cores modifying independent variables that reside within the same 64-byte cache line.",
+                    "Multiple CPUs attempting to access the network card simultaneously.",
+                    "Executing 32-bit applications on a 64-bit operating system."
+                ],
+                "correct": 1,
+                "explanation": "False sharing occurs when independent variables sit on the same 64-byte cache line, forcing MESI cache coherence to invalidate the line repeatedly across cores."
             },
             {
-                        "question": "What command allows you to view the status of jobs in the Slurm queue?",
-                        "options": [
-                                    "sview",
-                                    "squeue",
-                                    "sinfo",
-                                    "sstat"
-                        ],
-                        "correct": 1,
-                        "explanation": "The 'squeue' command lists the jobs currently running or waiting in the Slurm scheduling queue."
+                "question": "How can C++ developers eliminate false sharing between thread data structures?",
+                "options": [
+                    "By adding more CPU sockets to the server.",
+                    "By aligning data structures to 64-byte boundaries using alignas(64) and inserting padding bytes.",
+                    "By turning off hardware L1 caches.",
+                    "By using single-threaded compilation flags."
+                ],
+                "correct": 1,
+                "explanation": "Enforcing alignas(64) ensures each thread's counter or data structure occupies a separate 64-byte cache line, preventing cache line bouncing."
             },
             {
-                        "question": "If you submit a job by mistake, how do you stop it in Slurm?",
-                        "options": [
-                                    "kill -9",
-                                    "scancel <jobid>",
-                                    "sstop <jobid>",
-                                    "srm <jobid>"
-                        ],
-                        "correct": 1,
-                        "explanation": "The 'scancel' command followed by the job ID will terminate a running or pending job."
+                "question": "What state does the MOESI cache coherence protocol add over standard MESI?",
+                "options": [
+                    "Owner (O) state, allowing a core to share dirty cache line reads without writing the line back to RAM.",
+                    "Outdated state.",
+                    "Offline state.",
+                    "Operating state."
+                ],
+                "correct": 0,
+                "explanation": "The Owner state in MOESI allows dirty cache lines to be shared among cores without triggering expensive RAM write-backs."
             },
             {
-                        "question": "What is 'Fairshare' scheduling?",
-                        "options": [
-                                    "A policy that gives all users exactly equal CPU time every day.",
-                                    "An algorithm that adjusts job priority based on a user's historical resource usage compared to their allocated share.",
-                                    "A system that shares memory between nodes.",
-                                    "A licensing agreement for HPC software."
-                        ],
-                        "correct": 1,
-                        "explanation": "Fairshare ensures long-term fairness. If a user has recently consumed a lot of resources, their priority drops, allowing users who haven't run jobs recently to move up the queue."
+                "question": "Why are workload managers like Slurm essential in shared HPC clusters?",
+                "options": [
+                    "To prevent uncoordinated user jobs from colliding on the same CPU cores, exhausting RAM memory, and causing OOM kernel panics.",
+                    "To compile C++ code faster.",
+                    "To replace Linux with Windows Server.",
+                    "To manage data center air conditioning units."
+                ],
+                "correct": 0,
+                "explanation": "Slurm arbitrates resource allocations, ensuring user jobs do not collide, overcommit RAM, or crash shared compute nodes."
             },
             {
-                        "question": "What is the purpose of 'Backfill' scheduling?",
-                        "options": [
-                                    "To fill empty hard drive space with random data.",
-                                    "To allow smaller, shorter jobs to run immediately in the gaps left while the system waits for resources to free up for a massive job.",
-                                    "To restart failed jobs automatically.",
-                                    "To copy data from compute nodes back to the head node."
-                        ],
-                        "correct": 1,
-                        "explanation": "Backfill drastically improves cluster utilization by fitting small jobs into idle nodes, provided they will finish before the nodes are needed for the next high-priority large job."
+                "question": "What is the primary role of the Slurm Controller Daemon (slurmctld)?",
+                "options": [
+                    "It monitors hardware fan speeds.",
+                    "It runs on the master node, managing pending job queues, computing priority scores, and granting resource allocations.",
+                    "It compiles C++ source code.",
+                    "It formats storage drives."
+                ],
+                "correct": 1,
+                "explanation": "slurmctld acts as the central brain of Slurm on the control node, evaluating priorities and granting job allocations."
             },
             {
-                        "question": "Why must users accurately estimate the Wall Time (`--time`) for their jobs?",
-                        "options": [
-                                    "If they underestimate, the job is killed; if they overestimate, it may delay backfill scheduling.",
-                                    "Because Slurm charges them real money per hour.",
-                                    "Because the CPU clock speed depends on the wall time.",
-                                    "Because Slurm will randomly pause the job."
-                        ],
-                        "correct": 0,
-                        "explanation": "Slurm strictly enforces the time limit (killing jobs that exceed it), but overestimating prevents the backfill scheduler from fitting the job into gaps, leaving it pending longer."
+                "question": "Which Slurm daemon runs on every compute node to launch user tasks and enforce Cgroup limits?",
+                "options": [
+                    "slurmdbd",
+                    "slurmd",
+                    "slurmctld",
+                    "slurmweb"
+                ],
+                "correct": 1,
+                "explanation": "slurmd runs on compute nodes, executing tasks requested by slurmctld and enforcing CPU/RAM resource boundaries via Cgroups."
             },
             {
-                        "question": "What does the `sinfo` command display?",
-                        "options": [
-                                    "Information about the user's account.",
-                                    "The status and configuration of nodes and partitions in the cluster.",
-                                    "The memory usage of a running job.",
-                                    "The version of Slurm installed."
-                        ],
-                        "correct": 1,
-                        "explanation": "The 'sinfo' command gives a high-level view of cluster state, showing which nodes are allocated, idle, or down, grouped by partition."
+                "question": "What is the purpose of the Slurm Database Daemon (slurmdbd)?",
+                "options": [
+                    "To store user passwords.",
+                    "To record job completion logs, historical usage statistics, and fair-share accounting limits into a MySQL/MariaDB database.",
+                    "To backup Linux kernel source code.",
+                    "To manage DNS resolution."
+                ],
+                "correct": 1,
+                "explanation": "slurmdbd records accounting data, job logs, and fair-share historical statistics into a central relational database."
             },
             {
-                        "question": "What does the '#SBATCH' directive do in a script?",
-                        "options": [
-                                    "It is a comment ignored by Slurm.",
-                                    "It instructs the bash shell to execute the line.",
-                                    "It provides resource requests and configuration flags to the Slurm scheduler.",
-                                    "It defines a variable in Python."
-                        ],
-                        "correct": 2,
-                        "explanation": "Slurm parses lines starting with #SBATCH to understand how many nodes, cores, and hours the job requires."
+                "question": "What does the directive AuthType=auth/munge specify in slurm.conf?",
+                "options": [
+                    "It uses the Munge authentication daemon to produce cryptographic credentials verifying IPC requests originate from valid cluster users.",
+                    "It disables authentication across all nodes.",
+                    "It forces users to enter a password every 5 minutes.",
+                    "It requires biometric fingerprint scans."
+                ],
+                "correct": 0,
+                "explanation": "AuthType=auth/munge verifies inter-daemon and client IPC authentication using cryptographic MUNGE tokens."
             },
             {
-                        "question": "What does a node state of 'drain' indicate in Slurm?",
-                        "options": [
-                                    "The node is actively running jobs.",
-                                    "The node is physically leaking coolant.",
-                                    "The node is marked to accept no new jobs, usually pending maintenance or investigation of a hardware issue.",
-                                    "The node is booting up."
-                        ],
-                        "correct": 2,
-                        "explanation": "Draining a node prevents Slurm from scheduling new jobs on it, allowing current jobs to finish so the node can be safely taken offline."
+                "question": "What does SelectTypeParameters=CR_Core_Memory enforce in slurm.conf?",
+                "options": [
+                    "It tracks both individual CPU Cores and RAM Memory as consumable resources, preventing memory overcommit.",
+                    "It forces all jobs to run on a single CPU core.",
+                    "It disables RAM memory tracking.",
+                    "It restricts jobs to 1MB RAM memory."
+                ],
+                "correct": 0,
+                "explanation": "CR_Core_Memory tracks cores and RAM independently, ensuring jobs are not scheduled on nodes lacking sufficient free RAM."
             },
             {
-                        "question": "What is the role of the `slurmctld` daemon?",
-                        "options": [
-                                    "It runs on compute nodes to launch tasks.",
-                                    "It is the central controller running on the head node that manages state, queues, and allocations.",
-                                    "It manages the database backend.",
-                                    "It provides a web interface for users."
-                        ],
-                        "correct": 1,
-                        "explanation": "The slurmctld (Slurm Control Daemon) is the brain of Slurm, managing the entire cluster's scheduling and state."
+                "question": "What occurs when ConstrainRAMSpace=yes is enabled in cgroup.conf and a job exceeds its memory allocation?",
+                "options": [
+                    "The job automatically receives unlimited additional RAM.",
+                    "The Linux kernel Out-Of-Memory (OOM) killer immediately terminates the job process, protecting neighboring jobs.",
+                    "The compute node powers off.",
+                    "The job is paused for 24 hours."
+                ],
+                "correct": 1,
+                "explanation": "ConstrainRAMSpace=yes enforces strict RAM cgroup limits; jobs exceeding their requested RAM allocation are killed by OOM to protect node stability."
             },
             {
-                        "question": "What is the role of the `slurmd` daemon?",
-                        "options": [
-                                    "It runs on compute nodes, awaiting instructions from the controller to launch tasks and monitor resources.",
-                                    "It is the central controller.",
-                                    "It generates billing reports.",
-                                    "It provisions the operating system."
-                        ],
-                        "correct": 0,
-                        "explanation": "slurmd runs on every compute node, acting as the worker daemon that executes tasks assigned by slurmctld."
+                "question": "What does ConstrainCores=yes enforce in cgroup.conf?",
+                "options": [
+                    "It restricts job tasks exclusively to the specific CPU core masks assigned by Slurm, blocking execution on unallocated cores.",
+                    "It limits CPU clock frequency to 1 GHz.",
+                    "It disables hyperthreading across all cores.",
+                    "It forces all processes to run on CPU core 0."
+                ],
+                "correct": 0,
+                "explanation": "ConstrainCores=yes uses kernel cgroups to pin job tasks strictly to their allocated core masks."
             },
             {
-                        "question": "What is 'Exclusive' allocation in Slurm?",
-                        "options": [
-                                    "A job that requires a special license to run.",
-                                    "A job that is granted entire compute nodes, preventing any other user's jobs from sharing those nodes.",
-                                    "A job that runs only on weekends.",
-                                    "A job that uses all nodes in the cluster."
-                        ],
-                        "correct": 1,
-                        "explanation": "Exclusive mode gives a job dedicated access to whole nodes, preventing performance interference from other users' processes."
+                "question": "Which sbatch directive specifies the total number of parallel tasks (e.g. MPI processes) across all allocated nodes?",
+                "options": [
+                    "--nodes (-N)",
+                    "--ntasks (-n)",
+                    "--cpus-per-task (-c)",
+                    "--job-name (-J)"
+                ],
+                "correct": 1,
+                "explanation": "--ntasks (-n) defines the total count of parallel tasks or MPI process instances across the job allocation."
+            },
+            {
+                "question": "How is --cpus-per-task (-c) utilized in hybrid parallel applications?",
+                "options": [
+                    "It allocates multiple CPU cores per task for OpenMP multithreading (setting OMP_NUM_THREADS).",
+                    "It specifies the number of physical graphics cards.",
+                    "It sets the number of network interfaces.",
+                    "It specifies how many users can view the job."
+                ],
+                "correct": 0,
+                "explanation": "--cpus-per-task allocates multiple CPU cores per MPI process, ideal for hybrid OpenMP/MPI parallel programs."
+            },
+            {
+                "question": "What does the directive #SBATCH -o out_%j.log specify in a batch script?",
+                "options": [
+                    "It redirects standard output (stdout) to a file where %j expands to the unique Job ID.",
+                    "It cancels the job if an error occurs.",
+                    "It deletes all output files after job completion.",
+                    "It encrypts the log file."
+                ],
+                "correct": 0,
+                "explanation": "-o out_%j.log redirects stdout to a log file named with the dynamically substituted Job ID (%j)."
+            },
+            {
+                "question": "What is the primary difference between sbatch and salloc?",
+                "options": [
+                    "sbatch submits a batch script asynchronously; salloc allocates compute nodes in real time for interactive shell execution.",
+                    "sbatch only works on Windows; salloc works on Linux.",
+                    "sbatch is an administrative command; salloc is for regular users.",
+                    "There is no difference; both commands are identical."
+                ],
+                "correct": 0,
+                "explanation": "sbatch is non-interactive for queued batch scripts; salloc grants an interactive allocation and drops the user into a shell."
+            },
+            {
+                "question": "How do developers spawn an interactive terminal shell directly inside an allocated compute node?",
+                "options": [
+                    "srun --nodes=1 --pty /bin/bash",
+                    "sbatch --interactive",
+                    "scontrol spawn shell",
+                    "scancel --pty"
+                ],
+                "correct": 0,
+                "explanation": "Executing srun --pty /bin/bash opens an interactive pseudo-terminal session inside an allocated compute node environment."
+            },
+            {
+                "question": "What does the sinfo node state 'drain' indicate?",
+                "options": [
+                    "The node is running at 100% CPU capacity.",
+                    "The node is being removed from service for maintenance; current jobs finish, but no new jobs will be scheduled.",
+                    "The node has lost power.",
+                    "The node is downloading updates."
+                ],
+                "correct": 1,
+                "explanation": "Nodes in 'drain' state finish their currently running workloads but accept no new jobs, allowing administrators to perform maintenance."
+            },
+            {
+                "question": "How can an administrator inspect full diagnostic metadata for a running job?",
+                "options": [
+                    "scontrol show job <JobID>",
+                    "sbatch --inspect <JobID>",
+                    "srun --debug <JobID>",
+                    "sinfo --job <JobID>"
+                ],
+                "correct": 0,
+                "explanation": "scontrol show job <JobID> displays exhaustive internal Slurm diagnostic state, node lists, working directory, and environment variables."
+            },
+            {
+                "question": "Which command is used to query historical job accounting logs from the MySQL database?",
+                "options": [
+                    "sacct",
+                    "squeue",
+                    "sinfo",
+                    "scancel"
+                ],
+                "correct": 0,
+                "explanation": "sacct queries the slurmdbd database to retrieve historical job statistics like MaxRSS memory, elapsed wall-clock time, and exit status."
+            },
+            {
+                "question": "How does Backfill Scheduling optimize cluster utilization without delaying high-priority jobs?",
+                "options": [
+                    "By allowing small, short-duration jobs to run on idle nodes if they complete before top-priority jobs are scheduled to start.",
+                    "By deleting pending jobs that have waited longer than 1 hour.",
+                    "By running all queued jobs simultaneously.",
+                    "By pausing running jobs to start new ones."
+                ],
+                "correct": 0,
+                "explanation": "Backfill scheduling fills node utilization gaps with short jobs that will finish before higher-priority jobs are ready to run."
+            },
+            {
+                "question": "What tool can be executed on a compute node to output a graphical representation of sockets, NUMA nodes, and cache topology?",
+                "options": [
+                    "lstopo",
+                    "top",
+                    "htop",
+                    "free"
+                ],
+                "correct": 0,
+                "explanation": "lstopo (part of hwloc) discovers and visualizes physical sockets, NUMA nodes, L1/L2/L3 caches, and PCI devices."
+            },
+            {
+                "question": "Why is thread pinning (CPU affinity) recommended for high-performance parallel applications?",
+                "options": [
+                    "To prevent the OS kernel scheduler from migrating threads across NUMA domains, preserving local L1/L2 cache locality.",
+                    "To change the operating system background wallpaper.",
+                    "To disable hyperthreading completely.",
+                    "To double CPU clock frequency automatically."
+                ],
+                "correct": 0,
+                "explanation": "Pinning threads to specific CPU cores prevents migration overhead and preserves cache locality across NUMA nodes."
             }
-];
+        ];
 
-        let score = 0;
-        let answeredQuestions = 0;
+        let currentQIndex = 0;
+        let userAnswers = [];
 
-        const quizContainer = document.getElementById('quiz-container');
+        function initQuiz() {
+            if (typeof questions !== 'undefined' && questions.length > 0) {
+                userAnswers = new Array(questions.length).fill(null);
+                renderQuizWizard();
+            }
+        }
 
-        questions.forEach((q, index) => {
-            const qDiv = document.createElement('div');
-            qDiv.className = 'bg-white dark:bg-slate-900/80 p-6 md:p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 space-y-4';
-            
-            let optionsHtml = '';
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuiz);
+        } else {
+            initQuiz();
+        }
+
+        function renderQuizWizard() {
+            const container = document.getElementById('quiz-container');
+            const jumpContainer = document.getElementById('jump-grid-container');
+            container.innerHTML = '';
+            jumpContainer.innerHTML = '';
+
+            const totalQ = questions.length;
+
+            // Render Question Jump Pills
+            questions.forEach((_, idx) => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                pill.onclick = () => jumpToQuestion(idx);
+                
+                let pillStyle = 'w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center ';
+                if (idx === currentQIndex) {
+                    pillStyle += 'bg-sky-500 text-white shadow-md ring-2 ring-sky-400';
+                } else if (userAnswers[idx] !== null) {
+                    pillStyle += 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                } else {
+                    pillStyle += 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700';
+                }
+                pill.className = pillStyle;
+                pill.innerText = idx + 1;
+                jumpContainer.appendChild(pill);
+            });
+
+            // Render Active Question Card Only
+            const q = questions[currentQIndex];
+            const card = document.createElement('div');
+            card.className = 'p-6 md:p-8 rounded-3xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6';
+
+            let optionsHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
             q.options.forEach((opt, optIndex) => {
-                optionsHtml += `
-                    <button class="option-btn w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-sky-500 dark:hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-sky-950/20 text-slate-800 dark:text-slate-200 font-medium text-sm transition-all duration-200 flex items-center justify-between" 
-                            onclick="checkAnswer(${index}, ${optIndex}, this)">
-                        <span>${opt}</span>
-                        <span class="status-icon ml-3 flex-shrink-0"></span>
-                    </button>
+                const isSelected = userAnswers[currentQIndex] === optIndex;
+                optionsHTML += `
+                    <div onclick="selectOption(${optIndex})" class="flex items-center space-x-3.5 p-4 rounded-2xl ${isSelected ? 'bg-sky-500/10 border-2 border-sky-500 shadow-md' : 'bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 hover:bg-sky-500/5 hover:border-sky-500/30'} cursor-pointer transition-all group">
+                        <input type="radio" name="current-q-option" value="${optIndex}" ${isSelected ? 'checked' : ''} class="w-4 h-4 text-sky-500 focus:ring-sky-500">
+                        <span class="w-7 h-7 rounded-lg ${isSelected ? 'bg-sky-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} font-bold text-xs flex items-center justify-center group-hover:bg-sky-500 group-hover:text-white transition-colors">${letters[optIndex]}</span>
+                        <span class="text-xs md:text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">${opt}</span>
+                    </div>
                 `;
             });
 
-            qDiv.innerHTML = `
-                <div class="flex items-start space-x-3">
-                    <span class="px-3 py-1 rounded-lg bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Q${index + 1}</span>
-                    <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white m-0 leading-snug">${q.question}</h3>
+            card.innerHTML = `
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 rounded-full bg-sky-500/10 text-sky-500 font-black text-xs border border-sky-500/30">Question ${currentQIndex + 1} of ${totalQ}</span>
+                        <span class="text-xs text-slate-400 font-medium">NQF Level 7 Assessment</span>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-slate-500">${userAnswers[currentQIndex] !== null ? '✓ Answered' : 'Pending'}</span>
                 </div>
-                <div class="options-container space-y-3 pt-2" id="options-${index}">
-                    ${optionsHtml}
-                </div>
-                <div id="explanation-${index}" class="explanation hidden mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
-                    <strong class="text-amber-500 block mb-1">Explanation:</strong>
-                    ${q.explanation}
+
+                <h3 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white m-0 leading-snug">${q.question}</h3>
+                
+                <div class="space-y-3 pt-2">${optionsHTML}</div>
+
+                <!-- Navigation Controls Footer -->
+                <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 pt-6 mt-6">
+                    <button type="button" onclick="prevQuestion()" ${currentQIndex === 0 ? 'disabled' : ''} class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 disabled:opacity-40 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous
+                    </button>
+
+                    ${currentQIndex === totalQ - 1 ? `
+                        <button type="button" onclick="checkAnswers()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xs shadow-lg shadow-emerald-500/30 hover:scale-105 transition-all flex items-center">
+                            Submit Final Quiz
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                    ` : `
+                        <button type="button" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-sky-500 text-white font-bold text-xs hover:bg-sky-400 shadow-md shadow-sky-500/20 transition-all flex items-center">
+                            Next
+                            <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    `}
                 </div>
             `;
-            quizContainer.appendChild(qDiv);
-        });
 
-        function checkAnswer(questionIndex, selectedOptionIndex, buttonElement) {
-            const container = document.getElementById(`options-${questionIndex}`);
-            if (container.classList.contains('answered')) return;
-            
-            container.classList.add('answered');
-            const buttons = container.getElementsByTagName('button');
-            const correctIndex = questions[questionIndex].correct;
+            container.appendChild(card);
+            updateNavBarProgress();
+        }
 
-            if (selectedOptionIndex === correctIndex) {
-                buttonElement.classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-400');
-                buttonElement.querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                score++;
-            } else {
-                buttonElement.classList.add('bg-rose-500/20', 'border-rose-500', 'text-rose-400');
-                buttonElement.querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-                
-                buttons[correctIndex].classList.add('bg-emerald-500/20', 'border-emerald-500', 'text-emerald-400');
-                buttons[correctIndex].querySelector('.status-icon').innerHTML = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-            }
+        function selectOption(optIndex) {
+            userAnswers[currentQIndex] = optIndex;
+            renderQuizWizard();
+        }
 
-            for (let btn of buttons) {
-                btn.style.cursor = 'default';
-            }
+        function jumpToQuestion(idx) {
+            currentQIndex = idx;
+            renderQuizWizard();
+        }
 
-            document.getElementById(`explanation-${questionIndex}`).classList.remove('hidden');
-            
-            answeredQuestions++;
-            if (answeredQuestions === questions.length) {
-                setTimeout(showResults, 800);
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                renderQuizWizard();
             }
         }
 
-        function showResults() {
+        function nextQuestion() {
+            if (currentQIndex < questions.length - 1) {
+                currentQIndex++;
+                renderQuizWizard();
+            }
+        }
+
+        function updateNavBarProgress() {
+            const totalQ = questions.length;
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const pct = Math.round((answeredCount / totalQ) * 100);
+
+            if (document.getElementById('nav-progress-text')) {
+                document.getElementById('nav-progress-text').innerText = `Question ${currentQIndex + 1} of ${totalQ} (${answeredCount} Answered)`;
+            }
+            if (document.getElementById('nav-progress-bar')) {
+                document.getElementById('nav-progress-bar').style.width = `${pct}%`;
+            }
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const totalQ = questions.length;
+            const container = document.getElementById('quiz-container');
+            const jumpContainer = document.getElementById('jump-grid-container');
+            jumpContainer.innerHTML = '';
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const selected = userAnswers[index];
+                const isCorrect = selected === q.correct;
+                if (isCorrect) score++;
+
+                const card = document.createElement('div');
+                card.className = `p-6 rounded-2xl ${isCorrect ? 'bg-emerald-500/5 border border-emerald-500/30' : 'bg-rose-500/5 border border-rose-500/30'} space-y-3`;
+                
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-6 h-6 rounded-md ${isCorrect ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'} font-bold text-xs flex items-center justify-center">${index + 1}</span>
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0">${q.question}</h4>
+                        </div>
+                        <span class="text-xs font-bold ${isCorrect ? 'text-emerald-500' : 'text-rose-500'}">${isCorrect ? '✓ Correct' : '✗ Incorrect'}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 pl-8">
+                        <strong>Your Answer:</strong> ${selected !== null ? q.options[selected] : 'Not Answered'}<br>
+                        <strong>Correct Answer:</strong> ${q.options[q.correct]}
+                    </p>
+                    <div class="pl-8 pt-1 text-xs font-semibold ${isCorrect ? 'text-emerald-500' : 'text-rose-500'} leading-relaxed">
+                        ${q.explanation}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            const pct = Math.round((score / totalQ) * 100);
+            document.getElementById('score-percentage').innerText = `${pct}%`;
+            document.getElementById('score-ratio').innerText = `${score} / ${totalQ}`;
+            
+            const badge = document.getElementById('mastery-badge');
+            const msg = document.getElementById('mastery-message');
+
+            if (pct >= 80) {
+                badge.innerText = 'Mastery Demonstrated (80%+ Target)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs border border-emerald-500/30';
+                msg.innerText = 'Outstanding work! You have achieved complete mastery of this module\'s concepts.';
+            } else if (pct >= 60) {
+                badge.innerText = 'Good Competency (60%-79%)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 font-bold text-xs border border-sky-500/30';
+                msg.innerText = 'Solid performance! Review the incorrect questions above to achieve full mastery.';
+            } else {
+                badge.innerText = 'Review Recommended (<60%)';
+                badge.className = 'inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xs border border-amber-500/30';
+                msg.innerText = 'Re-read the student notes for this week before retrying the assessment.';
+            }
+
             document.getElementById('results-container').classList.remove('hidden');
-            document.getElementById('score-display').textContent = score;
-            document.getElementById('total-display').textContent = questions.length;
-            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({ top: document.getElementById('results-container').offsetTop - 100, behavior: 'smooth' });
         }
     </script>
-
-    <!-- Footer -->
-    <footer class="text-center text-slate-500 dark:text-slate-400 text-xs py-8 mt-12 border-t border-slate-200 dark:border-slate-800">
-        Vaal University of Technology · Department of Electrical Engineering - Computer Systems Engineering · EIOPS4A 2026
-    </footer>
-
 </body>
 </html>

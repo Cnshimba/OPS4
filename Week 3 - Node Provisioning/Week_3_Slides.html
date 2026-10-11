@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week 3 Presentation Deck: Node Provisioning & Warewulf — EIOPS4A</title>
+    <title>Week 3 Slides — Node Provisioning Strategies &amp; Microarchitecture (EIOPS4A)</title>
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/theme_v2_modern.css">
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
             const iconSun = document.getElementById('icon-sun');
             const iconMoon = document.getElementById('icon-moon');
 
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 html.classList.add('dark');
                 iconSun.classList.remove('hidden');
                 iconMoon.classList.add('hidden');
@@ -56,27 +56,27 @@
             });
         });
     </script>
-    <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\(', '\)']] }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-slate-50 dark:bg-[#070A12] text-slate-700 dark:text-slate-300 min-h-screen pt-20 pb-24 transition-colors duration-300">
-
-    <!-- Top Navigation Bar -->
+    
+    <!-- Navigation Bar -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 dark:bg-[#070A12]/80 backdrop-blur-xl z-50 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300">
         <div class="container mx-auto px-4 max-w-5xl h-16 flex items-center justify-between">
-            <a href="Week_3_Student_Notes.html" class="flex items-center space-x-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline">
-                <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>Back to Student Notes</span>
+            <a href="../index.html" class="flex items-center space-x-3 no-underline group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-sky-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                    03
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm leading-tight text-slate-900 dark:text-white">Week 3 Slides: Node Provisioning Strategies</span>
+                    <span class="text-xs text-indigo-500 font-semibold">Operating Systems 4 (EIOPS4A)</span>
+                </div>
             </a>
             <div class="flex items-center space-x-4">
-                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-indigo-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
-                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span>Course Home</span>
+                <a href="Week_3_Student_Notes.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span>Student Notes</span>
                 </a>
+                <a href="../index.html" class="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-sky-500 transition-colors no-underline hidden sm:block">Course Home</a>
                 <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 hover:border-sky-500/50 transition-colors">
                     <svg id="icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     <svg id="icon-moon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -85,8 +85,8 @@
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <main class="container mx-auto px-4 max-w-4xl">
+    <!-- Presentation Canvas -->
+    <main class="container mx-auto px-4 max-w-5xl">
         <article class="prose lg:prose-lg dark:prose-invert max-w-none bg-white dark:bg-slate-900/80 p-6 md:p-12 rounded-3xl shadow-xl shadow-sky-500/5 border border-slate-200 dark:border-slate-800">
 
             <!-- Hero Header Card -->
@@ -99,103 +99,53 @@
                     <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">SLIDES</span>
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-6">
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 3 Presentation Deck: Node Provisioning & Warewulf</h1>
-                    <span class="text-xs font-semibold text-indigo-500 mt-1">Stateless Architecture, Image Building & PXE Booting</span>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white m-0">Week 3 Presentation Deck: Node Provisioning Strategies</h1>
+                    <span class="text-xs font-semibold text-indigo-500 mt-1">Vagrant Virtualization Mechanics, Warewulf 4 OCI Bare-Metal Protocols &amp; Decision Engineering</span>
                 </div>
             </div>
 
+            <h2>Slide 1: What is Node Provisioning?</h2>
+            <ul>
+                <li>Definition: The automated pipeline allocating hardware, instantiating operating systems, and configuring network interfaces for cluster nodes.</li>
+                <li>Scale Bottleneck: Manual USB installation of 500 servers consumes &gt;250 hours of work.</li>
+                <li>Bit-for-Bit Consistency: Guarantees every compute node runs identical libraries, preventing floating-point simulation drift.</li>
+            </ul>
 
-            
-<div class="flex items-stretch bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8 overflow-hidden">
-    <div class="w-48 flex-shrink-0 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4">
-        <div class="w-32 h-32 rounded-full bg-primary border-4 border-secondary flex items-center justify-center shadow-lg mb-2 overflow-hidden">
-            <img src="../images/week_3_icon.png" class="h-full w-full object-contain p-4 grayscale invert mix-blend-screen" alt="Icon">
-        </div>
-        <span class="text-sm font-black text-slate-400 uppercase tracking-widest">Week 3</span>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <h1 class="text-3xl font-bold text-secondary m-0">Week 3: Node Provisioning - Slides</h1>
-        <span class="text-lg font-medium text-gray-500 dark:text-gray-400 mt-1">HPC & Cluster Computing</span>
-    </div>
-</div>
+            <h2>Slide 2: Vagrant &amp; Virtualization Mechanics (Lab 1)</h2>
+            <ul>
+                <li>Vagrant Box Packaging: Tarball archive containing virtual disk (`.vmdk`), metadata JSON, and provider configuration. Uses Copy-on-Write linked clones for sub-60-second multi-VM boot.</li>
+                <li>Virtual Network Drivers:
+                    <ul>
+                        <li>NAT (eth0): Outbound internet access and SSH port forwarding (`127.0.0.1:2222` -&gt; `:22`).</li>
+                        <li>Host-Only Private Network (eth1): Isolated virtual switch (`vboxnet0`) for static IP cluster communication (`192.168.56.0/24`).</li>
+                    </ul>
+                </li>
+                <li>Pipeline: State Check -&gt; Linked Clone -&gt; Hardware Tuning -&gt; Network Binding -&gt; SSH Communicator -&gt; Shell Provisioner.</li>
+            </ul>
 
-<h1>Week 3 Slides: Node Provisioning (Warewulf 4)</h1>
-<h2>Slide 1: The Provisioning Challenge</h2>
-<ul>
-<li><strong>The Problem</strong>: How to install the OS on 500 nodes?</li>
-<li><strong>Manual Install</strong>: CD/USB? Impossible at scale.</li>
-<li><strong>Imaging</strong>: Cloning disks? Slow and stateful.</li>
-<li><strong>The Solution</strong>: Network Provisioning (PXE).</li>
-</ul>
-<h2>Slide 2: Stateless Clustering</h2>
-<ul>
-<li><strong>Stateless</strong>: No OS on the hard drive.</li>
-<li><strong>Process</strong>:<ol>
-<li>Node powers on (Network Boot).</li>
-<li>Pulls OS Image from Master into RAM.</li>
-<li>Runs completely in Memory.</li>
-</ol>
-</li>
-<li><strong>Advantages</strong>:<ul>
-<li><strong>Speed</strong>: RAM is faster than Disk.</li>
-<li><strong>Consistency</strong>: Every reboot resets to "Golden State".</li>
-<li><strong>Scale</strong>: Update one file on Master -&gt; Update 1000 nodes.</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 3: Introduction to Warewulf 4</h2>
-<ul>
-<li><strong>What is it?</strong>: The open-source standard for HPC provisioning.</li>
-<li><strong>Architecture Change</strong>:<ul>
-<li><strong>Old (WW3)</strong>: Custom "VNFS" images. Complex.</li>
-<li><strong>New (WW4)</strong>: <strong>OCI Containers</strong>.</li>
-</ul>
-</li>
-<li><strong>Concept</strong>: Your Compute Node OS is just a Docker Container.</li>
-</ul>
-<h2>Slide 4: Anatomy of a Warewulf Boot</h2>
-<ol>
-<li><strong>DHCP</strong>: Master gives Node an IP.</li>
-<li><strong>iPXE</strong>: Node downloads the advanced bootloader.</li>
-<li><strong>HTTP</strong>: Node pulls the <strong>Container Image</strong> (Compressed).</li>
-<li><strong>Overlays</strong>: Master injects specific files (e.g., <code>/etc/hostname</code>) to customize the node.</li>
-<li><strong>Kernel</strong>: Linux boots.</li>
-</ol>
-<h2>Slide 5: The Warewulf Object Model</h2>
-<ul>
-<li><strong>Node</strong>: A physical machine (MAC Address, IP).</li>
-<li><strong>Profile</strong>: A template for grouping nodes (<code>gpu-nodes</code>, <code>web-servers</code>).</li>
-<li><strong>Inheritance</strong>:<ol>
-<li><strong>Default Profile</strong>: Global settings.</li>
-<li><strong>Specific Profile</strong>: Group settings.</li>
-<li><strong>Node</strong>: Specific overrides.</li>
-</ol>
-</li>
-<li><strong>Power</strong>: Define settings once (in Profile), apply to many.</li>
-</ul>
-<h2>Slide 6: The Warewulf Tools</h2>
-<ul>
-<li><code>wwctl</code>: The single command wrapper.<ul>
-<li><code>wwctl container import</code>: Fetch a Docker image.</li>
-<li><code>wwctl profile set</code>: Configure a group template.</li>
-<li><code>wwctl node add</code>: Register a new physical server.</li>
-<li><code>wwctl configure</code>: Build the services (DHCP/TFTP).</li>
-</ul>
-</li>
-</ul>
-<h2>Slide 7: Lab Overview</h2>
-<ul>
-<li><strong>Goal</strong>: Build a functional Provisioning Server.</li>
-<li><strong>Steps</strong>:<ol>
-<li>Install Warewulf 4 on Master.</li>
-<li>Import <code>rockylinux:9</code> container from the internet.</li>
-<li>Configure the <code>default</code> <strong>Profile</strong>.</li>
-<li>Register <code>node01</code> (MAC Address required!).</li>
-<li>Boot <code>node01</code> via Network.</li>
-</ol>
-</li>
-</ul>
-        
+            <h2>Slide 3: Warewulf 4 Bare-Metal Architecture &amp; Boot Stack</h2>
+            <div class="my-6 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                <img class="max-w-full h-auto max-h-[380px] mx-auto rounded-xl border border-slate-200 dark:border-slate-800/80 block" alt="Warewulf 4 Provisioning Flow" src="../images/warewulf_provisioning_flow_vut.png" />
+            </div>
+            <ul>
+                <li>OCI Container Revolution: Replaces legacy Perl/VNFS tarballs with Go-based OCI containers (built via standard Dockerfiles).</li>
+                <li>5-Stage Boot Protocols:
+                    <ol>
+                        <li>IPMI: Hardware power-on via out-of-band BMC (`wwctl power on`).</li>
+                        <li>DHCP (`dnsmasq`): MAC to IP binding &amp; `ipxe.efi` bootloader path.</li>
+                        <li>TFTP: Stage-1 iPXE transfer to RAM.</li>
+                        <li>HTTP: Multi-gigabit transfer of kernel (`vmlinuz`) &amp; OS container (`rootfs.img`).</li>
+                        <li>Overlays: Ingesting System (initramfs) &amp; Runtime (`wwclient`) overlays.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <h2>Slide 4: Provisioning Strategy Selection Matrix</h2>
+            <ul>
+                <li>Vagrant + VirtualBox: Best for local R&amp;D, lab work, CI testing. Zero hardware cost; limited by laptop RAM (3-8% hypervisor loss).</li>
+                <li>Warewulf 4 (Stateless Bare-Metal): Best for production supercomputers &amp; physical clusters. 100% bare-metal speed; zero disk latency; immutable golden image resilience.</li>
+                <li>Stateful Disk Imaging: Best for static computer labs. High disk I/O maintenance; severe configuration drift over time.</li>
+            </ul>
 
         </article>
     </main>
