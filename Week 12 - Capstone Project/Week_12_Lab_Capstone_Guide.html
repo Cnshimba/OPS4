@@ -399,86 +399,489 @@ module avail
                 <li><strong>End-to-End Application</strong>: The multi-stage Distributed Weather Analysis program synthesizing all primitives into a complete processing pipeline.</li>
             </ul>
 
-            <h2>5. Live Demonstration Protocol &amp; The "On-the-Fly" Challenge</h2>
-            <p>Each pair of students will demonstrate their cluster live to the course lecturer during their assigned evaluation slot. The demonstration follows a rigorous three-phase protocol:</p>
+            <h2>5. Live Demonstration Protocol (Strict 30-Minute Laptop Evaluation)</h2>
+            <p>Each pair of students will demonstrate their cluster live to the course lecturer during their assigned 30-minute evaluation slot. <strong>Each group must demonstrate the cluster running live on their own laptops.</strong></p>
 
-            <div class="border-l-4 border-amber-500 pl-4 py-2 my-6 space-y-4">
-                <div>
-                    <h3 class="text-base font-bold text-amber-500 m-0">Phase 1: Cluster Health &amp; Scientific Stack Audit (20 Mins)</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">The lecturer inspects live cluster status: <code>sinfo</code> showing 4 idle compute nodes, shared NFS mounts, and checks that <code>module use /shared/modulefiles</code> exposes all five scientific modules and the Python environment. The group displays clean HPL benchmark output (<code>xhpl</code> GFLOPS, <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency calculation).</p>
+            <!-- Pre-Staging Alert Callout -->
+            <div class="p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 my-6">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">⚠️</span>
+                    <div class="text-xs text-slate-700 dark:text-slate-300">
+                        <strong class="text-amber-500 text-sm block mb-1">CRITICAL DEMO REQUIREMENT: PRE-STAGING YOUR LAPTOP BEFORE THE DEMO</strong>
+                        <p class="mb-2">Because your evaluation window is strictly limited to <strong>30 minutes</strong>, you <strong>cannot</strong> boot your VMs, compile software from source, or run full benchmark jobs during the demo session. Compiling OpenBLAS, FFTW3, HDF5, ScaLAPACK, and PETSc takes 45–90 minutes, and a production Linpack run takes 10–20 minutes. If you attempt builds in the room, you will run out of time and fail.</p>
+                        <p class="font-semibold text-slate-900 dark:text-white mb-1">Before stepping up to the assessment table, you MUST have completed the following:</p>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li><strong>Cluster Running &amp; Idle:</strong> All 5 VMs (<code>master</code> and <code>compute01..04</code>) must already be booted with <code>sinfo</code> showing 4 idle nodes.</li>
+                            <li><strong>Stack Pre-Compiled:</strong> All test binaries in <code>/shared/cluster_test_suite/</code> must already be compiled via <code>make all</code>.</li>
+                            <li><strong>Sanity Check Passed:</strong> <code>/shared/verify_capstone.sh</code> must have already been run with <strong>100% PASS</strong>.</li>
+                            <li><strong>Baseline HPL Completed:</strong> At least one HPL Linpack run must have completed with <code>HPL.out</code> ready to generate the TOP500 Certificate instantly.</li>
+                        </ul>
+                    </div>
                 </div>
+            </div>
 
-                <div>
-                    <h3 class="text-base font-bold text-sky-500 m-0">Phase 2: The Live "On-The-Fly" Algorithm Challenge (25 Mins)</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">During the demo, the lecturer will supply an unannounced source code file or computational problem. It will require one or more of your installed libraries:</p>
-                    <ul class="text-xs text-slate-600 dark:text-slate-400 mt-1 mb-0 space-y-1">
-                        <li>An <strong>OpenBLAS</strong> matrix computation (e.g., parallel DGEMM / matrix-matrix multiplication).</li>
-                        <li>An <strong>FFTW 3</strong> multi-dimensional distributed Fourier transform.</li>
-                        <li>A <strong>Parallel HDF5</strong> dataset write/read test exercising parallel MPI-IO chunks across worker nodes.</li>
-                        <li>A <strong>ScaLAPACK</strong> distributed linear equation solver (e.g., <em>Ax</em> = <em>b</em> across a process grid).</li>
-                        <li>A <strong>PETSc</strong> parallel Krylov subspace linear solver / Poisson equation on a distributed grid.</li>
-                        <li>A <strong>Python / mpi4py</strong> distributed pipeline using NumPy arrays linked to OpenBLAS.</li>
-                        <li>An <strong>MPI Collective Algorithm</strong> (e.g., parallel reduction, scatter-gather data partitioning, or Monte Carlo estimation).</li>
+            <!-- 30-Minute Timeline Table -->
+            <h3>5.1 Strict 30-Minute Demonstration Timeline</h3>
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-800">
+                    <thead class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">
+                        <tr>
+                            <th class="p-3 border-b w-36">Time Window</th>
+                            <th class="p-3 border-b w-48">Evaluation Phase</th>
+                            <th class="p-3 border-b">Assessor Action &amp; Student Deliverable</th>
+                            <th class="p-3 border-b text-center w-20">Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                        <tr>
+                            <td class="p-3 font-mono font-semibold text-sky-500">00:00 – 08:00 (8 mins)</td>
+                            <td class="p-3 font-semibold text-slate-900 dark:text-white">Slide Presentation</td>
+                            <td class="p-3">Student pairs present architecture, automation, stack compilation, and HPL tuning (strict max 6 slides, 4 mins/student). Equal speaking time required.</td>
+                            <td class="p-3 text-center font-bold text-amber-500">20</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-mono font-semibold text-sky-500">08:00 – 14:00 (6 mins)</td>
+                            <td class="p-3 font-semibold text-slate-900 dark:text-white">Cluster Health Audit</td>
+                            <td class="p-3">Assessor executes automated diagnostic <code>/shared/verify_capstone.sh</code>. Instant audit of Slurm node states, NFS exports, Lmod modulefiles, and Python venv.</td>
+                            <td class="p-3 text-center font-bold text-amber-500">20</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-mono font-semibold text-sky-500">14:00 – 25:00 (11 mins)</td>
+                            <td class="p-3 font-semibold text-slate-900 dark:text-white">Live Library &amp; TOP500 Run</td>
+                            <td class="p-3">Assessor picks <strong>1 C test</strong> and <strong>1 Python test</strong> at random from <code>/shared/cluster_test_suite/</code> (15 marks each). Group executes <code>python3 python/top500_report_generator.py</code> to display verified TOP500 certificate (20 marks).</td>
+                            <td class="p-3 text-center font-bold text-amber-500">50</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-mono font-semibold text-sky-500">25:00 – 30:00 (5 mins)</td>
+                            <td class="p-3 font-semibold text-slate-900 dark:text-white">Clarification &amp; Scoring</td>
+                            <td class="p-3">Rapid technical questions on parallel distribution, tuning parameters, and rubric scoring sign-off.</td>
+                            <td class="p-3 text-center font-bold text-amber-500">10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Teamwork Roles -->
+            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 my-6">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-2 flex items-center">
+                    <svg class="w-4 h-4 mr-2 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Recommended Pair Division of Labor
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/60">
+                        <strong class="text-sky-500 block mb-1">Partner 1: Systems &amp; Toolchain Lead (Slides 1–3)</strong>
+                        <p class="m-0 text-slate-600 dark:text-slate-400">Presents cluster architecture, Vagrant/Ansible automation, NFS/MUNGE security, scientific stack compilation flags, and Lmod module hierarchy.</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/60">
+                        <strong class="text-amber-500 block mb-1">Partner 2: Performance &amp; Algorithmic Lead (Slides 4–6)</strong>
+                        <p class="m-0 text-slate-600 dark:text-slate-400">Presents centralized Python/mpi4py venv, HPL Linpack parameter tuning ($N$, $P \times Q$, $NB$), mathematical residual checks, and TOP500 efficiency analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5.2 Mandatory 6-Slide PowerPoint Presentation Structure -->
+            <h3>5.2 Mandatory 6-Slide PowerPoint Presentation Structure</h3>
+            <p>Your presentation is strictly capped at <strong>8 minutes (4 minutes per student)</strong>. Structure your slide deck according to the following 6-slide outline:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                <!-- Slide 1 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-mono font-bold text-sky-500">SLIDE 1 · 1.5 Mins</span>
+                        <span class="text-[10px] bg-sky-500/10 text-sky-500 px-2 py-0.5 rounded-full font-semibold">Student 1</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-1">Title, Team &amp; Architecture Overview</h4>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 pl-4 list-disc space-y-1">
+                        <li>Group No., Student Names, and Student IDs.</li>
+                        <li>5-node topology: 1 Master (4GB, 2 CPUs) + 4 Compute (2GB, 2 CPUs each = 8 worker cores).</li>
+                        <li>OS &amp; Stack: Rocky Linux 9.6, VirtualBox, Slurm 23.x with PMIx.</li>
+                        <li>Pair Division of Labor statement.</li>
                     </ul>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-2 mb-0"><strong>Student Actions Required:</strong> Your pair must save the file to <code>/shared/</code>, load the corresponding Lmod module(s), compile the code with correct wrapper flags (or execute within <code>python-hpc-env</code>), submit it across all 4 compute nodes via Slurm (<code>srun</code> or <code>sbatch</code>), and explain the output and data flow to the lecturer.</p>
                 </div>
 
-                <div>
-                    <h3 class="text-base font-bold text-indigo-500 m-0">Phase 3: Individual Oral Defense (15 Mins)</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0">The lecturer examines each student individually on compiler flags, dynamic library linking (<code>LD_LIBRARY_PATH</code>), Lmod mechanics, MPI collective communication complexity, and benchmarking analysis to ensure equal technical contribution.</p>
+                <!-- Slide 2 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-mono font-bold text-sky-500">SLIDE 2 · 1.5 Mins</span>
+                        <span class="text-[10px] bg-sky-500/10 text-sky-500 px-2 py-0.5 rounded-full font-semibold">Student 1</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-1">Infrastructure Automation &amp; Shared Storage</h4>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 pl-4 list-disc space-y-1">
+                        <li>Automation strategy: Option A (Bash Bootstrap) or Option B (Ansible Playbooks).</li>
+                        <li>NFS <code>/shared/</code> architecture (<code>/shared/apps</code>, <code>modulefiles</code>, <code>benchmarks</code>).</li>
+                        <li>Security &amp; fabric: Passwordless SSH (<code>id_ed25519</code>) and MUNGE key synchronization.</li>
+                        <li>Resource isolation: Slurm cgroup memory &amp; CPU limits.</li>
+                    </ul>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-mono font-bold text-sky-500">SLIDE 3 · 1.0 Min</span>
+                        <span class="text-[10px] bg-sky-500/10 text-sky-500 px-2 py-0.5 rounded-full font-semibold">Student 1</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-1">Scientific Stack Compilation &amp; Lmod Hierarchy</h4>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 pl-4 list-disc space-y-1">
+                        <li>GCC 11 &amp; Open MPI compiler toolchain with PMIx.</li>
+                        <li>Source compilation flags: OpenBLAS (<code>DYNAMIC_ARCH=1 USE_OPENMP=1</code>), FFTW3 (<code>--enable-mpi</code>), Parallel HDF5 (<code>CC=mpicc</code>), ScaLAPACK (CMake), PETSc.</li>
+                        <li>Lmod Lua modulefiles in <code>/shared/modulefiles/</code> (dynamic <code>PATH</code> &amp; <code>LD_LIBRARY_PATH</code>).</li>
+                    </ul>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-mono font-bold text-amber-500">SLIDE 4 · 1.5 Mins</span>
+                        <span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-semibold">Student 2</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-1">Centralized Python &amp; Distributed mpi4py</h4>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 pl-4 list-disc space-y-1">
+                        <li>Shared Python virtual environment at <code>/shared/apps/python-hpc-env</code>.</li>
+                        <li>Hardware acceleration: Custom <code>site.cfg</code> linking NumPy to custom OpenBLAS.</li>
+                        <li>Distributed Python: <code>mpi4py</code> integration with cluster Open MPI.</li>
+                        <li>Verification: Cross-node execution of <code>h5py</code>, <code>scipy</code>, and Monte Carlo Pi.</li>
+                    </ul>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-mono font-bold text-amber-500">SLIDE 5 · 1.5 Mins</span>
+                        <span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-semibold">Student 2</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-1">HPL Linpack Tuning &amp; Mathematics</h4>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 pl-4 list-disc space-y-1">
+                        <li>Governing formulation: Solving $Ax = b$ across 4 compute nodes via ScaLAPACK.</li>
+                        <li>Problem Size ($N$): Scaled to $N \approx 25,000$ to consume ~80% aggregate RAM.</li>
+                        <li>Block Size ($NB$): Aligned to CPU cache lines ($NB = 64$ or $128$).</li>
+                        <li>Process Grid ($P \times Q$): $2 \times 4 = 8$ processes matching total active cores.</li>
+                    </ul>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-mono font-bold text-amber-500">SLIDE 6 · 1.0 Min</span>
+                        <span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-semibold">Student 2</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-1">TOP500 Results, Efficiency &amp; Handover</h4>
+                    <ul class="text-xs text-slate-600 dark:text-slate-400 pl-4 list-disc space-y-1">
+                        <li>Theoretical Peak ($R_{peak}$): $\text{Cores} \times \text{Clock GHz} \times \text{FLOPs/cycle}$.</li>
+                        <li>Achieved ($R_{max}$) GFLOPS and Efficiency ($E = R_{max} / R_{peak} \ge 65\%$).</li>
+                        <li>Numerical verification: Residual check PASSED ($&lt; 16.0$).</li>
+                        <li>Closing handover: <em>"Cluster is idle and pre-staged for live testing."</em></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Rules for Presentation -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 mb-6 text-xs text-slate-600 dark:text-slate-400">
+                <strong class="text-slate-900 dark:text-white block mb-1">Presentation Ground Rules:</strong>
+                <ul class="list-disc pl-4 space-y-1 m-0">
+                    <li><strong>Max 6 Slides:</strong> Any group presenting more than 6 slides will be stopped at 8 minutes.</li>
+                    <li><strong>No Walls of Code:</strong> Use clean block diagrams, parameter callouts, and performance tables.</li>
+                    <li><strong>Strict Equal Speaking Time:</strong> 4 minutes for Student 1, 4 minutes for Student 2 (10 marks allocated to each student).</li>
+                    <li><strong>Keep Terminal Ready:</strong> Have your master node terminal open in the background behind the slides so the demo starts instantly.</li>
+                </ul>
+            </div>
+
+            <!-- 5.3 Live Cluster Test Suite -->
+            <h3>5.3 The Live Cluster Test Suite (<code>/shared/cluster_test_suite/</code>)</h3>
+            <p>During the live testing window (Minutes 14:00 – 25:00), the assessor will select <strong>one C test</strong> and <strong>one Python test</strong> at random from your pre-compiled test suite. Because all tests are pre-built, each test executes in 5–15 seconds:</p>
+
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-800">
+                    <thead class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">
+                        <tr>
+                            <th class="p-2.5 border-b">Software Stack</th>
+                            <th class="p-2.5 border-b">C Test Binary</th>
+                            <th class="p-2.5 border-b">Python Script</th>
+                            <th class="p-2.5 border-b">Assessor Execution Command</th>
+                            <th class="p-2.5 border-b">Verification Standard</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                        <tr>
+                            <td class="p-2.5 font-bold text-sky-500">OpenBLAS</td>
+                            <td class="p-2.5 font-mono">bin_openblas</td>
+                            <td class="p-2.5 font-mono">test_openblas_dgemm.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">srun -N 1 -c 2 ./bin_openblas</td>
+                            <td class="p-2.5">Residual $C[0,0] = 2N$, Speed &gt; 15 GFLOPS</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-sky-500">FFTW3</td>
+                            <td class="p-2.5 font-mono">bin_fftw3</td>
+                            <td class="p-2.5 font-mono">test_fftw3_mpi.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">srun -N 4 -n 8 ./bin_fftw3</td>
+                            <td class="p-2.5">2D FFT/IFFT round-trip, Max $L_\infty$ error &lt; 1e-10</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-sky-500">Parallel HDF5</td>
+                            <td class="p-2.5 font-mono">bin_phdf5</td>
+                            <td class="p-2.5 font-mono">test_phdf5_collective.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">srun -N 4 -n 8 ./bin_phdf5</td>
+                            <td class="p-2.5">Collective hyperslab MPI-IO to <code>/shared/</code> storage</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-sky-500">ScaLAPACK</td>
+                            <td class="p-2.5 font-mono">bin_scalapack</td>
+                            <td class="p-2.5 font-mono">test_scalapack_grid.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">srun -N 4 -n 8 ./bin_scalapack</td>
+                            <td class="p-2.5">$2 \times 4$ BLACS process grid, distributed pdgemm</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-sky-500">PETSc</td>
+                            <td class="p-2.5 font-mono">bin_petsc</td>
+                            <td class="p-2.5 font-mono">test_petsc_poisson.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">srun -N 4 -n 8 ./bin_petsc</td>
+                            <td class="p-2.5">Distributed MatMPIAIJ, KSP linear solver residual &lt; 1e-6</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-sky-500">Core MPI / mpi4py</td>
+                            <td class="p-2.5 font-mono">bin_mpi</td>
+                            <td class="p-2.5 font-mono">test_mpi4py_monte_carlo.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">srun -N 4 -n 8 ./bin_mpi</td>
+                            <td class="p-2.5"><code>MPI_Bcast</code> &amp; <code>MPI_Allreduce</code> Monte Carlo Pi</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-amber-500">TOP500 Linpack</td>
+                            <td class="p-2.5 font-mono">bin_top500</td>
+                            <td class="p-2.5 font-mono">top500_report_generator.py</td>
+                            <td class="p-2.5 font-mono text-[11px]">python3 python/top500_report_generator.py</td>
+                            <td class="p-2.5">HPL parsed, Residual &lt; 16.0 (PASSED), Efficiency $E \ge 65\%$</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 5.4 Compiler & Linker Quick-Reference Card -->
+            <h3>5.4 Compiler &amp; Linker Quick-Reference Card</h3>
+            <p>Use this reference table to ensure you load the correct module and pass the required linker arguments for any test algorithm:</p>
+
+            <div class="overflow-x-auto my-6">
+                <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-800">
+                    <thead class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">
+                        <tr>
+                            <th class="p-2.5 border-b">Target Stack</th>
+                            <th class="p-2.5 border-b">Lmod Module Required</th>
+                            <th class="p-2.5 border-b">Compiler / Wrapper</th>
+                            <th class="p-2.5 border-b">Essential Linker Flags</th>
+                            <th class="p-2.5 border-b">Slurm Dispatch Example</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-800 font-mono text-[11px]">
+                        <tr>
+                            <td class="p-2.5 font-bold font-sans text-sky-500">OpenBLAS (C)</td>
+                            <td class="p-2.5"><code>mpi/openmpi-x86_64 openblas</code></td>
+                            <td class="p-2.5"><code>mpicc</code></td>
+                            <td class="p-2.5 text-amber-500"><code>-lopenblas</code></td>
+                            <td class="p-2.5"><code>srun -N 4 -n 4 ./app</code></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold font-sans text-sky-500">FFTW 3 (MPI)</td>
+                            <td class="p-2.5"><code>mpi/openmpi-x86_64 fftw3</code></td>
+                            <td class="p-2.5"><code>mpicc</code></td>
+                            <td class="p-2.5 text-amber-500"><code>-lfftw3_mpi -lfftw3 -lm</code></td>
+                            <td class="p-2.5"><code>srun -N 4 -n 4 ./app</code></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold font-sans text-sky-500">Parallel HDF5</td>
+                            <td class="p-2.5"><code>mpi/openmpi-x86_64 hdf5</code></td>
+                            <td class="p-2.5"><code>h5pcc</code></td>
+                            <td class="p-2.5 text-emerald-500"><em>(Built into h5pcc wrapper)</em></td>
+                            <td class="p-2.5"><code>srun -N 4 -n 4 ./app</code></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold font-sans text-sky-500">ScaLAPACK (F/C)</td>
+                            <td class="p-2.5"><code>mpi/openmpi-x86_64 scalapack openblas</code></td>
+                            <td class="p-2.5"><code>mpif90</code> / <code>mpicc</code></td>
+                            <td class="p-2.5 text-amber-500"><code>-lscalapack -lopenblas</code></td>
+                            <td class="p-2.5"><code>srun -N 4 -n 4 ./app</code></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold font-sans text-sky-500">Python / mpi4py</td>
+                            <td class="p-2.5"><code>python-hpc</code></td>
+                            <td class="p-2.5"><code>python3</code></td>
+                            <td class="p-2.5 text-emerald-500"><em>(Linked inside venv)</em></td>
+                            <td class="p-2.5"><code>srun -N 4 -n 4 python3 app.py</code></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold font-sans text-sky-500">Chapter 8 MPI</td>
+                            <td class="p-2.5"><code>mpi/openmpi-x86_64</code></td>
+                            <td class="p-2.5"><code>mpicc -O3</code></td>
+                            <td class="p-2.5 text-slate-400"><code>-lm</code></td>
+                            <td class="p-2.5"><code>srun -N 4 -n 8 ./app</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 5.5 Automated Pre-Flight Sanity Checker -->
+            <h3>5.5 Automated Pre-Flight Sanity Script (<code>verify_capstone.sh</code>)</h3>
+            <p>To eliminate surprises before calling the assessor over, run the automated diagnostic script from your master node:</p>
+
+            <div class="cyber-code-block">
+                <div class="cyber-code-header">
+                    <div class="cyber-code-dots">
+                        <span class="cyber-dot dot-red"></span>
+                        <span class="cyber-dot dot-yellow"></span>
+                        <span class="cyber-dot dot-green"></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400">Terminal — Running Pre-Flight Verification</span>
+                </div>
+                <pre><code class="language-bash"># On master node:
+/shared/verify_capstone.sh
+
+# Expected result:
+# ==============================================================================
+#   CAPSTONE PRE-FLIGHT VERIFICATION SUMMARY
+# ==============================================================================
+#   Total Checks Evaluated : 18
+#   Passed Checks          : 18
+#   Warnings               : 0
+#   Failed Checks          : 0
+# >>> STATUS: READY FOR LIVE DEMONSTRATION!</code></pre>
+            </div>
+
+            <!-- 5.6 Practice Rehearsal Challenges -->
+            <h3>5.6 Three Practice Rehearsal Challenges</h3>
+            <p>Student pairs should practice the following three self-tests to rehearse team communication, compilation, and Slurm job submission:</p>
+
+            <div class="space-y-4 my-6">
+                <!-- Rehearsal 1 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <h4 class="text-sm font-bold text-sky-500 m-0 mb-1">Rehearsal Challenge A: C + OpenBLAS Distributed Matrix-Vector Product</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Create <code>/shared/rehearsal_blas.c</code>, compile linking <code>-lopenblas</code>, and verify output across 4 nodes:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-c">#include &lt;mpi.h&gt;
+#include &lt;cblas.h&gt;
+#include &lt;stdio.h&gt;
+int main(int argc, char **argv) {
+    int rank, size;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+    double A[4] = {1.0 + rank, 2.0, 3.0, 4.0};
+    double x[2] = {2.0, 3.0};
+    double y[2] = {0.0, 0.0};
+    cblas_dgemv(CblasRowMajor, CblasNoTrans, 2, 2, 1.0, A, 2, x, 1, 0.0, y, 1);
+    printf("Rank %d calculated y[0]=%.1f y[1]=%.1f\n", rank, y[0], y[1]);
+    MPI_Finalize();
+    return 0;
+}</code></pre>
+                    </div>
+                    <div class="cyber-code-block text-xs mt-2">
+                        <pre><code class="language-bash">module load mpi/openmpi-x86_64 openblas
+mpicc /shared/rehearsal_blas.c -o /shared/rehearsal_blas -lopenblas
+srun -N 4 -n 4 /shared/rehearsal_blas</code></pre>
+                    </div>
+                </div>
+
+                <!-- Rehearsal 2 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <h4 class="text-sm font-bold text-emerald-500 m-0 mb-1">Rehearsal Challenge B: Python + mpi4py Distributed Variance Reduction</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Create <code>/shared/rehearsal_mpi4py.py</code> and dispatch via Slurm requesting 8 tasks across 4 nodes:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-python">from mpi4py import MPI
+import numpy as np
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+# Each rank generates random measurements
+np.random.seed(42 + rank)
+data = np.random.normal(loc=20.0, scale=2.0, size=500)
+local_sum = np.sum(data)
+total_sum = comm.reduce(local_sum, op=MPI.SUM, root=0)
+
+if rank == 0:
+    global_mean = total_sum / (size * 500)
+    print(f"[MPI4PY] Total Ranks: {size} | Global Dataset Mean: {global_mean:.4f}")</code></pre>
+                    </div>
+                    <div class="cyber-code-block text-xs mt-2">
+                        <pre><code class="language-bash">module load python-hpc
+srun -N 4 --ntasks-per-node=2 python3 /shared/rehearsal_mpi4py.py</code></pre>
+                    </div>
+                </div>
+
+                <!-- Rehearsal 3 -->
+                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60">
+                    <h4 class="text-sm font-bold text-purple-400 m-0 mb-1">Rehearsal Challenge C: Chapter 8 MPI Scatter &amp; Minimum Reduction</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 m-0 mb-2">Create <code>/shared/rehearsal_scatter.c</code> using <code>MPI_Scatter</code> and <code>MPI_Reduce(MPI_MIN)</code>:</p>
+                    <div class="cyber-code-block text-xs">
+                        <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;mpi.h&gt;
+int main(int argc, char **argv) {
+    int rank, size;
+    MPI_Init(&amp;argc, &amp;argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+    int global_vals[4] = {48, 12, 79, 34};
+    int local_val = 0;
+    MPI_Scatter(global_vals, 1, MPI_INT, &amp;local_val, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    printf("Rank %d received scattered element: %d\n", rank, local_val);
+    int global_min = 0;
+    MPI_Reduce(&amp;local_val, &amp;global_min, 1, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
+    if (rank == 0) printf("=== Global Minimum Discovered: %d ===\n", global_min);
+    MPI_Finalize();
+    return 0;
+}</code></pre>
+                    </div>
+                    <div class="cyber-code-block text-xs mt-2">
+                        <pre><code class="language-bash">module load mpi/openmpi-x86_64
+mpicc /shared/rehearsal_scatter.c -o /shared/rehearsal_scatter
+srun -N 4 -n 4 /shared/rehearsal_scatter</code></pre>
+                    </div>
                 </div>
             </div>
 
             <h2>6. Evaluation Rubric &amp; Mark Breakdown</h2>
-            <p>The Capstone Project carries a total of <strong>100 Marks</strong>, evaluated according to ECSA NQF Level 7 exit standards:</p>
+            <p>The Capstone Project carries a total of <strong>100 Marks</strong>, evaluated strictly against the 30-minute laptop demonstration schedule:</p>
 
             <table class="w-full text-xs text-left border border-slate-200 dark:border-slate-800 my-6">
                 <thead class="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold">
                     <tr>
-                        <th class="p-3 border-b border-slate-200 dark:border-slate-700">Assessment Area</th>
+                        <th class="p-3 border-b border-slate-200 dark:border-slate-700">Assessment Category</th>
                         <th class="p-3 border-b border-slate-200 dark:border-slate-700">Performance Criteria &amp; Target Evidence</th>
+                        <th class="p-3 border-b border-slate-200 dark:border-slate-700 text-center w-24">Timing</th>
                         <th class="p-3 border-b border-slate-200 dark:border-slate-700 text-center w-20">Marks</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
                     <tr>
-                        <td class="p-3 font-semibold text-sky-500">1. Baseline Verification (Labs 1-3)</td>
-                        <td class="p-3">5-node cluster healthy; all 4 compute nodes in IDLE state; <code>/shared</code> NFS mounted on all workers; <code>srun -N 4 hostname</code> executes cleanly; base Open MPI operational.</td>
-                        <td class="p-3 text-center font-bold">10</td>
+                        <td class="p-3 font-semibold text-sky-500">1. Slide Presentation</td>
+                        <td class="p-3">Strict 6-slide deck. Equal speaking time (4 mins / 10 marks per student). Clear explanation of architecture, automation, custom stack flags, Lmod hierarchy, and HPL tuning parameters.</td>
+                        <td class="p-3 text-center font-mono">00:00–08:00</td>
+                        <td class="p-3 text-center font-bold text-amber-500">20</td>
                     </tr>
                     <tr>
-                        <td class="p-3 font-semibold text-sky-500">2. Scientific Software Stack (Lab 4)</td>
-                        <td class="p-3">OpenBLAS (DYNAMIC_ARCH=1, OpenMP), FFTW 3 (MPI enabled), Parallel HDF5 (MPI-IO), ScaLAPACK (CMake, OpenBLAS-linked), and PETSc compiled cleanly from source under <code>/shared/apps/</code>.</td>
-                        <td class="p-3 text-center font-bold">25</td>
+                        <td class="p-3 font-semibold text-sky-500">2. Cluster Health &amp; Infrastructure</td>
+                        <td class="p-3">All 4 compute nodes healthy in IDLE state; <code>/shared</code> NFS mounted on all workers; <code>/shared/verify_capstone.sh</code> audit runs cleanly with 100% PASS; Lmod modulefiles and Python venv functional.</td>
+                        <td class="p-3 text-center font-mono">08:00–14:00</td>
+                        <td class="p-3 text-center font-bold text-amber-500">20</td>
                     </tr>
                     <tr>
-                        <td class="p-3 font-semibold text-sky-500">3. Lmod Environment Modules (Lab 4)</td>
-                        <td class="p-3">Declarative Lua modulefiles for all 5 packages active under <code>/shared/modulefiles/</code>; modules load cleanly on remote compute nodes via <code>module load</code> without path pollution.</td>
-                        <td class="p-3 text-center font-bold">10</td>
+                        <td class="p-3 font-semibold text-sky-500">3. Functional Library Validation (C &amp; Python)</td>
+                        <td class="p-3">Assessor randomly selects 1 C test and 1 Python test from <code>/shared/cluster_test_suite/</code>. Tests execute across nodes without segmentation faults; numerical verification targets met (15 marks per test).</td>
+                        <td class="p-3 text-center font-mono">14:00–21:00</td>
+                        <td class="p-3 text-center font-bold text-amber-500">30</td>
                     </tr>
                     <tr>
-                        <td class="p-3 font-semibold text-sky-500">4. Centralized Python &amp; mpi4py (Lab 4)</td>
-                        <td class="p-3">Shared Python virtual environment in <code>/shared/apps/python-hpc-env</code>; <code>site.cfg</code> configured; NumPy compiled with OpenBLAS dynamic linkage verified via <code>show_config()</code>; SciPy and <code>mpi4python</code> fully configured and operable across worker nodes.</td>
-                        <td class="p-3 text-center font-bold">15</td>
+                        <td class="p-3 font-semibold text-sky-500">4. TOP500 Linpack Performance</td>
+                        <td class="p-3">Successful HPL Linpack run parsed by <code>top500_report_generator.py</code>. Residual check PASSED (&lt; 16.0); verified $R_{max}$ GFLOPS reported; cluster efficiency $E \ge 65\%$ on Rocky Linux.</td>
+                        <td class="p-3 text-center font-mono">21:00–25:00</td>
+                        <td class="p-3 text-center font-bold text-amber-500">20</td>
                     </tr>
                     <tr>
-                        <td class="p-3 font-semibold text-sky-500">5. HPL Benchmarking &amp; Tuning (Lab 6)</td>
-                        <td class="p-3">HPL <code>xhpl</code> compiled and linked to OpenBLAS; <code>HPL.dat</code> sized for 80% RAM (<em>N</em>) and process grid (<em>P</em> &times; <em>Q</em> = 8); Slurm batch execution completed; correct calculation of <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency <em>E</em>.</td>
-                        <td class="p-3 text-center font-bold">15</td>
-                    </tr>
-                    <tr>
-                        <td class="p-3 font-semibold text-amber-500">6. Live "On-The-Fly" Algorithm Execution</td>
-                        <td class="p-3">Rapid ingestion of the lecturer's test algorithm; selection and loading of correct Lmod modules; accurate compilation/linkage with wrappers or Python execution; successful 4-node Slurm job dispatch and explanation of parallel results.</td>
-                        <td class="p-3 text-center font-bold">15</td>
-                    </tr>
-                    <tr>
-                        <td class="p-3 font-semibold text-indigo-500">7. Individual Oral Defense (Ch 8 &amp; Architecture)</td>
-                        <td class="p-3">Individual questioning on MPI communication patterns (point-to-point vs collectives, reductions, barriers), Slurm queue management, dynamic linkers, and architectural bottlenecks.</td>
-                        <td class="p-3 text-center font-bold">10</td>
+                        <td class="p-3 font-semibold text-indigo-500">5. Operational Agility &amp; Teamwork</td>
+                        <td class="p-3">Rapid terminal command entry, smooth coordination between partners, clear technical clarification answers, pre-staged cluster readiness with no boot delays.</td>
+                        <td class="p-3 text-center font-mono">25:00–30:00</td>
+                        <td class="p-3 text-center font-bold text-amber-500">10</td>
                     </tr>
                     <tr class="bg-slate-50 dark:bg-slate-800/50 font-bold">
-                        <td class="p-3 text-slate-900 dark:text-white" colspan="2">Total Capstone Mark Allocation</td>
-                        <td class="p-3 text-center text-amber-500">100</td>
+                        <td class="p-3 text-slate-900 dark:text-white" colspan="3">Total Capstone Mark Allocation</td>
+                        <td class="p-3 text-center text-amber-500 text-sm">100</td>
                     </tr>
                 </tbody>
             </table>
