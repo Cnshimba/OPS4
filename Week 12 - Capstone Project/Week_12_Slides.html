@@ -249,26 +249,25 @@
             <div class="p-6 mb-8 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 shadow-sm">
                 <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 mb-4">
                     <span class="text-xs font-black uppercase tracking-wider text-rose-500">Slide 7</span>
-                    <span class="text-xs font-bold text-slate-400">The Live Demo Challenge</span>
+                    <span class="text-xs font-bold text-slate-400">Strict 30-Min Live Demo</span>
                 </div>
-                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Live Assessment: The "On-The-Fly" Challenge</h2>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Live Assessment: 30-Minute Laptop Demonstration</h2>
                 <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
-                    <li><strong>The Protocol</strong>: Student pairs demonstrate their cluster live to the lecturer.</li>
-                    <li><strong>The Surprise Challenge</strong>:
+                    <li><strong>Demonstration Setting</strong>: Student pairs demonstrate their cluster live on their own laptops (all 5 VMs pre-booted and idle).</li>
+                    <li><strong>Randomized Spot-Check Protocol</strong>:
                         <ul class="mt-1 space-y-1">
-                            <li>The lecturer presents an <strong>unannounced algorithm / source code</strong> on the spot.</li>
-                            <li>The algorithm is based on <strong>ANY of the installed libraries</strong>:
+                            <li>The assessor randomly selects <strong>1 C benchmark</strong> and <strong>1 Python script</strong> from <code>/shared/cluster_test_suite/</code>.</li>
+                            <li>The suite covers all 6 compiled scientific stack components:
                                 <br>&bull; OpenBLAS matrix calculation (<code>cblas_dgemm</code>)
-                                <br>&bull; FFTW 3 parallel Fourier transform
-                                <br>&bull; Parallel HDF5 distributed I/O write/read
-                                <br>&bull; ScaLAPACK distributed matrix solver
-                                <br>&bull; PETSc parallel solver
-                                <br>&bull; Python <code>mpi4py</code> / NumPy distributed pipeline
-                                <br>&bull; Chapter 8 MPI collective primitives
+                                <br>&bull; FFTW 3 parallel 2D Fourier transform
+                                <br>&bull; Parallel HDF5 distributed collective hyperslab I/O
+                                <br>&bull; ScaLAPACK distributed matrix multiply (<code>pdgemm</code>)
+                                <br>&bull; PETSc distributed Poisson sparse solver (KSP)
+                                <br>&bull; Core MPI / <code>mpi4py</code> Monte Carlo Pi reduction
                             </li>
                         </ul>
                     </li>
-                    <li><strong>Action Required</strong>: Save code to <code>/shared/</code>, load Lmod modules, compile/execute with wrappers, dispatch across 4 compute nodes via Slurm, and explain output.</li>
+                    <li><strong>TOP500 Linpack Verification</strong>: Execute <code>python3 python/top500_report_generator.py</code> to produce and verify the official cluster certificate live!</li>
                 </ul>
             </div>
 
@@ -280,13 +279,11 @@
                 </div>
                 <h2 class="text-xl font-black text-slate-900 dark:text-white m-0 mb-3">Grading Rubric & Oral Defense (100 Marks)</h2>
                 <ul class="text-sm space-y-2 text-slate-600 dark:text-slate-300 m-0 pl-4">
-                    <li><strong>1. Baseline Infrastructure Health (10 Marks)</strong>: <code>sinfo</code> healthy, all compute nodes IDLE, NFS mounts active, base Open MPI verified.</li>
-                    <li><strong>2. Scientific Software Stack Compilation (25 Marks)</strong>: OpenBLAS, FFTW3, HDF5, ScaLAPACK, and PETSc compiled from source under <code>/shared/apps/</code>.</li>
-                    <li><strong>3. Lmod Environment Modules (10 Marks)</strong>: Clean Lua modulefiles active in <code>/shared/modulefiles/</code> loading on remote worker nodes.</li>
-                    <li><strong>4. Centralized Python & mpi4py (15 Marks)</strong>: Shared venv, NumPy linked to custom OpenBLAS, <code>mpi4py</code> operational across compute nodes.</li>
-                    <li><strong>5. HPL Benchmarking & Efficiency (15 Marks)</strong>: HPL compiled, tuned, and executed via Slurm; <em>R</em><sub>peak</sub>, <em>R</em><sub>max</sub>, and efficiency calculated.</li>
-                    <li><strong>6. Live On-The-Fly Algorithm Execution (15 Marks)</strong>: Successful compilation, Slurm submission, execution, and explanation of the mystery algorithm.</li>
-                    <li><strong>7. Individual Oral Defense (10 Marks)</strong>: Individual technical examination on architecture, linking, and MPI communication patterns.</li>
+                    <li><strong>1. Slide Presentation (20 Marks · 8 mins)</strong>: Max 6 slides presented equally by the pair (4 mins each). Clear architectural & parameter explanation.</li>
+                    <li><strong>2. Cluster Health & Infrastructure (20 Marks · 6 mins)</strong>: All 4 compute nodes IDLE, NFS mounts active, <code>/shared/verify_capstone.sh</code> audit achieves 100% PASS.</li>
+                    <li><strong>3. Functional Library Validation (30 Marks · 7 mins)</strong>: Live execution of randomly selected C test (15 marks) and Python test (15 marks) without memory faults.</li>
+                    <li><strong>4. TOP500 Linpack Performance (20 Marks · 4 mins)</strong>: Residual check PASSED (&lt; 16.0), measured $R_{max}$ GFLOPS verified, Efficiency $E \ge 65\%$.</li>
+                    <li><strong>5. Operational Agility & Teamwork (10 Marks · 5 mins)</strong>: Quick terminal navigation, clean exit codes, agile coordination, and oral defense answers.</li>
                 </ul>
             </div>
 
